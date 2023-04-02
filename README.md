@@ -20,7 +20,7 @@ sensors, motors and other components which can be found in the [Components](#com
 
 1. Download or clone the EggCubator repository.
 1. `cd eggcubator`
-1. Build the package using either `pio build` or using the build icon in VSCode
+1. Build the package using either `pio run --target  upload` or using the build icon in VSCode
 1. Connect the components as shown in the wiring diagram.
 1. Upload the code to your Arduino board.
 
