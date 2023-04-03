@@ -8,7 +8,6 @@
 #define THERMOSTAT_H
 
 #include "configuration.h"
-#include "module/moving_avg_filter.h"
 #include "module/pid.h"
 #include <DHT.h>
 
@@ -28,7 +27,6 @@ private:
 
 	PID* pid;
 	DHT* temp_sensor;
-	MovingAvgFilter* temp_filter;
 
 private:
 	/**

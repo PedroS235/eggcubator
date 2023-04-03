@@ -16,7 +16,6 @@ Thermostat::Thermostat(unsigned long temp_reading_interval_, float temp_correcti
 	temp_sensor = new DHT(PIN_DHT, TYPE_DHT);
 	temp_sensor->begin();
 	pid = new PID(PID_TEMP_KP, PID_TEMP_KI, PID_TEMP_KD);
-	temp_filter = new MovingAvgFilter();
 
 	temp_reading_interval = temp_reading_interval_;
 	temp_correction = temp_correction_;
@@ -31,7 +30,7 @@ void Thermostat::update_temp()
 		const float reading = temp_sensor->readTemperature();
 		if(!isnan(reading))
 		{
-			temp = temp_filter->compute(reading+temp_correction);
+			temp = reading+temp_correction;
 		}
 		else
 		{
