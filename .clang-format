@@ -1,130 +1,91 @@
-# Checkout config tool: https://zed0.co.uk/clang-format-configurator/
-# Or http://cf.monofraps.net/
-# https://clang.llvm.org/docs/ClangFormatStyleOptions.html
-# https://github.com/01org/parameter-framework/blob/master/.clang-format
-
-# Tested on: clang-format version 6.0.1
-
-
-# Common settings
-BasedOnStyle:  WebKit
-TabWidth:        4
-IndentWidth:     4
-UseTab:          Always
-ColumnLimit: 100
-
-# Other languages JavaScript, Proto
-
----
 Language: Cpp
-
-# http://releases.llvm.org/6.0.1/tools/clang/docs/ClangFormatStyleOptions.html#disabling-formatting-on-a-piece-of-code
-# int formatted_code;
-# // clang-format off
-#     void    unformatted_code  ;
-# // clang-format on
-# void formatted_code_again;
-
-DisableFormat:   false
-Standard: Cpp11
-
-AccessModifierOffset: -4
-AlignAfterOpenBracket: true
+BasedOnStyle: Google
+AccessModifierOffset: -1
+AlignAfterOpenBracket: Align
 AlignConsecutiveAssignments: false
 AlignConsecutiveDeclarations: false
-AlignEscapedNewlinesLeft: false
-AlignOperands:   true
-AlignTrailingComments: false
-AllowAllParametersOfDeclarationOnNextLine: true
+AlignOperands: true
+AlignTrailingComments: true
+AllowAllParametersOfDeclarationOnNextLine: false
 AllowShortBlocksOnASingleLine: false
 AllowShortCaseLabelsOnASingleLine: false
-AllowShortFunctionsOnASingleLine: Empty
-AllowShortIfStatementsOnASingleLine: false
-AllowShortLoopsOnASingleLine: false
-AlwaysBreakAfterDefinitionReturnType: false
+AllowShortFunctionsOnASingleLine: All
+AllowShortIfStatementsOnASingleLine: true
+AllowShortLoopsOnASingleLine: true
+AlwaysBreakAfterDefinitionReturnType: None
 AlwaysBreakAfterReturnType: None
-AlwaysBreakBeforeMultilineStrings: false
+AlwaysBreakBeforeMultilineStrings: true
 AlwaysBreakTemplateDeclarations: true
 BinPackArguments: false
 BinPackParameters: false
-
-# Configure each individual brace in BraceWrapping
-BreakBeforeBraces: Custom
-# Control of individual brace wrapping cases
-BraceWrapping: {
-    AfterClass: 'true'
-    AfterControlStatement: 'true'
-    AfterEnum : 'true'
-    AfterFunction : 'true'
-    AfterNamespace : 'true'
-    AfterStruct : 'true'
-    AfterUnion : 'true'
-    BeforeCatch : 'true'
-    BeforeElse : 'true'
-    IndentBraces : 'false'
-    AfterExternBlock : 'true'
-    SplitEmptyFunction : 'false'
-    SplitEmptyRecord : 'false'
-    SplitEmptyNamespace : 'true'
-}
-
-BreakAfterJavaFieldAnnotations: true
-BreakBeforeInheritanceComma: false
+BraceWrapping:
+  AfterClass: false
+  AfterControlStatement: false
+  AfterEnum: false
+  AfterFunction: false
+  AfterNamespace: false
+  AfterObjCDeclaration: false
+  AfterStruct: false
+  AfterUnion: false
+  BeforeCatch: false
+  BeforeElse: false
+  IndentBraces: false
 BreakBeforeBinaryOperators: None
+BreakBeforeBraces: Attach
 BreakBeforeTernaryOperators: true
-BreakConstructorInitializersBeforeComma: true
-BreakStringLiterals: true
-
-CommentPragmas:  '^ IWYU pragma:'
-CompactNamespaces: false
-ConstructorInitializerAllOnOneLineOrOnePerLine: false
+BreakConstructorInitializersBeforeComma: false
+ColumnLimit: 88
+CommentPragmas: '^ IWYU pragma:'
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
 ConstructorInitializerIndentWidth: 4
 ContinuationIndentWidth: 4
 Cpp11BracedListStyle: true
-SpaceBeforeCpp11BracedList: false
-DerivePointerAlignment: false
+DerivePointerAlignment: true
+DisableFormat: false
 ExperimentalAutoDetectBinPacking: false
-ForEachMacros:   [ foreach, Q_FOREACH, BOOST_FOREACH ]
-IndentCaseLabels: false
-FixNamespaceComments: true
+ForEachMacros:
+  - foreach
+  - Q_FOREACH
+  - BOOST_FOREACH
+IncludeCategories:
+  - Regex: '^<ext/.*\.h>'
+    Priority: 2
+  - Regex: '^<.*\.h>'
+    Priority: 1
+  - Regex: '^<.*'
+    Priority: 2
+  - Regex: '.*'
+    Priority: 3
+IndentCaseLabels: true
+IndentWidth: 4
 IndentWrappedFunctionNames: false
-KeepEmptyLinesAtTheStartOfBlocks: true
+KeepEmptyLinesAtTheStartOfBlocks: false
 MacroBlockBegin: ''
-MacroBlockEnd:   ''
-JavaScriptQuotes: Double
+MacroBlockEnd: ''
 MaxEmptyLinesToKeep: 1
 NamespaceIndentation: None
-ObjCBlockIndentWidth: 4
-ObjCSpaceAfterProperty: true
-ObjCSpaceBeforeProtocolList: true
-PenaltyBreakBeforeFirstCallParameter: 19
+ObjCBlockIndentWidth: 2
+ObjCSpaceAfterProperty: false
+ObjCSpaceBeforeProtocolList: false
+PenaltyBreakBeforeFirstCallParameter: 1
 PenaltyBreakComment: 300
 PenaltyBreakFirstLessLess: 120
 PenaltyBreakString: 1000
-
 PenaltyExcessCharacter: 1000000
-PenaltyReturnTypeOnItsOwnLine: 60
+PenaltyReturnTypeOnItsOwnLine: 200
 PointerAlignment: Left
+ReflowComments: true
+SortIncludes: true
 SpaceAfterCStyleCast: false
 SpaceBeforeAssignmentOperators: true
-SpaceBeforeParens: Never
+SpaceBeforeParens: ControlStatements
 SpaceInEmptyParentheses: false
-SpacesBeforeTrailingComments: 1
-SpacesInAngles:  false
+SpacesBeforeTrailingComments: 2
+SpacesInAngles: false
 SpacesInContainerLiterals: true
 SpacesInCStyleCastParentheses: false
 SpacesInParentheses: false
 SpacesInSquareBrackets: false
-SpaceAfterTemplateKeyword: true
-SpaceBeforeInheritanceColon: true
-
-SortUsingDeclarations: true
-SortIncludes: true
-
-# Comments are for developers, they should arrange them
-ReflowComments: false
-
-IncludeBlocks: Preserve
-IndentPPDirectives: AfterHash
----
-
+Standard: Auto
+TabWidth: 4
+UseTab: Never
