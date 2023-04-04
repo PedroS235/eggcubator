@@ -4,7 +4,27 @@
  * See end of the file for extended copyright information
  */
 
-#include "incubation_routine.h"
+#include <incubation_routine.h>
+
+void IncubationRoutine::routine() {
+    switch (curr_state) {
+        case IDDLE_INCUBATION_STATE:
+            iddle_incubation_state();
+            break;
+        case BEFORE_INCUBATION_STATE:
+            before_incubation_state();
+            break;
+        case IN_INCUBATION_STATE:
+            in_incubation_state();
+            break;
+        case AFTER_INCUBATION_STATE:
+            after_incubation_state();
+            break;
+        default:
+            iddle_incubation_state();
+            break;
+    }
+}
 
 /*
  *
@@ -21,4 +41,3 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-

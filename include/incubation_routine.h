@@ -6,8 +6,35 @@
 
 #ifndef INCUBATION_ROUTINE_H
 #define INCUBATION_ROUTINE_H
+#include <cstdint>
 
-class IncubationRoutine {};
+// States
+#define IDDLE_INCUBATION_STATE 0
+#define BEFORE_INCUBATION_STATE 1
+#define IN_INCUBATION_STATE 2
+#define AFTER_INCUBATION_STATE 3
+
+class IncubationRoutine {
+   private:
+    uint8_t curr_state = 0;
+    unsigned int time_left;
+    unsigned long curr_time;
+    unsigned long total_time;
+
+   private:
+    void iddle_incubation_state();
+    void before_incubation_state();
+    void in_incubation_state();
+    void after_incubation_state();
+
+   public:
+    IncubationRoutine();
+    unsigned long get_time_left();
+    unsigned long get_total_time();
+    unsigned long get_curr_time();
+
+    void routine();
+};
 
 #endif  // !INCUBATION_ROUTINE_H
 
