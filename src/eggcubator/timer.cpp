@@ -1,13 +1,5 @@
 #include "eggcubator/timer.h"
 
-#include <cstdint>
-#include <cstdio>
-#include <cstring>
-#include <string>
-
-#include "HardwareSerial.h"
-#include "esp32-hal.h"
-
 using namespace eggcubator;
 
 Timer::Timer() {

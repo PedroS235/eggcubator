@@ -8,8 +8,6 @@
 #include <eggcubator/pins.h>
 #include <eggcubator/utils/time_conversions.h>
 
-#include "HardwareSerial.h"
-
 MotorController::MotorController() {
     pinMode(PIN_MOTOR, OUTPUT);
     curr_state = IDDLE_MOTOR_STATE;
