@@ -10,8 +10,6 @@ IncubationRoutine::IncubationRoutine() : curr_time(), motor_controller() {
     curr_state = IDDLE_INCUBATION_STATE;
 }
 
-eggcubator::time_t IncubationRoutine::get_time_left() { return time_left; }
-unsigned long IncubationRoutine::get_total_time() { return total_time; }
 Timer IncubationRoutine::get_curr_time() { return curr_time; }
 
 void IncubationRoutine::before_incubation_state() {
@@ -20,9 +18,12 @@ void IncubationRoutine::before_incubation_state() {
     extern float humd_target;
     temp_target = curr_egg->target_temp;
     humd_target = curr_egg->target_humd;
-    total_time = curr_egg->incubation_days;
+
     motor_controller.set_rotation_interval_hours(curr_egg->eggs_rotation_period);
     motor_controller.set_rotation_duration_seconds(EGG_MOTOR_ROTATION_DURATION);
+
+    // TODO(PedroS): Before starting the incubation, wait for the temperature to settle
+
     curr_time.start();
     curr_state = IN_INCUBATION_STATE;
 }

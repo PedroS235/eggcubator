@@ -13,33 +13,65 @@
 
 using namespace eggcubator;
 
-// States
+// Incubation States
 #define IDDLE_INCUBATION_STATE 0
 #define BEFORE_INCUBATION_STATE 1
 #define IN_INCUBATION_STATE 2
 #define AFTER_INCUBATION_STATE 3
 
+/**
+ * @brief Class reponsible for the routine of the incubation.
+ * It's aim is to be in charge in checking when to start and end an incubation cycle
+ * which depends on the type of egg. In addition, it is also reposible in triggering
+ * when the motor should start rotating the eggs as well as ending the rotation.
+ */
 class IncubationRoutine {
    private:
     uint8_t curr_state;
-    eggcubator::time_t time_left;
     Timer curr_time;
-    unsigned long total_time;
     egg_t *curr_egg;
     MotorController motor_controller;
 
    private:
+    /**
+     * @brief Method which represetns the BEFORE_INCUBATION_STATE
+     */
     void before_incubation_state();
+
+    /**
+     * @brief Method which represetns the IN_INCUBATION_STATE
+     */
     void in_incubation_state();
+
+    /**
+     * @brief Method which represetns the AFTER_INCUBATION_STATE
+     */
     void after_incubation_state();
 
    public:
+    /**
+     * @brief Constructor of the class IncubationRoutine
+     */
     IncubationRoutine();
-    eggcubator::time_t get_time_left();
-    unsigned long get_total_time();
-    Timer get_curr_time();
+    /**
+     * @brief Method which returns the current time elapsed of incubation
+     *
+     * @returns current time elapsed in form of a time_t struct
+     */
+    eggcubator::time_t get_curr_time();
+
+    /**
+     * @brief Method which triggers the incubation to start taking place
+     *
+     * @param egg: egg for wihch the incubation should aim for
+     */
     void start_incubation(egg_t *egg);
 
+    /**
+     * @brief Method which acts like the internal loop cycle for the incubation routine
+     *
+     * @returns true if incubation is in place, false otherwise
+     */
     bool routine();
 };
 
