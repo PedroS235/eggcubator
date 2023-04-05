@@ -6,11 +6,10 @@
 
 #ifndef INCUBATION_ROUTINE_H
 #define INCUBATION_ROUTINE_H
+#include <eggcubator/configuration.h>
 #include <eggcubator/egg.h>
 #include <eggcubator/module/motor_controller.h>
 #include <eggcubator/timer.h>
-
-#include <cstdint>
 
 using namespace eggcubator;
 
