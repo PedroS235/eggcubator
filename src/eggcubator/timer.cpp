@@ -1,7 +1,12 @@
+/*
+ * EggCubator - Arduino-based egg incubator controller
+ * Copyright (C) 2023 Pedro Soares
+ * See end of the file for extended copyright information
+ */
+
 #include "eggcubator/timer.h"
 
 using namespace eggcubator;
-
 Timer::Timer() {
     time_interval = 1000;
     elapsed_time = millis();
@@ -15,6 +20,8 @@ uint8_t Timer::get_hour() { return time.hour; }
 uint8_t Timer::get_minute() { return time.minute; }
 
 uint8_t Timer::get_seconds() { return time.second; }
+
+eggcubator::time_t Timer::get_time_t() { return time; }
 
 void Timer::print_time() {
     if (time.day > 0) {
@@ -59,3 +66,19 @@ void Timer::update() {
         }
     }
 }
+
+/*
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
