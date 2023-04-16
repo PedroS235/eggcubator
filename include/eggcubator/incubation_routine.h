@@ -58,7 +58,7 @@ class IncubationRoutine {
      *
      * @returns current time elapsed in form of a time_t struct
      */
-    eggcubator::time_t get_curr_time();
+    Timer get_curr_time();
 
     /**
      * @brief Method which triggers the incubation to start taking place
