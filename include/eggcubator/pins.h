@@ -40,7 +40,7 @@
 #define PIN_I2C_SDA 21
 #define PIN_I2C_SCK 22
 
-#endif // !PINS_H
+#endif  // !PINS_H
 
 /*
  *
