@@ -6,7 +6,7 @@
 
 #ifndef EGG_H
 #define EGG_H
-#include <cstdint>
+#include <Arduino.h>
 
 /*
  * Egg types:
