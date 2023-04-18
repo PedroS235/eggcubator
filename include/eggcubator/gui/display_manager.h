@@ -21,8 +21,8 @@ class DisplayManager {
                            uint8_t width,
                            uint8_t height,
                            uint8_t percetange);
-    void draw_temperature(float value, float target);
-    void draw_humidity(float value, float target);
+    void draw_temperature(uint8_t x, uint8_t y, float value, float target);
+    void draw_humidity(uint8_t x, uint8_t y, float value, float target);
     void draw_time(uint8_t x, uint8_t y, eggcubator::time_t time);
 
    public:
