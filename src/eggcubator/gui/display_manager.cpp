@@ -48,27 +48,26 @@ void DisplayManager::draw_progress_bar(uint8_t x,
     display->drawBox(x, y, w, height);
 }
 
-void DisplayManager::draw_temperature(float value, float target) {
+void DisplayManager::draw_temperature(uint8_t x, uint8_t y, float value, float target) {
     display->setFont(u8g2_font_tenthinnerguys_tr);
-    display->setCursor(0, 5);
+    display->setCursor(x, y);
     display->print(value, 1);
     display->drawBitmap(
-        2, display->getMaxCharHeight() + 4, 16 / 8, 16, temperature_icon);
-    display->setCursor(0, 38);
+        x + 2, y + display->getMaxCharHeight() + 4, 16 / 8, 16, temperature_icon);
+    display->setCursor(x, y + 38);
     display->print(target, 1);
 }
-void DisplayManager::draw_humidity(float value, float target) {
+
+void DisplayManager::draw_humidity(uint8_t x, uint8_t y, float value, float target) {
     display->setFont(u8g2_font_tenthinnerguys_tr);
-    display->setCursor(display->getWidth() - 25, 5);
+    display->setCursor(x, y);
     display->print(value, 1);
-    display->drawBitmap(display->getWidth() - 22,
-                        display->getMaxCharHeight() + 4,
-                        16 / 8,
-                        16,
-                        humidity_icon);
-    display->setCursor(display->getWidth() - 25, 38);
+    display->drawBitmap(
+        x + 2, y + display->getMaxCharHeight() + 4, 16 / 8, 16, temperature_icon);
+    display->setCursor(x, y + 38);
     display->print(target, 1);
 }
+
 void DisplayManager::draw_time(uint8_t x, uint8_t y, eggcubator::time_t time) {
     // Time format (Dd) HH::MM
     display->setFont(u8g2_font_5x8_tf);
@@ -86,22 +85,21 @@ void DisplayManager::draw_time(uint8_t x, uint8_t y, eggcubator::time_t time) {
     // MM
     if (time.minute < 10) display->print("0");
     display->print(time.minute);
-    display->print(":");
 }
 
 void DisplayManager::draw_status_screen() {
     display->firstPage();
     do {
-        draw_temperature(12.5, 23.5);
-        draw_humidity(12.5, 34.5);
+        draw_temperature(0, 0, 12.5, 23.5);
+        draw_humidity(display->getWidth() - 25, 0, 12.5, 34.5);
     } while (display->nextPage());
 }
 
 void DisplayManager::draw_incubation_status_screen() {
     display->firstPage();
     do {
-        draw_temperature(12.5, 23.5);
-        draw_humidity(12.5, 34.5);
+        draw_temperature(0, 0, 12.5, 23.5);
+        draw_humidity(display->getWidth() - 25, 0, 12.5, 34.5);
         /* draw_progress_bar(2, 60, display->getWidth() - 4, 4, 30); */
         draw_time(0, 50, {20, 12, 4, 33});
 
