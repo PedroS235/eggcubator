@@ -70,38 +70,23 @@ void DisplayManager::draw_humidity(float value, float target) {
     display->print(target, 1);
 }
 void DisplayManager::draw_time(uint8_t x, uint8_t y, eggcubator::time_t time) {
+    // Time format (Dd) HH::MM
     display->setFont(u8g2_font_5x8_tf);
+    display->setCursor(x, y);
     if (time.day > 0) {
         // DD HH::MM
-        display->setCursor(x, y);
         display->print(time.day);
         display->print("d ");
-
-        // draw hour
-        if (time.hour < 10) display->print("0");
-        display->print(time.hour);
-        display->print(":");
-
-        // draw minutes
-        if (time.minute < 10) display->print("0");
-        display->print(time.minute);
-    } else {
-        // HH::MM::SS
-        // draw hours
-        display->setCursor(x, y);
-        if (time.hour < 10) display->print("0");
-        display->print(time.hour);
-        display->print(":");
-
-        // draw minutes
-        if (time.minute < 10) display->print("0");
-        display->print(time.minute);
-        display->print(":");
-
-        // draw seconds
-        if (time.second < 10) display->print("0");
-        display->print(time.second);
     }
+    // HH
+    if (time.hour < 10) display->print("0");
+    display->print(time.hour);
+    display->print(":");
+
+    // MM
+    if (time.minute < 10) display->print("0");
+    display->print(time.minute);
+    display->print(":");
 }
 
 void DisplayManager::draw_status_screen() {
