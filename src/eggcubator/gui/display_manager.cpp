@@ -6,8 +6,6 @@
 
 #include <eggcubator/gui/display_manager.h>
 
-#include <cstdint>
-
 #include "clib/u8g2.h"
 #include "eggcubator/configuration.h"
 #include "eggcubator/gui/icons.h"
@@ -24,7 +22,6 @@ void DisplayManager::draw_menu_item_cell(uint8_t x,
                                          bool select) {
     display->setFont(u8g2_font_tenthinnerguys_tr);
     if (select) {
-        /* display->setFont(u8g2_font_tenthinguys_t_all); */
         display->setDrawColor(1);
         display->drawRBox(0, y, display->getWidth(), 20, 2);
         display->setDrawColor(0);
@@ -87,6 +84,13 @@ void DisplayManager::draw_time(uint8_t x, uint8_t y, eggcubator::time_t time) {
     display->print(time.minute);
 }
 
+void DisplayManager::draw_title(const char* title) {
+    display->setFont(u8g2_font_tenthinnerguys_tr);
+    display->drawStr(
+        display->getWidth() / 2 - display->getStrWidth(title) / 2, 0, title);
+    display->drawHLine(0, display->getMaxCharHeight() + 1, display->getWidth());
+}
+
 void DisplayManager::draw_status_screen() {
     display->firstPage();
     do {
@@ -120,6 +124,20 @@ void DisplayManager::draw_menu(const char* menu_items[],
             }
             y += 22;
         }
+    } while (display->nextPage());
+}
+
+void DisplayManager::draw_number_change(const char* title, float number) {
+    display->firstPage();
+    do {
+        draw_title(title);
+        int x, y;
+        x = display->getWidth() / 2 - 10;
+        y = display->getMaxCharHeight() + 1 +
+            (display->getHeight() - display->getMaxCharHeight() + 1) / 2 -
+            display->getMaxCharHeight() / 2;
+        display->setCursor(x, y);
+        display->print(number, 1);
     } while (display->nextPage());
 }
 

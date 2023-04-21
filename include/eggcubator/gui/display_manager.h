@@ -24,6 +24,7 @@ class DisplayManager {
     void draw_temperature(uint8_t x, uint8_t y, float value, float target);
     void draw_humidity(uint8_t x, uint8_t y, float value, float target);
     void draw_time(uint8_t x, uint8_t y, eggcubator::time_t time);
+    void draw_title(const char* title);
 
    public:
     DisplayManager();
@@ -52,6 +53,8 @@ class DisplayManager {
      * @param selected_item: index of the selected item (0-menu_size)
      */
     void draw_menu(const char* menu_items[], uint8_t menu_size, uint8_t selected_item);
+
+    void draw_number_change(const char* title, float number);
 };
 
 #endif  // !DISPLAY_MANAGER_H
