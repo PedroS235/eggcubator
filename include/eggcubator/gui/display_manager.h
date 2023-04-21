@@ -33,7 +33,10 @@ class DisplayManager {
      *  + temperature
      *  + humidity
      */
-    void draw_status_screen();
+    void draw_status_screen(float temp,
+                            float target_temp,
+                            float humd,
+                            float target_humd);
 
     /**
      * @brief Draws the information about the current incubation in place, such
@@ -43,7 +46,12 @@ class DisplayManager {
      *  + incubation time
      *  + progress bar
      */
-    void draw_incubation_status_screen();
+    void draw_incubation_status_screen(float temp,
+                                       float target_temp,
+                                       float humd,
+                                       float target_humd,
+                                       eggcubator::time_t curr_time,
+                                       long total_days);
 
     /**
      * @brief Draws a menu based on the items passed as a parameter. It also
