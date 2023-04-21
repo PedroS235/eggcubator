@@ -9,6 +9,7 @@
 #include "clib/u8g2.h"
 #include "eggcubator/configuration.h"
 #include "eggcubator/gui/icons.h"
+#include "eggcubator/timer.h"
 
 DisplayManager::DisplayManager() {
     display = new TYPE_DISPLAY(U8G2_R0, U8X8_PIN_NONE);
@@ -82,6 +83,11 @@ void DisplayManager::draw_time(uint8_t x, uint8_t y, eggcubator::time_t time) {
     // MM
     if (time.minute < 10) display->print("0");
     display->print(time.minute);
+    display->print(":");
+
+    // SS
+    if (time.second < 10) display->print("0");
+    display->print(time.second);
 }
 
 void DisplayManager::draw_title(const char* title) {
@@ -91,21 +97,30 @@ void DisplayManager::draw_title(const char* title) {
     display->drawHLine(0, display->getMaxCharHeight() + 1, display->getWidth());
 }
 
-void DisplayManager::draw_status_screen() {
+void DisplayManager::draw_status_screen(float temp,
+                                        float target_temp,
+                                        float humd,
+                                        float target_humd) {
     display->firstPage();
     do {
-        draw_temperature(0, 0, 12.5, 23.5);
-        draw_humidity(display->getWidth() - 25, 0, 12.5, 34.5);
+        draw_temperature(0, 0, temp, target_temp);
+        draw_humidity(display->getWidth() - 25, 0, humd, target_humd);
     } while (display->nextPage());
 }
 
-void DisplayManager::draw_incubation_status_screen() {
+void DisplayManager::draw_incubation_status_screen(float temp,
+                                                   float target_temp,
+                                                   float humd,
+                                                   float target_humd,
+                                                   eggcubator::time_t curr_time,
+                                                   long total_days) {
     display->firstPage();
     do {
-        draw_temperature(0, 0, 12.5, 23.5);
-        draw_humidity(display->getWidth() - 25, 0, 12.5, 34.5);
-        /* draw_progress_bar(2, 60, display->getWidth() - 4, 4, 30); */
-        draw_time(0, 50, {20, 12, 4, 33});
+        draw_temperature(0, 0, temp, target_temp);
+        draw_humidity(display->getWidth() - 25, 0, humd, target_humd);
+        draw_progress_bar(
+            2, 60, display->getWidth() - 4, 4, curr_time.day * 100 / total_days);
+        draw_time(0, 50, curr_time);
 
     } while (display->nextPage());
 }
