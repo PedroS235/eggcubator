@@ -5,12 +5,14 @@
  */
 
 #include <Arduino.h>
-#include <eggcubator/gui/display_manager.h>
-#include <eggcubator/incubation_routine.h>
-#include <eggcubator/module/motor_controller.h>
-#include <eggcubator/module/thermostat.h>
-#include <eggcubator/pins.h>
-#include <eggcubator/timer.h>
+
+#include "RotaryEncoder.h"
+#include "eggcubator/gui/display_manager.h"
+#include "eggcubator/gui/eggcubator_ui.h"
+#include "eggcubator/incubation_routine.h"
+#include "eggcubator/module/motor_controller.h"
+#include "eggcubator/module/thermostat.h"
+#include "eggcubator/pins.h"
 
 // --------------------
 // - Global Variables -
@@ -19,27 +21,39 @@ float temp_target = 0;
 float humd_target = 0;
 float curr_temp = 0;
 float curr_humd = 0;
-const char *menu_items[] = {"Incubate", "Preheat", "Settings", "Item 4", "Item 5"};
-int i = 0;
 
 Thermostat *thermostat;
 IncubationRoutine *routine;
-DisplayManager *display_manager;
+RotaryEncoder *encoder;
+EggCubatorUI *ui;
 
-void setup() {
+void encoder_ISR() { encoder->tick(); }
+
+void setup_constructers() {
     thermostat = new Thermostat();
     routine = new IncubationRoutine();
-    display_manager = new DisplayManager();
+    encoder = new RotaryEncoder(PIN_ENCODER_CLK, PIN_ENCODER_DT);
+    ui = new EggCubatorUI(encoder);
+}
+
+void setup_interrupts() {
+    attachInterrupt(digitalPinToInterrupt(PIN_ENCODER_CLK), encoder_ISR, CHANGE);
+    attachInterrupt(digitalPinToInterrupt(PIN_ENCODER_DT), encoder_ISR, CHANGE);
+}
+
+void setup() {
+    delay(2000);
     Serial.begin(115200);
+
+    setup_constructers();
+    setup_interrupts();
 }
 
 void loop() {
     thermostat->routine(temp_target);
     routine->routine();
     curr_temp = thermostat->get_temp();
-    display_manager->draw_incubation_status_screen();
-    i = (i + 1) % 100;
-    delay(500);
+    ui->render();
 }
 
 /*
