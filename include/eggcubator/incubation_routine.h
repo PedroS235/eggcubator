@@ -66,6 +66,7 @@ class IncubationRoutine {
      * @param egg: egg for wihch the incubation should aim for
      */
     void start_incubation(egg_t *egg);
+    void stop_incubation();
 
     /**
      * @brief Method which acts like the internal loop cycle for the incubation routine
@@ -73,6 +74,10 @@ class IncubationRoutine {
      * @returns true if incubation is in place, false otherwise
      */
     bool routine();
+
+    egg_t curr_egg_in_incubation();
+
+    bool in_incubation();
 };
 
 #endif  // !INCUBATION_ROUTINE_H

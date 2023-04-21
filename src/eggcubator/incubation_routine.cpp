@@ -6,6 +6,8 @@
 
 #include <eggcubator/incubation_routine.h>
 
+#include "HardwareSerial.h"
+
 IncubationRoutine::IncubationRoutine() : curr_time(), motor_controller() {
     curr_state = IDDLE_INCUBATION_STATE;
 }
@@ -54,6 +56,11 @@ void IncubationRoutine::start_incubation(egg_t *egg) {
     curr_egg = egg;
     curr_state = BEFORE_INCUBATION_STATE;
 }
+void IncubationRoutine::stop_incubation() { curr_state = AFTER_INCUBATION_STATE; }
+
+egg_t IncubationRoutine::curr_egg_in_incubation() { return *curr_egg; }
+
+bool IncubationRoutine::in_incubation() { return curr_state == IN_INCUBATION_STATE; }
 
 bool IncubationRoutine::routine() {
     switch (curr_state) {
@@ -63,6 +70,7 @@ bool IncubationRoutine::routine() {
             before_incubation_state();
             break;
         case IN_INCUBATION_STATE:
+            curr_time.update();
             in_incubation_state();
             return true;
         case AFTER_INCUBATION_STATE:
