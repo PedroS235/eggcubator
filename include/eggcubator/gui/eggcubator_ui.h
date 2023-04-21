@@ -25,6 +25,8 @@
 #define PID_MENU 8
 #define INFO_SCREEN 9
 #define INCUBATION_INFO_SCREEN 10
+#define INCUBATION_MAIN_MENU 11
+#define CHANGE_VALUE_SCREEN 12
 
 class EggCubatorUI {
    private:
@@ -62,6 +64,8 @@ class EggCubatorUI {
     void pid_menu_callback();
     void info_screen_callback();
     void incubation_info_screen_callback();
+    void incubation_main_menu_callback();
+    void change_value_screen_callback();
 
    public:
     EggCubatorUI(RotaryEncoder *encoder_);

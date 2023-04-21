@@ -1,7 +1,9 @@
 #include <eggcubator/gui/eggcubator_ui.h>
 
 #include "Arduino.h"
+#include "eggcubator/egg.h"
 #include "eggcubator/gui/menus.h"
+#include "eggcubator/incubation_routine.h"
 #include "eggcubator/pins.h"
 
 EggCubatorUI::EggCubatorUI(RotaryEncoder *encoder_) : display() {
@@ -71,7 +73,49 @@ void EggCubatorUI::render() {
         case TUNE_MENU:
             tune_menu_callback();
             break;
+        case INCUBATION_MAIN_MENU:
+            incubation_main_menu_callback();
+            break;
     }
+}
+
+void EggCubatorUI::info_screen_callback() {
+    if (button_pressed) {
+        curr_menu_state = MAIN_MENU;
+        button_pressed = false;
+        set_encoder_bounds(0, main_menu_size - 1);
+        reset_encoder();
+    }
+    extern float curr_temp;
+    extern float temp_target;
+    extern float curr_humd;
+    extern float humd_target;
+    display.draw_status_screen(curr_temp, temp_target, curr_humd, humd_target);
+}
+
+void EggCubatorUI::incubation_info_screen_callback() {
+    if (button_pressed) {
+        curr_menu_state = INCUBATION_MAIN_MENU;
+        button_pressed = false;
+        reset_encoder();
+    }
+    extern IncubationRoutine *routine;
+    extern float curr_temp;
+    extern float temp_target;
+    extern float curr_humd;
+    extern float humd_target;
+
+    if (!routine->in_incubation()) {
+        curr_menu_state = INFO_SCREEN;
+    }
+
+    display.draw_incubation_status_screen(
+        curr_temp,
+        temp_target,
+        curr_humd,
+        humd_target,
+        routine->get_curr_time().get_time_t(),
+        routine->curr_egg_in_incubation().incubation_days);
 }
 
 void EggCubatorUI::main_menu_callback() {
@@ -107,6 +151,7 @@ void EggCubatorUI::main_menu_callback() {
 }
 void EggCubatorUI::incubate_menu_callback() {
     if (button_pressed) {
+        extern IncubationRoutine *routine;
         switch (encoder_pos) {
             case 0:
                 // Go back
@@ -116,27 +161,33 @@ void EggCubatorUI::incubate_menu_callback() {
                 break;
             case 1:
                 // Chicken
-                // TODO: Start of incubation
+                routine->start_incubation(&chicken_egg);
+                curr_menu_state = INCUBATION_INFO_SCREEN;
                 break;
             case 2:
                 // Quail
-                // TODO: Start of incubation
+                routine->start_incubation(&quail_egg);
+                curr_menu_state = INCUBATION_INFO_SCREEN;
                 break;
             case 3:
                 // Duck
-                // TODO: Start of incubation
+                routine->start_incubation(&duck_egg);
+                curr_menu_state = INCUBATION_INFO_SCREEN;
                 break;
             case 4:
                 // Turkey
-                // TODO: Start of incubation
+                routine->start_incubation(&turkey_egg);
+                curr_menu_state = INCUBATION_INFO_SCREEN;
                 break;
             case 5:
                 // Goose
-                // TODO: Start of incubation
+                routine->start_incubation(&goose_egg);
+                curr_menu_state = INCUBATION_INFO_SCREEN;
                 break;
             case 6:
                 // Pigeon
-                // TODO: Start of incubation
+                routine->start_incubation(&pigeon_egg);
+                curr_menu_state = INCUBATION_INFO_SCREEN;
                 break;
         }
         button_pressed = false;
@@ -186,62 +237,7 @@ void EggCubatorUI::preheat_menu_callback() {
 
     display.draw_menu(preheat_menu, preheat_menu_size, encoder_pos);
 }
-void EggCubatorUI::eggs_settings_menu_callback() {
-    if (button_pressed) {
-        switch (encoder_pos) {
-            case 0:
-                // Go back
-                curr_menu_state = SETTINGS_MENU;
-                reset_encoder();
-                set_encoder_bounds(0, settings_menu_size - 1);
-                break;
-            case 1:
-                // Chicken
-                curr_menu_state = EGG_CONFIG_MENU;
-                reset_encoder();
-                set_encoder_bounds(0, egg_config_menu_size - 1);
-                // TODO: Start of incubation
-                break;
-            case 2:
-                // Quail
-                curr_menu_state = EGG_CONFIG_MENU;
-                reset_encoder();
-                set_encoder_bounds(0, egg_config_menu_size - 1);
-                // TODO: Start of incubation
-                break;
-            case 3:
-                // Duck
-                curr_menu_state = EGG_CONFIG_MENU;
-                reset_encoder();
-                set_encoder_bounds(0, egg_config_menu_size - 1);
-                // TODO: Start of incubation
-                break;
-            case 4:
-                // Turkey
-                curr_menu_state = EGG_CONFIG_MENU;
-                reset_encoder();
-                set_encoder_bounds(0, egg_config_menu_size - 1);
-                // TODO: Start of incubation
-                break;
-            case 5:
-                // Goose
-                curr_menu_state = EGG_CONFIG_MENU;
-                reset_encoder();
-                set_encoder_bounds(0, egg_config_menu_size - 1);
-                // TODO: Start of incubation
-                break;
-            case 6:
-                // Pigeon
-                curr_menu_state = EGG_CONFIG_MENU;
-                reset_encoder();
-                set_encoder_bounds(0, egg_config_menu_size - 1);
-                // TODO: Start of incubation
-                break;
-        }
-        button_pressed = false;
-    }
-    display.draw_menu(eggs_settings_menu, eggs_settings_menu_size, encoder_pos);
-}
+
 void EggCubatorUI::settings_menu_callback() {
     if (button_pressed) {
         switch (encoder_pos) {
@@ -276,6 +272,57 @@ void EggCubatorUI::settings_menu_callback() {
     }
 
     display.draw_menu(settings_menu, settings_menu_size, encoder_pos);
+}
+
+void EggCubatorUI::eggs_settings_menu_callback() {
+    if (button_pressed) {
+        switch (encoder_pos) {
+            case 0:
+                // Go back
+                curr_menu_state = SETTINGS_MENU;
+                reset_encoder();
+                set_encoder_bounds(0, settings_menu_size - 1);
+                break;
+            case 1:
+                // Chicken
+                curr_menu_state = EGG_CONFIG_MENU;
+                reset_encoder();
+                set_encoder_bounds(0, egg_config_menu_size - 1);
+                break;
+            case 2:
+                // Quail
+                curr_menu_state = EGG_CONFIG_MENU;
+                reset_encoder();
+                set_encoder_bounds(0, egg_config_menu_size - 1);
+                break;
+            case 3:
+                // Duck
+                curr_menu_state = EGG_CONFIG_MENU;
+                reset_encoder();
+                set_encoder_bounds(0, egg_config_menu_size - 1);
+                break;
+            case 4:
+                // Turkey
+                curr_menu_state = EGG_CONFIG_MENU;
+                reset_encoder();
+                set_encoder_bounds(0, egg_config_menu_size - 1);
+                break;
+            case 5:
+                // Goose
+                curr_menu_state = EGG_CONFIG_MENU;
+                reset_encoder();
+                set_encoder_bounds(0, egg_config_menu_size - 1);
+                break;
+            case 6:
+                // Pigeon
+                curr_menu_state = EGG_CONFIG_MENU;
+                reset_encoder();
+                set_encoder_bounds(0, egg_config_menu_size - 1);
+                break;
+        }
+        button_pressed = false;
+    }
+    display.draw_menu(eggs_settings_menu, eggs_settings_menu_size, encoder_pos);
 }
 void EggCubatorUI::calibrate_menu_callback() {
     if (button_pressed) {
@@ -373,8 +420,8 @@ void EggCubatorUI::tune_menu_callback() {
     }
 
     display.draw_menu(tune_menu, tune_menu_size, encoder_pos);
-    display.draw_incubation_status_screen();
 }
+
 void EggCubatorUI::pid_menu_callback() {
     if (button_pressed) {
         switch (encoder_pos) {
@@ -403,21 +450,31 @@ void EggCubatorUI::pid_menu_callback() {
     display.draw_menu(pid_menu, pid_menu_size, encoder_pos);
 }
 
-void EggCubatorUI::info_screen_callback() {
-    if (button_pressed) {
-        curr_menu_state = MAIN_MENU;
-        button_pressed = false;
-        set_encoder_bounds(0, main_menu_size - 1);
-        reset_encoder();
-    }
-    display.draw_status_screen();
-}
+void EggCubatorUI::change_value_screen_callback() {}
 
-void EggCubatorUI::incubation_info_screen_callback() {
+void EggCubatorUI::incubation_main_menu_callback() {
     if (button_pressed) {
-        curr_menu_state = TUNE_MENU;
+        switch (encoder_pos) {
+            case 0:
+                // Go back
+                curr_menu_state = INCUBATION_INFO_SCREEN;
+                set_encoder_bounds(0, calibrate_menu_size - 1);
+                reset_encoder();
+                break;
+            case 1:
+                curr_menu_state = TUNE_MENU;
+                set_encoder_bounds(0, calibrate_menu_size - 1);
+                reset_encoder();
+                break;
+            case 2:
+                // End inucation
+                extern IncubationRoutine *routine;
+                routine->stop_incubation();
+                curr_menu_state = INFO_SCREEN;
+                break;
+        }
         button_pressed = false;
-        reset_encoder();
     }
-    display.draw_incubation_status_screen();
+
+    display.draw_menu(incubation_main_menu, incubation_main_menu_size, encoder_pos);
 }
