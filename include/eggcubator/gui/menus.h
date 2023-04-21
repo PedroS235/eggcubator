@@ -49,4 +49,7 @@ inline const char *tune_menu[] = {"Go Back",
                                   "Rot period"};
 inline uint8_t tune_menu_size = 4;
 
+inline const char *incubation_main_menu[] = {"Go Back", "Tune", "Stop Incubation"};
+inline uint8_t incubation_main_menu_size = 3;
+
 #endif  // !MENUS_H
