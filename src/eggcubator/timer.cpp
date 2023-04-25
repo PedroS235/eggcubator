@@ -8,7 +8,7 @@
 
 using namespace eggcubator;
 Timer::Timer() {
-    time_interval = 980;
+    time_interval = 984;
     elapsed_time = millis();
     time = {0, 0, 0, 0};
 }
