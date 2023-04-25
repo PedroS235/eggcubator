@@ -7,6 +7,7 @@
 #include <Arduino.h>
 
 #include "RotaryEncoder.h"
+#include "eggcubator/egg.h"
 #include "eggcubator/gui/display_manager.h"
 #include "eggcubator/gui/eggcubator_ui.h"
 #include "eggcubator/incubation_routine.h"
@@ -14,18 +15,24 @@
 #include "eggcubator/module/thermostat.h"
 #include "eggcubator/pins.h"
 
-// --------------------
-// - Global Variables -
-// --------------------
+// -----------------------------------------------------------------------------
+// -                             Global Variables                              -
+// -----------------------------------------------------------------------------
 float temp_target = 0;
 float humd_target = 0;
 float curr_temp = 0;
 float curr_humd = 0;
+egg_t selected_egg;
+unsigned long prev_screen_refresh;
 
 Thermostat *thermostat;
 IncubationRoutine *routine;
 RotaryEncoder *encoder;
 EggCubatorUI *ui;
+
+// -----------------------------------------------------------------------------
+// -                            Helper Functions                               -
+// -----------------------------------------------------------------------------
 
 void encoder_ISR() { encoder->tick(); }
 
@@ -41,19 +48,30 @@ void setup_interrupts() {
     attachInterrupt(digitalPinToInterrupt(PIN_ENCODER_DT), encoder_ISR, CHANGE);
 }
 
+void startup_sound() {
+    tone(PIN_BUZZER, 523, 100);
+    tone(PIN_BUZZER, 600, 50);
+    tone(PIN_BUZZER, 700, 100);
+    tone(PIN_BUZZER, 800, 200);
+}
+
 void setup() {
     delay(2000);
     Serial.begin(115200);
 
     setup_constructers();
     setup_interrupts();
+    startup_sound();
 }
 
 void loop() {
     thermostat->routine(temp_target);
     routine->routine();
     curr_temp = thermostat->get_temp();
-    ui->render();
+    if (millis() - prev_screen_refresh > 2) {
+        ui->render();
+        prev_screen_refresh = millis();
+    }
 }
 
 /*
