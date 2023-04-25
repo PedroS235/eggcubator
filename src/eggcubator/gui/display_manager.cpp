@@ -61,7 +61,7 @@ void DisplayManager::draw_humidity(uint8_t x, uint8_t y, float value, float targ
     display->setCursor(x, y);
     display->print(value, 1);
     display->drawBitmap(
-        x + 2, y + display->getMaxCharHeight() + 4, 16 / 8, 16, temperature_icon);
+        x + 2, y + display->getMaxCharHeight() + 4, 16 / 8, 16, humidity_icon);
     display->setCursor(x, y + 38);
     display->print(target, 1);
 }
