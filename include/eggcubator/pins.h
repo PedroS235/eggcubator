@@ -17,16 +17,16 @@
 #define PIN_DHT 32
 
 // Heater MOSFET
-#define PIN_HEATER 19
+#define PIN_HEATER 12
 
 // Fan MOSFET
 // #define PIN_FAN -1
 
 // Eggs rotation motor
-#define PIN_MOTOR 23
+#define PIN_MOTOR 14
 
 // Speaker pin
-#define PIN_BUZZER 2
+#define PIN_BUZZER 4
 
 // Rotary encoder pins
 #define PIN_ENCODER_CLK 25
@@ -36,7 +36,7 @@
 // Servo data pins
 // #define PIN_SERVO
 
-// I2C PINS (Don't change if using a ESP32)
+// I2C PINS (Don't change if using an ESP32)
 #define PIN_I2C_SDA 21
 #define PIN_I2C_SCK 22
 
