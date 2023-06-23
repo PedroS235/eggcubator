@@ -9,6 +9,7 @@
 #include "clib/u8g2.h"
 #include "eggcubator/configuration.h"
 #include "eggcubator/gui/icons.h"
+#include "eggcubator/gui/menu.h"
 #include "eggcubator/timer.h"
 
 DisplayManager::DisplayManager() {
@@ -136,6 +137,24 @@ void DisplayManager::draw_menu(const char* menu_items[],
                 draw_menu_item_cell(0, y, menu_items[i], true);
             } else {
                 draw_menu_item_cell(0, y, menu_items[i], false);
+            }
+            y += 22;
+        }
+    } while (display->nextPage());
+}
+
+void DisplayManager::draw_menu(Menu* menu) {
+    uint8_t selected_item = menu->selected_index();
+    uint8_t menu_size = menu->size();
+    menu_item_t* items = menu->menu_items();
+    display->firstPage();
+    do {
+        int y = selected_item > 2 ? -22 * (selected_item - 2) : 0;
+        for (int i = 0; i < menu_size; i++) {
+            if (i == selected_item) {
+                draw_menu_item_cell(0, y, items[i].name, true);
+            } else {
+                draw_menu_item_cell(0, y, items[i].name, false);
             }
             y += 22;
         }
