@@ -7,6 +7,7 @@
 #include <Arduino.h>
 
 #include "RotaryEncoder.h"
+#include "eggcubator/configuration.h"
 #include "eggcubator/egg.h"
 #include "eggcubator/gui/display_manager.h"
 #include "eggcubator/gui/eggcubator_ui.h"
@@ -29,6 +30,7 @@ Thermostat *thermostat;
 IncubationRoutine *routine;
 RotaryEncoder *encoder;
 EggCubatorUI *ui;
+DisplayManager *display;
 
 // -----------------------------------------------------------------------------
 // -                            Helper Functions                               -
@@ -41,6 +43,7 @@ void setup_constructers() {
     routine = new IncubationRoutine();
     encoder = new RotaryEncoder(PIN_ENCODER_CLK, PIN_ENCODER_DT);
     ui = new EggCubatorUI(encoder);
+    display = new DisplayManager();
 }
 
 void setup_interrupts() {
@@ -56,12 +59,15 @@ void startup_sound() {
 }
 
 void setup() {
-    delay(2000);
+    delay(500);
     Serial.begin(115200);
 
     setup_constructers();
     setup_interrupts();
+    display->draw_boot_screen("EGGCUBATOR");
+    delay(BOOTSCREEN_DURATION);
     startup_sound();
+    delete display;
 }
 
 void loop() {
