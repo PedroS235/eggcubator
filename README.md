@@ -1,18 +1,41 @@
 # EggCubator
 
 EggCubator is an Arduino-based program that controls the incubation period of
-chicken eggs (or any other type of egg). It uses a set of sensors, a servo motor,
-a motor to rotate the eggs, an heater, a fan, and an OLED screen to monitor and
-regulate temperature, humidity, and other factors that affect egg incubation.
+chicken eggs (or any other type of egg). It's main target is to control the
+temperature inside the incubator, which uses a PID controller for controlling an
+heating source. In addition, the controller is also able to rotate a DC motor
+in order to rotate the eggs every x amount of time. Furthermore, the controller
+will also be able to control the humidity inside the incubator, by controlling
+and opening using a servo motor, letting fresh air enter or not. This however,
+is just theory and I cannot be sure that it will be able to adjust the humidity.
+Therefore, this must still be tested.
 
-**DISCLAIMER: This project is currently under development!**
+This controller, is targeted to be used with an OLED screen, which is used to
+navigate between the different menus available, and also change some configuration
+parameters on the go, without the need of flashing the firmware to the controller board.
 
-## Getting Started
+As of now, the current state of the controller is still very limited, and it was
+not tested yet. Nevertheless, it should now be able to control the incubation of
+any of the eggs configarations available. Before using it, the PID gains will need
+to be tuned, in order for the temperature to be consistent. Otherwise, the temperature
+will most likely fluctuate quite a lot. However, I cannot yet give a guide on how to
+perform such tune, as I have not yet tested on the real thing. In addition, I have
+not yet implemented a watchdog for the heater, and thus if the temperature sensor
+is by any change damaged, and the heater is trying to achieve the desired temperature,
+it will not stop until it reaches it. For this reason, **the controller will not stop at this point**.
+
+**DISCLAIMER: This project is currently under development! If you plan to use this, be very careful!**
+
+## Table of Contents
+
+- [Installation](installation)
+
+## Installation
 
 To use EggCubator, you will need an Arduino board (ESP32 is recommended), the
-sensors, motors and other components which can be found in the [Components](#components) section.
+sensors, motors and other components which can be found in the [Bill of Materieals](#bill-of-materials) section.
 
-With all the components gathered, you will need to connected them to the your
+With all the components gathered, you will need to connect them to the your
 board of choice. In case you are using an ESP32 board and want to stick the
 default connections, you can follow the schematic in [here](#schematic).
 
@@ -23,7 +46,7 @@ TODO: Finish this section
 - PlatformIO (Tool to upload the code to the board)
 - The core components
 
-## Components
+## Bill of Materials
 
 - ESP32 (or other compatible Arduino board)
 - OLED screen (128x64)
