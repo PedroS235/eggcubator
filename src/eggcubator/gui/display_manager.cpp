@@ -22,17 +22,17 @@ void DisplayManager::draw_menu_item_cell(uint8_t x,
                                          uint8_t y,
                                          const char* item_name,
                                          bool select) {
-    display->setFont(u8g2_font_tenthinnerguys_tr);
+    display->setFont(u8g2_font_profont15_tf);
     if (select) {
         display->setDrawColor(1);
         display->drawRBox(0, y, display->getWidth(), 20, 2);
         display->setDrawColor(0);
-        display->drawStr(4, y + 4, item_name);
+        display->drawUTF8(4, y + 4, item_name);
     } else {
         display->setDrawColor(0);
         display->drawRFrame(0, y, display->getWidth(), 20, 2);
         display->setDrawColor(1);
-        display->drawStr(4, y + 4, item_name);
+        display->drawUTF8(4, y + 4, item_name);
     }
     display->setDrawColor(1);
     display->drawRFrame(0, y, display->getWidth(), 20, 2);
@@ -92,7 +92,7 @@ void DisplayManager::draw_time(uint8_t x, uint8_t y, eggcubator::time_t time) {
 }
 
 void DisplayManager::draw_title(const char* title) {
-    display->setFont(u8g2_font_tenthinnerguys_tr);
+    display->setFont(u8g2_font_profont15_tf);
     display->drawStr(
         display->getWidth() / 2 - display->getStrWidth(title) / 2, 0, title);
     display->drawHLine(0, display->getMaxCharHeight() + 1, display->getWidth());
@@ -172,6 +172,19 @@ void DisplayManager::draw_number_change(const char* title, float number) {
             display->getMaxCharHeight() / 2;
         display->setCursor(x, y);
         display->print(number, 1);
+    } while (display->nextPage());
+}
+
+void DisplayManager::draw_boot_screen(const char* text) {
+    display->firstPage();
+    do {
+        display->setFont(u8g2_font_tenthinnerguys_tr);
+        display->drawBitmap(
+            display->getWidth() / 2 - 12, 5, 24 / 8, 24, chicken_egg_icon);
+        display->drawStr(
+            display->getWidth() / 2 - display->getStrWidth(text) / 2,
+            display->getHeight() / 2 - display->getMaxCharHeight() / 2 + 10,
+            text);
     } while (display->nextPage());
 }
 

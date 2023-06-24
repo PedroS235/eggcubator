@@ -66,6 +66,7 @@ class DisplayManager {
     void draw_menu(Menu* menu);
 
     void draw_number_change(const char* title, float number);
+    void draw_boot_screen(const char* text);
 };
 
 #endif  // !DISPLAY_MANAGER_H
