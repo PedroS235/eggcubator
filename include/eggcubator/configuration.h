@@ -41,12 +41,12 @@
 // ---------------
 
 // Temperature PID values
-#define PID_TEMP_KP 1
-#define PID_TEMP_KI 0.2
-#define PID_TEMP_KD 0.2
+#define PID_TEMP_KP 5.0
+#define PID_TEMP_KI 0.0
+#define PID_TEMP_KD 0.0
 
 // Servo PID values
-#define PID_SERVO_KP 1
+#define PID_SERVO_KP 1.0
 #define PID_SERVO_KI 0.2
 #define PID_SERVO_KD 0.2
 
