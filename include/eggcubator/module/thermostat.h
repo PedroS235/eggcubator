@@ -59,6 +59,7 @@ class Thermostat {
      * @param new_correction is the new correction value to be applied
      */
     void set_temp_correction(float new_correction);
+    float get_temp_correction();
 
     /**
      * @brief Method to set the current temperature target the thermostat
@@ -98,6 +99,8 @@ class Thermostat {
      * @param new_d is the new derivative term to be set
      */
     void update_pid_terms(float new_p, float new_i, float new_d);
+    void update_pid_terms(pid_terms_t new_terms);
+    pid_terms_t get_pid_terms();
 
     /**
      * @brief Main method that should run continuously.

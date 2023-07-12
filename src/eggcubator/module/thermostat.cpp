@@ -9,7 +9,7 @@
 #include "eggcubator/configuration.h"
 #include "eggcubator/pins.h"
 Thermostat::Thermostat(unsigned long temp_reading_interval_, float temp_correction_)
-    : temp(NAN), last_temp_reading_time(0), temp_target(0), prev_temp_target(0) {
+    : temp(NAN), temp_target(0), prev_temp_target(0), last_temp_reading_time(0) {
     temp_sensor = new DHT(PIN_DHT, TYPE_DHT);
     temp_sensor->begin();
     pid = new PID(PID_TEMP_KP, PID_TEMP_KI, PID_TEMP_KD);
@@ -38,6 +38,8 @@ void Thermostat::set_temp_correction(float new_correction) {
     temp_correction = new_correction;
 }
 
+float Thermostat::get_temp_correction() { return temp_correction; }
+
 void Thermostat::set_temp_target(float new_target) { temp_target = new_target; }
 
 void Thermostat::update_pid_p_term(float new_p) { pid->update_p_term(new_p); }
@@ -49,6 +51,11 @@ void Thermostat::update_pid_d_term(float new_d) { pid->update_d_term(new_d); }
 void Thermostat::update_pid_terms(float new_p, float new_i, float new_d) {
     pid->update_pid_terms(new_p, new_i, new_d);
 }
+void Thermostat::update_pid_terms(pid_terms_t new_pid_terms) {
+    pid->update_pid_terms(new_pid_terms);
+}
+
+pid_terms_t Thermostat::get_pid_terms() { return pid->get_pid_terms(); }
 
 bool Thermostat::routine(float temp_target) {
     update_temp();
