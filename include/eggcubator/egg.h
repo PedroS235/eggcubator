@@ -59,6 +59,8 @@ void update_goose_egg_config(egg_t egg);
 egg_t *get_pigeon_egg_config();
 void update_pigeon_egg_config(egg_t egg);
 
+void print_egg_config(egg_t config);
+
 #endif  // !EGG_H
 
 /*

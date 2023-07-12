@@ -65,3 +65,20 @@ void update_goose_egg_config(egg_t egg) { quail_egg = egg; }
 
 egg_t *get_pigeon_egg_config() { return &pigeon_egg; }
 void update_pigeon_egg_config(egg_t egg) { quail_egg = egg; }
+
+void print_egg_config(egg_t config) {
+    Serial.print("egg type: ");
+    Serial.println(config.type);
+    Serial.print("egg incubation: ");
+    Serial.println(config.incubation_days);
+    Serial.print("rotation: ");
+    Serial.println(config.eggs_rotation_period);
+    Serial.print("start motor: ");
+    Serial.println(config.start_of_motor_rotation);
+    Serial.print("end motor: ");
+    Serial.println(config.end_of_motor_rotation);
+    Serial.print("egg temp: ");
+    Serial.println(config.target_temp);
+    Serial.print("egg humd: ");
+    Serial.println(config.target_humd);
+}
