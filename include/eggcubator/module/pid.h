@@ -7,14 +7,18 @@
 #ifndef PID_H
 #define PID_H
 
+typedef struct {
+    float kp;
+    float ki;
+    float kd;
+} pid_terms_t;
+
 /**
  * @brief Simple PID controller class which can be be used for general purpose
  */
 class PID {
    private:
-    float kp;
-    float ki;
-    float kd;
+    pid_terms_t pid_terms;
     float error_sum;
     float prev_error;
 
@@ -28,6 +32,7 @@ class PID {
      *
      */
     PID(float kp_, float ki_, float kd_);
+    PID(pid_terms_t pid_terms_);
 
     /**
      * @brief Updates the current proportional term
@@ -58,6 +63,8 @@ class PID {
      * @param new_d is the new derivative term to be set
      */
     void update_pid_terms(float new_p, float new_i, float new_d);
+    void update_pid_terms(pid_terms_t pid_terms_);
+    pid_terms_t get_pid_terms();
 
     /**
      * @brief Resets the errors

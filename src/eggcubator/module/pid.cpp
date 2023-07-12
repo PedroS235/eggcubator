@@ -7,22 +7,30 @@
 #include "eggcubator/module/pid.h"
 
 PID::PID(float kp_, float ki_, float kd_) : error_sum(0), prev_error(0) {
-    kp = kp_;
-    ki = ki_;
-    kd = kd_;
+    pid_terms.kp = kp_;
+    pid_terms.ki = ki_;
+    pid_terms.kd = kd_;
 }
 
-void PID::update_p_term(float new_p) { kp = new_p; }
+PID::PID(pid_terms_t pid_terms_) : error_sum(0), prev_error(0) {
+    pid_terms = pid_terms_;
+}
 
-void PID::update_i_term(float new_i) { ki = new_i; }
+void PID::update_p_term(float new_p) { pid_terms.kp = new_p; }
 
-void PID::update_d_term(float new_d) { kd = new_d; }
+void PID::update_i_term(float new_i) { pid_terms.ki = new_i; }
+
+void PID::update_d_term(float new_d) { pid_terms.kd = new_d; }
 
 void PID::update_pid_terms(float new_p, float new_i, float new_d) {
-    kp = new_p;
-    ki = new_i;
-    kd = new_d;
+    pid_terms.kp = new_p;
+    pid_terms.ki = new_i;
+    pid_terms.kd = new_d;
 }
+
+void PID::update_pid_terms(pid_terms_t new_pid_terms) { pid_terms = new_pid_terms; }
+
+pid_terms_t PID::get_pid_terms() { return pid_terms; }
 
 void PID::reset() {
     error_sum = 0;
@@ -34,13 +42,13 @@ float PID::compute(float setpoint, float current_value) {
     error_sum += error;
 
     // Compute P term
-    const float p = kp * error;
+    const float p = pid_terms.kp * error;
 
     // Compute I term
-    const float i = ki * error_sum;
+    const float i = pid_terms.ki * error_sum;
 
     // Compute D term
-    const float d = kd * (error - prev_error);
+    const float d = pid_terms.kd * (error - prev_error);
 
     prev_error = error;
 
