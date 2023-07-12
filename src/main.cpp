@@ -12,7 +12,9 @@
 #include "eggcubator/gui/display_manager.h"
 #include "eggcubator/gui/eggcubator_ui.h"
 #include "eggcubator/incubation_routine.h"
+#include "eggcubator/module/eeprom_manager.h"
 #include "eggcubator/module/motor_controller.h"
+#include "eggcubator/module/pid.h"
 #include "eggcubator/module/thermostat.h"
 #include "eggcubator/pins.h"
 
@@ -61,13 +63,15 @@ void startup_sound() {
 void setup() {
     delay(500);
     Serial.begin(115200);
+    eeprom_setup();
 
     setup_constructers();
     setup_interrupts();
     display->draw_boot_screen("EGGCUBATOR");
     delay(BOOTSCREEN_DURATION);
+    /* eeprom_reset(); */
+
     startup_sound();
-    delete display;
 }
 
 void loop() {
