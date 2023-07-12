@@ -37,6 +37,46 @@ void DisplayManager::draw_menu_item_cell(uint8_t x,
     display->setDrawColor(1);
     display->drawRFrame(0, y, display->getWidth(), 20, 2);
 }
+
+void DisplayManager::draw_menu_item_cell(uint8_t x,
+                                         uint8_t y,
+                                         const char* item_name,
+                                         bool select,
+                                         float value,
+                                         uint8_t precision) {
+    display->setFont(u8g2_font_profont15_tf);
+    if (select) {
+        display->setDrawColor(1);
+        display->drawRBox(0, y, display->getWidth(), 20, 2);
+        display->setDrawColor(0);
+        display->drawUTF8(4, y + 4, item_name);
+        display->setCursor(6 + display->getStrWidth(item_name), y + 4);
+        switch (precision) {
+            case 0:
+                display->print(": ");
+                break;
+            case 1:
+                display->print(":> ");
+                break;
+            case 2:
+                display->print(":>> ");
+                break;
+        }
+        display->print(value, 1);
+
+    } else {
+        display->setDrawColor(0);
+        display->drawRFrame(0, y, display->getWidth(), 20, 2);
+        display->setDrawColor(1);
+        display->drawUTF8(4, y + 4, item_name);
+        display->setCursor(6 + display->getStrWidth(item_name), y + 4);
+        display->print(": ");
+        display->print(value, 1);
+    }
+    display->setDrawColor(1);
+    display->drawRFrame(0, y, display->getWidth(), 20, 2);
+}
+
 void DisplayManager::draw_progress_bar(uint8_t x,
                                        uint8_t y,
                                        uint8_t width,
@@ -152,9 +192,17 @@ void DisplayManager::draw_menu(Menu* menu) {
         int y = selected_item > 2 ? -22 * (selected_item - 2) : 0;
         for (int i = 0; i < menu_size; i++) {
             if (i == selected_item) {
-                draw_menu_item_cell(0, y, items[i].name, true);
+                if (items[i].is_value)
+                    draw_menu_item_cell(
+                        0, y, items[i].name, true, items[i].value, items[i].precision);
+                else
+                    draw_menu_item_cell(0, y, items[i].name, true);
             } else {
-                draw_menu_item_cell(0, y, items[i].name, false);
+                if (items[i].is_value)
+                    draw_menu_item_cell(
+                        0, y, items[i].name, false, items[i].value, items[i].precision);
+                else
+                    draw_menu_item_cell(0, y, items[i].name, false);
             }
             y += 22;
         }

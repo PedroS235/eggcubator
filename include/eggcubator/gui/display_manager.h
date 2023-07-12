@@ -18,6 +18,12 @@ class DisplayManager {
 
    private:
     void draw_menu_item_cell(uint8_t x, uint8_t y, const char* item_name, bool select);
+    void draw_menu_item_cell(uint8_t x,
+                             uint8_t y,
+                             const char* item_name,
+                             bool select,
+                             float value,
+                             uint8_t precision);
     void draw_progress_bar(uint8_t x,
                            uint8_t y,
                            uint8_t width,
