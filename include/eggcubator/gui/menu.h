@@ -8,6 +8,8 @@ typedef struct {
     const char *name;
     void (*callback)(void);
     float value;
+    bool is_value;
+    uint8_t precision;
 } menu_item_t;
 
 class Menu {
@@ -31,6 +33,7 @@ class Menu {
 
     menu_item_t *menu_items() { return items; }
 
+    menu_item_t *selected_item_ptr() { return &items[selected]; }
     menu_item_t selected_item() { return items[selected]; }
     uint8_t selected_index() { return selected; }
 
