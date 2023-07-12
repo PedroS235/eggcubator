@@ -8,9 +8,10 @@
 
 using namespace eggcubator;
 Timer::Timer() {
-    time_interval = 984;
+    time_interval = 1000;
     elapsed_time = millis();
     time = {0, 0, 0, 0};
+    drift = 0;
 }
 
 uint8_t Timer::get_day() { return time.day; }
@@ -45,7 +46,8 @@ void Timer::start() {
 void Timer::update() {
     if (is_running) {
         unsigned long now = millis();
-        if (now - elapsed_time > time_interval) {
+        if (now - elapsed_time + drift >= time_interval) {
+            drift = now - elapsed_time + drift - time_interval;
             elapsed_time = now;
             time.second++;
         }

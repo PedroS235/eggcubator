@@ -21,6 +21,7 @@ class Timer {
    private:
     time_t time;
     unsigned long elapsed_time;
+    unsigned long drift;
     unsigned long time_interval;
     bool is_running = false;
 
@@ -35,7 +36,7 @@ class Timer {
     void update();
     void start();
 };
-};      // namespace eggcubator
+};  // namespace eggcubator
 
 #endif  // !TIMER_H
 
