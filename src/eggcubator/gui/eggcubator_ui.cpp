@@ -3,13 +3,11 @@
 #include "Arduino.h"
 #include "RotaryEncoder.h"
 #include "eggcubator/egg.h"
-#include "eggcubator/gui/language/language.h"
 #include "eggcubator/gui/menu.h"
 #include "eggcubator/incubation_routine.h"
 #include "eggcubator/module/eeprom_manager.h"
 #include "eggcubator/module/thermostat.h"
 #include "eggcubator/pins.h"
-#include "esp32-hal.h"
 
 static Menu *curr_menu = NULL;
 
@@ -339,21 +337,25 @@ void calibrate_menu_callback() { curr_menu = calibrate_menu; }
 void eggs_settings_menu_callback() { curr_menu = eggs_settings_menu; }
 // TODO: Save to eeprom
 void save_menu_callback() {}
-void reset_menu_callback() { eeprom_reset(); }
+void reset_menu_callback() {
+    eeprom_reset();
+    // Adding a small delay to allow the user to see the reset message
+    delay(100);
+}
 
 // -----------------------------| Calibrate Menu |------------------------------
 
 void EggCubatorUI::create_calibrate_menu() {
     calibrate_menu_items[0] = {GO_BACK_STR, NULL, 0, false, 0};
-    calibrate_menu_items[1] = {TEMEPERATURE_STR,
+    calibrate_menu_items[1] = {TEMPERATURE_OFFSET_STR,
                                calibrate_temp_offset_menu_callback,
                                thermostat->get_temp_correction(),
                                true,
                                0};
     calibrate_menu_items[2] = {
-        HUMIDITY_STR, calibrate_humd_offset_menu_callback, 0, true, 0};
+        HUMIDITY_OFFSET_STR, calibrate_humd_offset_menu_callback, 0, true, 0};
     calibrate_menu_items[3] = {"PID", calibrate_pid_menu_callback, 0, false, 0};
-    calibrate_menu_items[4] = {MOTOR_DURATION_STR,
+    calibrate_menu_items[4] = {MOTOR_ROTATION_STR,
                                calibrate_motor_menu_callback,
                                (float)eeprom_read_egg_rotation_duration(),
                                true,
