@@ -45,8 +45,8 @@ void save_menu_callback();
 void reset_menu_callback();
 
 // Calibrate Menu
-void calibrate_temp_menu_callback();
-void calibrate_humd_menu_callback();
+void calibrate_temp_offset_menu_callback();
+void calibrate_humd_offset_menu_callback();
 void calibrate_pid_menu_callback();
 void calibrate_motor_menu_callback();
 
@@ -121,7 +121,12 @@ class EggCubatorUI {
     void create_eggs_settings_menu();
 
     // Eggs Config Menu
-    void create_egg_config_menu();
+    void create_chicken_egg_config_menu();
+    void create_quail_egg_config_menu();
+    void create_turkey_egg_config_menu();
+    void create_goose_egg_config_menu();
+    void create_duck_egg_config_menu();
+    void create_pigeon_egg_config_menu();
 
     // In Incubation Menu
     void create_incubation_main_menu();

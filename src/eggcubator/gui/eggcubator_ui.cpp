@@ -9,6 +9,7 @@
 #include "eggcubator/module/eeprom_manager.h"
 #include "eggcubator/module/thermostat.h"
 #include "eggcubator/pins.h"
+#include "esp32-hal.h"
 
 static Menu *curr_menu = NULL;
 
@@ -31,7 +32,12 @@ static Menu *eggs_settings_menu = NULL;
 static menu_item_t *eggs_settings_menu_items = new menu_item_t[7];
 
 static Menu *egg_config_menu = NULL;
-static menu_item_t *egg_config_menu_items = new menu_item_t[7];
+static menu_item_t *chicken_egg_config_menu_items = new menu_item_t[7];
+static menu_item_t *quail_egg_config_menu_items = new menu_item_t[7];
+static menu_item_t *goose_egg_config_menu_items = new menu_item_t[7];
+static menu_item_t *turkey_egg_config_menu_items = new menu_item_t[7];
+static menu_item_t *pigeon_egg_config_menu_items = new menu_item_t[7];
+static menu_item_t *duck_egg_config_menu_items = new menu_item_t[7];
 
 static Menu *calibrate_menu = NULL;
 static menu_item_t *calibrate_menu_items = new menu_item_t[5];
@@ -115,7 +121,6 @@ EggCubatorUI::~EggCubatorUI() {
     delete[] settings_menu_items;
     delete[] incubation_main_menu_items;
     delete[] eggs_settings_menu_items;
-    delete[] egg_config_menu_items;
     delete[] calibrate_menu_items;
     delete[] pid_menu_items;
     delete[] tune_menu_items;
@@ -261,7 +266,8 @@ void incubate_pigeon_menu_callback() {
 
 void EggCubatorUI::create_preheat_menu() {
     preheat_menu_items[0] = {GO_BACK_STR, NULL, 0, false, 0};
-    preheat_menu_items[1] = {MANUAL_STR, NULL, temp_target, true, 0};
+    preheat_menu_items[1] = {
+        MANUAL_STR, preheat_manual_menu_callback, temp_target, true, 0};
     preheat_menu_items[2] = {CHICKEN_STR, preheat_chicken_menu_callback, 0, false, 0};
     preheat_menu_items[3] = {QUAIL_STR, preheat_quail_menu_callback, 0, false, 0};
     preheat_menu_items[4] = {DUCK_STR, preheat_duck_menu_callback, 0, false, 0};
@@ -270,6 +276,19 @@ void EggCubatorUI::create_preheat_menu() {
     preheat_menu_items[7] = {PIGEON_STR, preheat_pigeon_menu_callback, 0, false, 0};
 
     preheat_menu = new Menu(preheat_menu_items, main_menu, 8);
+}
+
+void preheat_manual_menu_callback() {
+    menu_item_t *item = curr_menu->selected_item_ptr();
+    if (selected_callback == NULL) {
+        selected_callback = preheat_manual_menu_callback;
+        item->precision = 1;
+        prev_encoder_pos = encoder->getPosition();
+        step = 1.0;
+    }
+
+    changing_value(item, 0, 50, temp_target);
+    temp_target = item->value;
 }
 
 void preheat_chicken_menu_callback() {
@@ -308,12 +327,12 @@ void preheat_pigeon_menu_callback() {
 void EggCubatorUI::create_settings_menu() {
     settings_menu_items[0] = {GO_BACK_STR, NULL, 0, false, 0};
     settings_menu_items[1] = {CALIBRATE_STR, calibrate_menu_callback, 0, false, 0};
-    settings_menu_items[2] = {
-        EGGS_SETTINGS_STR, eggs_settings_menu_callback, 0, false, 0};
-    settings_menu_items[3] = {SAVE_STR, save_menu_callback, 0, false, 0};
-    settings_menu_items[4] = {RESET_STR, reset_menu_callback, 0, false, 0};
+    /* settings_menu_items[2] = { */
+    /*     EGGS_SETTINGS_STR, eggs_settings_menu_callback, 0, false, 0}; */
+    settings_menu_items[2] = {SAVE_STR, save_menu_callback, 0, false, 0};
+    settings_menu_items[3] = {RESET_STR, reset_menu_callback, 0, false, 0};
 
-    settings_menu = new Menu(settings_menu_items, main_menu, 5);
+    settings_menu = new Menu(settings_menu_items, main_menu, 4);
 }
 
 void calibrate_menu_callback() { curr_menu = calibrate_menu; }
@@ -327,11 +346,12 @@ void reset_menu_callback() { eeprom_reset(); }
 void EggCubatorUI::create_calibrate_menu() {
     calibrate_menu_items[0] = {GO_BACK_STR, NULL, 0, false, 0};
     calibrate_menu_items[1] = {TEMEPERATURE_STR,
-                               calibrate_temp_menu_callback,
+                               calibrate_temp_offset_menu_callback,
                                thermostat->get_temp_correction(),
                                true,
                                0};
-    calibrate_menu_items[2] = {HUMIDITY_STR, calibrate_humd_menu_callback, 0, true, 0};
+    calibrate_menu_items[2] = {
+        HUMIDITY_STR, calibrate_humd_offset_menu_callback, 0, true, 0};
     calibrate_menu_items[3] = {"PID", calibrate_pid_menu_callback, 0, false, 0};
     calibrate_menu_items[4] = {MOTOR_DURATION_STR,
                                calibrate_motor_menu_callback,
@@ -342,10 +362,45 @@ void EggCubatorUI::create_calibrate_menu() {
     calibrate_menu = new Menu(calibrate_menu_items, settings_menu, 5);
 }
 
-void calibrate_temp_menu_callback() {}
-void calibrate_humd_menu_callback() {}
+void calibrate_temp_offset_menu_callback() {
+    menu_item_t *item = curr_menu->selected_item_ptr();
+    if (selected_callback == NULL) {
+        selected_callback = calibrate_temp_offset_menu_callback;
+        item->precision = 1;
+        prev_encoder_pos = encoder->getPosition();
+        step = 1.0;
+    }
+
+    changing_value(item, -20, 20, thermostat->get_temp_correction());
+    thermostat->set_temp_correction(item->value);
+}
+void calibrate_humd_offset_menu_callback() {
+    menu_item_t *item = curr_menu->selected_item_ptr();
+    if (selected_callback == NULL) {
+        // selected_callback = calibrate_humd_offset_menu_callback;
+        // TODO: When humidifier is implemented, uncomment the line above
+        selected_callback = NULL;
+        item->precision = 1;
+        prev_encoder_pos = encoder->getPosition();
+        step = 1.0;
+    }
+
+    /* changing_value(item, -20, 20, humdifier->get_humd_correction()); */
+    /* humdifier->set_humd_correction(item->value); */
+}
 void calibrate_pid_menu_callback() { curr_menu = pid_menu; }
-void calibrate_motor_menu_callback() {}
+void calibrate_motor_menu_callback() {
+    menu_item_t *item = curr_menu->selected_item_ptr();
+    if (selected_callback == NULL) {
+        selected_callback = calibrate_motor_menu_callback;
+        item->precision = 1;
+        prev_encoder_pos = encoder->getPosition();
+        step = 1.0;
+    }
+
+    changing_value(item, 0, 60, eeprom_read_egg_rotation_duration());
+    eeprom_write_egg_rotation_duration(item->value);
+}
 
 // --------------------------------| PID Menu |---------------------------------
 
@@ -439,20 +494,100 @@ void settings_pigeon_menu_callback() {}
 
 // -----------------------------| Egg Config Menu |-----------------------------
 
-void EggCubatorUI::create_egg_config_menu() {
+void EggCubatorUI::create_chicken_egg_config_menu() {
     // TODO: Missing callbacks declarations
-    egg_config_menu_items[0] = {GO_BACK_STR, NULL, 0, false, 0};
-    egg_config_menu_items[1] = {
+    chicken_egg_config_menu_items[0] = {GO_BACK_STR, NULL, 0, false, 0};
+    chicken_egg_config_menu_items[1] = {
         TARGET_TEMPERATURE_STR, tune_target_temp_menu_callback, temp_target, true, 0};
-    egg_config_menu_items[2] = {
+    chicken_egg_config_menu_items[2] = {
         TARGET_HUMIDITY_STR, tune_target_humd_menu_callback, humd_target, true, 0};
-    egg_config_menu_items[3] = {PERIOD_STR, NULL, 0, true, 0};
-    egg_config_menu_items[4] = {
+    chicken_egg_config_menu_items[3] = {PERIOD_STR, NULL, 0, true, 0};
+    chicken_egg_config_menu_items[4] = {
         ROTATION_PERIOD_STR, tune_rot_period_menu_callback, 0, true, 0};
-    egg_config_menu_items[5] = {START_OF_ROTATION_STR, NULL, 0, true, 0};
-    egg_config_menu_items[6] = {STOP_INCUBATION_STR, NULL, 0, true, 0};
+    chicken_egg_config_menu_items[5] = {START_OF_ROTATION_STR, NULL, 0, true, 0};
+    chicken_egg_config_menu_items[6] = {STOP_INCUBATION_STR, NULL, 0, true, 0};
 
-    egg_config_menu = new Menu(egg_config_menu_items, eggs_settings_menu, 7);
+    egg_config_menu = new Menu(chicken_egg_config_menu_items, eggs_settings_menu, 7);
+}
+
+void EggCubatorUI::create_quail_egg_config_menu() {
+    // TODO: Missing callbacks declarations
+    quail_egg_config_menu_items[0] = {GO_BACK_STR, NULL, 0, false, 0};
+    quail_egg_config_menu_items[1] = {
+        TARGET_TEMPERATURE_STR, tune_target_temp_menu_callback, temp_target, true, 0};
+    quail_egg_config_menu_items[2] = {
+        TARGET_HUMIDITY_STR, tune_target_humd_menu_callback, humd_target, true, 0};
+    quail_egg_config_menu_items[3] = {PERIOD_STR, NULL, 0, true, 0};
+    quail_egg_config_menu_items[4] = {
+        ROTATION_PERIOD_STR, tune_rot_period_menu_callback, 0, true, 0};
+    quail_egg_config_menu_items[5] = {START_OF_ROTATION_STR, NULL, 0, true, 0};
+    quail_egg_config_menu_items[6] = {STOP_INCUBATION_STR, NULL, 0, true, 0};
+
+    egg_config_menu = new Menu(quail_egg_config_menu_items, eggs_settings_menu, 7);
+}
+
+void EggCubatorUI::create_duck_egg_config_menu() {
+    // TODO: Missing callbacks declarations
+    duck_egg_config_menu_items[0] = {GO_BACK_STR, NULL, 0, false, 0};
+    duck_egg_config_menu_items[1] = {
+        TARGET_TEMPERATURE_STR, tune_target_temp_menu_callback, temp_target, true, 0};
+    duck_egg_config_menu_items[2] = {
+        TARGET_HUMIDITY_STR, tune_target_humd_menu_callback, humd_target, true, 0};
+    duck_egg_config_menu_items[3] = {PERIOD_STR, NULL, 0, true, 0};
+    duck_egg_config_menu_items[4] = {
+        ROTATION_PERIOD_STR, tune_rot_period_menu_callback, 0, true, 0};
+    duck_egg_config_menu_items[5] = {START_OF_ROTATION_STR, NULL, 0, true, 0};
+    duck_egg_config_menu_items[6] = {STOP_INCUBATION_STR, NULL, 0, true, 0};
+
+    egg_config_menu = new Menu(duck_egg_config_menu_items, eggs_settings_menu, 7);
+}
+
+void EggCubatorUI::create_goose_egg_config_menu() {
+    // TODO: Missing callbacks declarations
+    goose_egg_config_menu_items[0] = {GO_BACK_STR, NULL, 0, false, 0};
+    goose_egg_config_menu_items[1] = {
+        TARGET_TEMPERATURE_STR, tune_target_temp_menu_callback, temp_target, true, 0};
+    goose_egg_config_menu_items[2] = {
+        TARGET_HUMIDITY_STR, tune_target_humd_menu_callback, humd_target, true, 0};
+    goose_egg_config_menu_items[3] = {PERIOD_STR, NULL, 0, true, 0};
+    goose_egg_config_menu_items[4] = {
+        ROTATION_PERIOD_STR, tune_rot_period_menu_callback, 0, true, 0};
+    goose_egg_config_menu_items[5] = {START_OF_ROTATION_STR, NULL, 0, true, 0};
+    goose_egg_config_menu_items[6] = {STOP_INCUBATION_STR, NULL, 0, true, 0};
+
+    egg_config_menu = new Menu(goose_egg_config_menu_items, eggs_settings_menu, 7);
+}
+
+void EggCubatorUI::create_turkey_egg_config_menu() {
+    // TODO: Missing callbacks declarations
+    turkey_egg_config_menu_items[0] = {GO_BACK_STR, NULL, 0, false, 0};
+    turkey_egg_config_menu_items[1] = {
+        TARGET_TEMPERATURE_STR, tune_target_temp_menu_callback, temp_target, true, 0};
+    turkey_egg_config_menu_items[2] = {
+        TARGET_HUMIDITY_STR, tune_target_humd_menu_callback, humd_target, true, 0};
+    turkey_egg_config_menu_items[3] = {PERIOD_STR, NULL, 0, true, 0};
+    turkey_egg_config_menu_items[4] = {
+        ROTATION_PERIOD_STR, tune_rot_period_menu_callback, 0, true, 0};
+    turkey_egg_config_menu_items[5] = {START_OF_ROTATION_STR, NULL, 0, true, 0};
+    turkey_egg_config_menu_items[6] = {STOP_INCUBATION_STR, NULL, 0, true, 0};
+
+    egg_config_menu = new Menu(turkey_egg_config_menu_items, eggs_settings_menu, 7);
+}
+
+void EggCubatorUI::create_pigeon_egg_config_menu() {
+    // TODO: Missing callbacks declarations
+    pigeon_egg_config_menu_items[0] = {GO_BACK_STR, NULL, 0, false, 0};
+    pigeon_egg_config_menu_items[1] = {
+        TARGET_TEMPERATURE_STR, tune_target_temp_menu_callback, temp_target, true, 0};
+    pigeon_egg_config_menu_items[2] = {
+        TARGET_HUMIDITY_STR, tune_target_humd_menu_callback, humd_target, true, 0};
+    pigeon_egg_config_menu_items[3] = {PERIOD_STR, NULL, 0, true, 0};
+    pigeon_egg_config_menu_items[4] = {
+        ROTATION_PERIOD_STR, tune_rot_period_menu_callback, 0, true, 0};
+    pigeon_egg_config_menu_items[5] = {START_OF_ROTATION_STR, NULL, 0, true, 0};
+    pigeon_egg_config_menu_items[6] = {STOP_INCUBATION_STR, NULL, 0, true, 0};
+
+    egg_config_menu = new Menu(pigeon_egg_config_menu_items, eggs_settings_menu, 7);
 }
 
 // TODO: we need to check the current egg selected
@@ -531,10 +666,10 @@ void EggCubatorUI::create_menus() {
     create_pid_menu();
     create_incubate_menu();
     create_settings_menu();
-    create_egg_config_menu();
+    /* create_egg_config_menu(); */
     create_preheat_menu();
     create_incubation_main_menu();
-    create_eggs_settings_menu();
+    /* create_eggs_settings_menu(); */
     create_calibrate_menu();
     create_tune_menu();
 }
