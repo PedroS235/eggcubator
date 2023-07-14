@@ -29,7 +29,7 @@ class Humidifier {
 
    public:
     Humidifier(DHT* dht_sensor,
-               unsigned long humidity_reading_interval_ = 250,
+               unsigned long humidity_reading_interval_ = 100,
                float humidity_correction_ = 0);
 
     /**

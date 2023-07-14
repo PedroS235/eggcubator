@@ -45,7 +45,7 @@ class Thermostat {
      * temperature reading to calibrate the sensor
      */
     Thermostat(DHT* dht_sensor,
-               unsigned long temp_reading_interval_ = 250,
+               unsigned long temp_reading_interval_ = 100,
                float temp_correction_ = 0);
 
     /**
