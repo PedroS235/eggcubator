@@ -8,10 +8,11 @@
 
 #include "eggcubator/configuration.h"
 #include "eggcubator/pins.h"
-Thermostat::Thermostat(unsigned long temp_reading_interval_, float temp_correction_)
+Thermostat::Thermostat(DHT* dht_sensor,
+                       unsigned long temp_reading_interval_,
+                       float temp_correction_)
     : temp(NAN), temp_target(0), prev_temp_target(0), last_temp_reading_time(0) {
-    temp_sensor = new DHT(PIN_DHT, TYPE_DHT);
-    temp_sensor->begin();
+    temp_sensor = dht_sensor;
     pid = new PID(PID_TEMP_KP, PID_TEMP_KI, PID_TEMP_KD);
 
     temp_reading_interval = temp_reading_interval_;

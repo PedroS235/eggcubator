@@ -44,7 +44,9 @@ class Thermostat {
      * @param temp_correction_ is a correction that will be applied to the
      * temperature reading to calibrate the sensor
      */
-    Thermostat(unsigned long temp_reading_interval_ = 250, float temp_correction_ = 0);
+    Thermostat(DHT* dht_sensor,
+               unsigned long temp_reading_interval_ = 250,
+               float temp_correction_ = 0);
 
     /**
      * @brief Method to return the current temperature reading
