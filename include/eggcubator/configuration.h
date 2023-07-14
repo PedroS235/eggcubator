@@ -21,7 +21,7 @@
 // Currently supported languages are:
 // + EN - English
 // + PT - Portuguese
-#define LANGUAGE_PT
+#define LANGUAGE_EN
 
 // ------------------------
 // - Sensor Types Section -
