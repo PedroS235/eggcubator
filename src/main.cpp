@@ -13,6 +13,7 @@
 #include "eggcubator/gui/eggcubator_ui.h"
 #include "eggcubator/incubation_routine.h"
 #include "eggcubator/module/eeprom_manager.h"
+#include "eggcubator/module/humidifier.h"
 #include "eggcubator/module/motor_controller.h"
 #include "eggcubator/module/pid.h"
 #include "eggcubator/module/thermostat.h"
@@ -29,10 +30,12 @@ egg_t selected_egg;
 unsigned long prev_screen_refresh;
 
 Thermostat *thermostat;
+Humidifier *humidifier;
 IncubationRoutine *routine;
 RotaryEncoder *encoder;
 EggCubatorUI *ui;
 DisplayManager *display;
+DHT *dht_sensor;
 
 // -----------------------------------------------------------------------------
 // -                            Helper Functions                               -
@@ -41,7 +44,10 @@ DisplayManager *display;
 void encoder_ISR() { encoder->tick(); }
 
 void setup_constructers() {
-    thermostat = new Thermostat();
+    dht_sensor = new DHT(PIN_DHT, TYPE_DHT);
+    dht_sensor->begin();
+    thermostat = new Thermostat(dht_sensor);
+    humidifier = new Humidifier(dht_sensor);
     routine = new IncubationRoutine();
     encoder = new RotaryEncoder(PIN_ENCODER_CLK, PIN_ENCODER_DT);
     ui = new EggCubatorUI(encoder);
@@ -76,8 +82,10 @@ void setup() {
 
 void loop() {
     thermostat->routine(temp_target);
+    humidifier->routine(humd_target);
     routine->routine();
     curr_temp = thermostat->get_temp();
+    curr_humd = humidifier->get_humidity();
     if (millis() - prev_screen_refresh > 2) {
         ui->render();
         prev_screen_refresh = millis();
