@@ -10,6 +10,8 @@
 #include "eggcubator/configuration.h"
 #include "eggcubator/egg.h"
 
+// TODO: Add to eeprom the temperature offset and humidity offset correction
+
 void eeprom_setup() {
     EEPROM.begin(EEPROM_SIZE);
     // Check if the eeprom varies from the default values
