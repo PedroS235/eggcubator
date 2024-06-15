@@ -1,0 +1,21 @@
+*.o
+
+# ESP-IDF Build
+build/
+build_*_*/
+sdkconfig
+sdkconfig.old
+
+# Dependencies
+managed_components
+dependencies.lock
+
+
+# MacOS directory files
+.DS_Store
+
+# cache dir
+.cache/
+
+# clang config (for LSP)
+.clangd
