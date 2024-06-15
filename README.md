@@ -22,3 +22,13 @@ egg rotation and the humidity inside the incubator, as this plays a crucial role
 - [ ] UI
   - [ ] Menu Builder
   - [ ] Menu Navigation
+
+## Dependencies
+
+- [esp-idf](https://github.com/espressif/esp-idf)
+
+## Build
+
+1. `edf.py set-target esp32s3`
+1. `edf.py menuconfig`
+1. `edf.py -p PORT flash`
