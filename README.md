@@ -8,21 +8,35 @@ egg rotation and the humidity inside the incubator, as this plays a crucial role
 > This project is currently under development and is not stable yet. Therefore,
 > none of the features mentioned above might not yet be implemented.
 
-## TO-DO List
+## Project Structure
 
-- [ ] Core
-  - [ ] PID Controller
-  - [ ] Bang-Bang Controller
-  - [ ] Heater -> Controls the Heater MOSFET
-  - [ ] Humidifier -> Controls the Servo to open/close a vent
-  - [ ] Rotary Encoder Driver -> Used for UI Navigation
-  - [ ] Servo Motor Controller
-  - [ ] Speaker Driver
-  - [ ] Clock/Timer Implementation -> used to control incubation period and motor rotations
-  - [ ] Bridge the gap of U2g8 library for Oled screen
-- [ ] UI
-  - [ ] Menu Builder
-  - [ ] Menu Navigation
+```
+eggcubator/
+  /core
+    - incubation.h/cpp
+    /controllers
+      - pid_control.h/cpp
+      - bangbang_control.h/cpp
+    /actuators
+      - heater.h/cpp
+      - humidifier.h/cpp
+    /sensors
+      - rotary_encoder.h/cpp
+      - thermostat.h/cpp
+      - dht.h/cpp
+    /timing (Might not need)
+      - clock_timer.h/cpp
+  /web
+    - server.h/cpp
+  /ui
+    - oled_screen_interface.h/cpp
+    - menu_builder.h/cpp
+    - menu_navigation.h/cpp
+  /extras
+    - speaker.h/cpp
+    - led_status.h/cpp
+    - pid_calibration.h/cpp
+```
 
 ## PINs
 
