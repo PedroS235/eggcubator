@@ -12,8 +12,9 @@ egg rotation and the humidity inside the incubator, as this plays a crucial role
 
 - [ ] Core
   - [ ] PID Controller
-  - [ ] Thermostat -> Controls the Heater MOSFET
-  - [ ] Humidistat -> Controls the Servo to open/close a vent
+  - [ ] Bang-Bang Controller
+  - [ ] Heater -> Controls the Heater MOSFET
+  - [ ] Humidifier -> Controls the Servo to open/close a vent
   - [ ] Rotary Encoder Driver -> Used for UI Navigation
   - [ ] Servo Motor Controller
   - [ ] Speaker Driver
@@ -22,6 +23,22 @@ egg rotation and the humidity inside the incubator, as this plays a crucial role
 - [ ] UI
   - [ ] Menu Builder
   - [ ] Menu Navigation
+
+## PINs
+
+- `GPIO_01`: Water Level Sensor
+- `GPIO_02`: DHT11/22
+- `GPIO_03`: Rotary Encoder CLK
+- `GPIO_04`: Rotary Encoder DT
+- `GPIO_05`: Rotary Encoder SW
+- `GPIO_06`: BUZZER
+- `GPIO_07`: THERMISTOR
+- `GPIO_O8`: HEATER
+- `GPIO_O9`: MOTOR
+- `GPIO_10`: FAN
+- `GPIO_11`: SERVO
+- `GPIO_12`: OLED_SCK
+- `GPIO_13`: OLED_SDA
 
 ## Dependencies
 
