@@ -1,5 +1,5 @@
-#ifndef PID_CONTROL
-#define PID_CONTROL
+#ifndef PID_CONTROL_H
+#define PID_CONTROL_H
 
 #include "esp_err.h"
 #include "stdbool.h"
@@ -27,4 +27,4 @@ esp_err_t pid_compute(pid_handle_t *pid, float setpoint, float curr_value,
                       bool reset, float *correction);
 esp_err_t pid_reset(pid_handle_t *pid);
 
-#endif // !PID_CONTROL
+#endif // !PID_CONTROL_H

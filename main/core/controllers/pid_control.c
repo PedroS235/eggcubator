@@ -1,6 +1,5 @@
 #include "core/controllers/pid_control.h"
 #include "esp_check.h"
-#include "esp_err.h"
 #include <sys/param.h>
 
 static const char *TAG = "PID Control";
