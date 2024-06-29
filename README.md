@@ -11,32 +11,50 @@ egg rotation and the humidity inside the incubator, as this plays a crucial role
 ## Project Structure
 
 ```
-eggcubator/
+eggcubator/src
   /core
-    - incubation.h/cpp
-    /controllers
-      - pid_control.h/cpp
-      - bangbang_control.h/cpp
-    /actuators
-      - heater.h/cpp
-      - humidifier.h/cpp
-    /sensors
-      - rotary_encoder.h/cpp
-      - thermostat.h/cpp
-      - dht.h/cpp
-    /timing (Might not need)
-      - clock_timer.h/cpp
-  /web
-    - server.h/cpp
-  /ui
-    - oled_screen_interface.h/cpp
-    - menu_builder.h/cpp
-    - menu_navigation.h/cpp
-  /extras
+    - incubation.rs
+    - pid_control.rs
+    - heater.rs
+    - motor.rs
+    - servo.rs
+    - humidifier.rs
+    - timer_control.rs
+  /drivers
+    - rotary_encoder.rs
+    - thermistor.rs
     - speaker.h/cpp
+    - dht.rs
+  /web
+    - server.rs
+  /ui
+    - menu.rs
+  /extras
     - led_status.h/cpp
     - pid_calibration.h/cpp
 ```
+
+## Architecture
+
+### Incubation
+
+- **Input**: Type of egg to incubate
+- **Output**: Control of incubation period. Uses `heater`, `humidifier`, `motor` and `timer_control`
+
+### Heater
+
+- **Input**: Target Temperature
+- **Output**: PWM which controls the heater element. Uses the `pid_control` and the `termistor`
+
+### Humidifier
+
+- **Input**: Target Humidity
+- **Output**: Controls the servo motor. Uses the `servo` and `dht`
+
+### Motor
+
+- **Input**: On/Off
+- **Output**: Controls the motor if its on or off. Uses the `motor`
 
 ## PINs
 
@@ -56,10 +74,8 @@ eggcubator/
 
 ## Dependencies
 
-- [esp-idf](https://github.com/espressif/esp-idf)
+- [esp-rs](https://docs.esp-rs.org/book/)
 
-## Build
+## Build && Flash
 
-1. `edf.py set-target esp32s3`
-1. `edf.py menuconfig`
-1. `edf.py -p PORT flash`
+1. `cargo run`
