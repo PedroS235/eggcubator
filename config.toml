@@ -1,0 +1,65 @@
+[heater]
+heater_pin = 8
+thermistor_pin = 7
+control = 'pid'
+pid_kp = 1.0
+pid_ki = 1.0
+pid_kd = 1.0
+
+[humidifier]
+servo_pin = 11
+dht_pin = 2
+
+[motor]
+pin = 9
+rotation_duration = 5 # Seconds
+
+# Eggs configuration
+
+[chicken_egg]
+incubation_days = 21
+motor_period = 1          # Hour
+motor_start = 2           # Days
+motor_end = 3             # Days
+target_temperature = 37.7 # Degrees
+target_humidity = 55.0    # Percentage
+
+[quail_egg]
+incubation_days = 18
+motor_period = 1          # Hour
+motor_start = 2           # Days
+motor_end = 3             # Days
+target_temperature = 37.3 # Degrees
+target_humidity = 40.0    # Percentage
+
+[duck_egg]
+incubation_days = 28
+motor_period = 1          # Hour
+motor_start = 2           # Days
+motor_end = 3             # Days
+target_temperature = 37.5 # Degrees
+target_humidity = 55.0    # Percentage
+
+[turkey_egg]
+incubation_days = 28
+motor_period = 1          # Hour
+motor_start = 2           # Days
+motor_end = 3             # Days
+target_temperature = 37.7 # Degrees
+target_humidity = 55.0    # Percentage
+
+[goose_egg]
+incubation_days = 28
+motor_period = 1          # Hour
+motor_start = 2           # Days
+motor_end = 3             # Days
+target_temperature = 37.7 # Degrees
+target_humidity = 80.0    # Percentage
+
+[pigeon_egg]
+incubation_days = 28
+motor_period = 1          # Hour
+motor_start = 2           # Days
+motor_end = 3             # Days
+target_temperature = 37.5 # Degrees
+target_humidity = 57.0    # Percentage
