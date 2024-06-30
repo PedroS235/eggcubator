@@ -153,7 +153,7 @@ impl PidControl {
     ///
     /// The computed control output.
     pub fn compute(&mut self, setpoint: f32, curr_value: f32) -> f32 {
-        let error = curr_value - setpoint;
+        let error = setpoint - curr_value;
 
         match self.mode {
             PidControlMode::AUTO => {
