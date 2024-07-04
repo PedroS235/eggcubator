@@ -5,6 +5,7 @@
  */
 
 #include <Arduino.h>
+#include <Wire.h>
 
 #include "RotaryEncoder.h"
 #include "eggcubator/configuration.h"
@@ -68,6 +69,7 @@ void startup_sound() {
 
 void setup() {
     delay(500);
+    Wire.begin(PIN_I2C_SDA, PIN_I2C_SCK);  // Define which pins are to be used for i2c
     Serial.begin(115200);
     eeprom_setup();
 
