@@ -1,13 +1,13 @@
-#include <eggcubator/gui/eggcubator_ui.h>
+#include <eggcubator/ui/eggcubator_ui.h>
 
 #include "Arduino.h"
 #include "RotaryEncoder.h"
+#include "eggcubator/config/pins.h"
+#include "eggcubator/core/eeprom_manager.h"
+#include "eggcubator/core/thermostat.h"
 #include "eggcubator/egg.h"
-#include "eggcubator/gui/menu.h"
-#include "eggcubator/incubation_routine.h"
-#include "eggcubator/module/eeprom_manager.h"
-#include "eggcubator/module/thermostat.h"
-#include "eggcubator/pins.h"
+#include "eggcubator/incubation.h"
+#include "eggcubator/ui/menu.h"
 
 static Menu *curr_menu = NULL;
 

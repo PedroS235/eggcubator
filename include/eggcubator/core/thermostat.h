@@ -4,57 +4,73 @@
  * See end of the file for extended copyright information
  */
 
-#ifndef HUMIDIFIER_H
-#define HUMIDIFIER_H
+#ifndef THERMOSTAT_H
+#define THERMOSTAT_H
 
 #include <DHT.h>
 
-#include "eggcubator/configuration.h"
-#include "eggcubator/module/pid.h"
+#include "eggcubator/config/configuration.h"
+#include "eggcubator/extras/pid.h"
 
-class Humidifier {
+/**
+ * @brief Controlls the temperature of a chamber to a desired target
+ * temperature, by controlling an heater with a PWM signal
+ */
+class Thermostat {
    private:
-    float humidity;
-    float humidity_correction;
-    float humidity_target;
-    float prev_humidity_target;
-    unsigned long last_humidity_reading_time;
-    unsigned long humidity_reading_interval;
+    float temp;
+    float temp_correction;
+    float temp_target;
+    float prev_temp_target;
+    unsigned long last_temp_reading_time;
+    unsigned long temp_reading_interval;
 
     PID* pid;
-    DHT* humidity_sensor;
+    DHT* temp_sensor;
 
    private:
-    void update_humidity();
+    /**
+     * @brief Method which updates the current thermostat temperature giving
+     * a specified interval
+     */
+    void update_temp();
 
    public:
-    Humidifier(DHT* dht_sensor,
-               unsigned long humidity_reading_interval_ = 100,
-               float humidity_correction_ = 0);
-
     /**
-     * @brief Method to return the current humidity reading
+     * @brief Constructor of the class Thermostat
      *
-     * @returns Last humidity reading
+     * @param temp_reading_interval_ is the interval at wich a new temperature
+     * reading is made
+     * @param temp_correction_ is a correction that will be applied to the
+     * temperature reading to calibrate the sensor
      */
-    float get_humidity();
+    Thermostat(DHT* dht_sensor,
+               unsigned long temp_reading_interval_ = 100,
+               float temp_correction_ = 0);
 
     /**
-     * @brief Method to update the current humidity correction
+     * @brief Method to return the current temperature reading
+     *
+     * @returns Last temperature reading
+     */
+    float get_temp();
+
+    /**
+     * @brief Method to update the current temperature correction
      *
      * @param new_correction is the new correction value to be applied
      */
-    void set_humidity_correction(float new_correction);
-    float get_humidity_correction();
+    void set_temp_correction(float new_correction);
+    float get_temp_correction();
 
     /**
-     * @brief Method to set the current humidity target the thermostat
+     * @brief Method to set the current temperature target the thermostat
      * should aim for
      *
-     * @param new_target is the new humidity target that should be applied
+     * @param new_target is the new temperature target that should be applied
      *
      */
-    void set_humidity_target(float new_target);
+    void set_temp_target(float new_target);
 
     /**
      * @brief Updates the current proportional term of the PID controller
@@ -98,10 +114,10 @@ class Humidifier {
      *
      * @return True if temperature sensor is working as expected, false otherwise
      */
-    bool routine(float humidity_target_);
+    bool routine(float temp_target);
 };
 
-#endif  // !HUMIDIFIER_H
+#endif  // !THERMOSTAT_H
 
 /*
  *

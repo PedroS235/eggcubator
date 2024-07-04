@@ -9,10 +9,10 @@
 
 #include <RotaryEncoder.h>
 
-#include "eggcubator/gui/display_manager.h"
-#include "eggcubator/gui/language/language.h"
-#include "eggcubator/gui/menu.h"
-#include "eggcubator/pins.h"
+#include "eggcubator/config/pins.h"
+#include "eggcubator/ui/display_manager.h"
+#include "eggcubator/ui/language/language.h"
+#include "eggcubator/ui/menu.h"
 
 bool is_button_pressed();
 void changing_value(menu_item_t *item, float min, float max, float value);

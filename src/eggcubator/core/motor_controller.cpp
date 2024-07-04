@@ -4,9 +4,9 @@
  * See end of the file for extended copyright information
  */
 
-#include <eggcubator/module/motor_controller.h>
-#include <eggcubator/pins.h>
-#include <eggcubator/utils/time_conversions.h>
+#include <eggcubator/config/pins.h>
+#include <eggcubator/core/motor_controller.h>
+#include <eggcubator/extras/time_conversions.h>
 
 MotorController::MotorController() {
     pinMode(PIN_MOTOR, OUTPUT);

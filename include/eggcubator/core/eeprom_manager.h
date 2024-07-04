@@ -10,7 +10,7 @@
 #include <EEPROM.h>
 
 #include "eggcubator/egg.h"
-#include "eggcubator/module/pid.h"
+#include "eggcubator/extras/pid.h"
 
 #define EEPROM_SIZE 512
 #define EEPROM_START 50

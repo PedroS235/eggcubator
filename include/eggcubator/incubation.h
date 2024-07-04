@@ -6,10 +6,10 @@
 
 #ifndef INCUBATION_ROUTINE_H
 #define INCUBATION_ROUTINE_H
-#include <eggcubator/configuration.h>
+#include <eggcubator/config/configuration.h>
+#include <eggcubator/core/motor_controller.h>
+#include <eggcubator/core/timer.h>
 #include <eggcubator/egg.h>
-#include <eggcubator/module/motor_controller.h>
-#include <eggcubator/timer.h>
 
 using namespace eggcubator;
 

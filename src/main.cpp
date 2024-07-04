@@ -8,17 +8,17 @@
 #include <Wire.h>
 
 #include "RotaryEncoder.h"
-#include "eggcubator/configuration.h"
+#include "eggcubator/config/configuration.h"
+#include "eggcubator/config/pins.h"
+#include "eggcubator/core/eeprom_manager.h"
+#include "eggcubator/core/humidifier.h"
+#include "eggcubator/core/motor_controller.h"
+#include "eggcubator/core/thermostat.h"
 #include "eggcubator/egg.h"
-#include "eggcubator/gui/display_manager.h"
-#include "eggcubator/gui/eggcubator_ui.h"
-#include "eggcubator/incubation_routine.h"
-#include "eggcubator/module/eeprom_manager.h"
-#include "eggcubator/module/humidifier.h"
-#include "eggcubator/module/motor_controller.h"
-#include "eggcubator/module/pid.h"
-#include "eggcubator/module/thermostat.h"
-#include "eggcubator/pins.h"
+#include "eggcubator/extras/pid.h"
+#include "eggcubator/incubation.h"
+#include "eggcubator/ui/display_manager.h"
+#include "eggcubator/ui/eggcubator_ui.h"
 
 // -----------------------------------------------------------------------------
 // -                             Global Variables                              -

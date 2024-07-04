@@ -1,6 +1,6 @@
-#include "eggcubator/module/humidifier.h"
+#include "eggcubator/core/humidifier.h"
 
-#include "eggcubator/pins.h"
+#include "eggcubator/config/pins.h"
 
 Humidifier::Humidifier(DHT *dht_sensor,
                        unsigned long humidity_reading_interval_,

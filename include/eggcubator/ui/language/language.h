@@ -7,7 +7,7 @@
 #ifndef LANGUAGE_H
 #define LANGUAGE_H
 
-#include <eggcubator/configuration.h>
+#include <eggcubator/config/configuration.h>
 
 #ifdef LANGUAGE_PT
 #include "eggcubator/gui/language/language_pt.h"

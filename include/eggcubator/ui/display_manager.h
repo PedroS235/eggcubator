@@ -8,10 +8,10 @@
 #define DISPLAY_MANAGER_H
 
 #include <U8g2lib.h>
-#include <eggcubator/configuration.h>
-#include <eggcubator/timer.h>
+#include <eggcubator/config/configuration.h>
+#include <eggcubator/core/timer.h>
 
-#include "eggcubator/gui/menu.h"
+#include "eggcubator/ui/menu.h"
 
 class DisplayManager {
     TYPE_DISPLAY* display;

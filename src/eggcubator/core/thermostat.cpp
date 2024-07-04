@@ -4,10 +4,10 @@
  * See end of the file for extended copyright information
  */
 
-#include "eggcubator/module/thermostat.h"
+#include "eggcubator/core/thermostat.h"
 
-#include "eggcubator/configuration.h"
-#include "eggcubator/pins.h"
+#include "eggcubator/config/configuration.h"
+#include "eggcubator/config/pins.h"
 Thermostat::Thermostat(DHT* dht_sensor,
                        unsigned long temp_reading_interval_,
                        float temp_correction_)

@@ -4,7 +4,7 @@
  * See end of the file for extended copyright information
  */
 
-#include <eggcubator/incubation_routine.h>
+#include <eggcubator/incubation.h>
 
 #include "HardwareSerial.h"
 

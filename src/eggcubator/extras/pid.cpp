@@ -4,7 +4,7 @@
  * See end of the file for extended copyright information
  */
 
-#include "eggcubator/module/pid.h"
+#include "eggcubator/extras/pid.h"
 
 PID::PID(float kp_, float ki_, float kd_) : error_sum(0), prev_error(0) {
     pid_terms.kp = kp_;

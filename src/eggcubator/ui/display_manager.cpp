@@ -4,13 +4,13 @@
  * See end of the file for extended copyright information
  */
 
-#include <eggcubator/gui/display_manager.h>
+#include <eggcubator/ui/display_manager.h>
 
 #include "clib/u8g2.h"
-#include "eggcubator/configuration.h"
-#include "eggcubator/gui/icons.h"
-#include "eggcubator/gui/menu.h"
-#include "eggcubator/timer.h"
+#include "eggcubator/config/configuration.h"
+#include "eggcubator/core/timer.h"
+#include "eggcubator/ui/icons.h"
+#include "eggcubator/ui/menu.h"
 
 DisplayManager::DisplayManager() {
     display = new TYPE_DISPLAY(U8G2_R0, U8X8_PIN_NONE);

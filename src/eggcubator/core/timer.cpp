@@ -4,7 +4,7 @@
  * See end of the file for extended copyright information
  */
 
-#include "eggcubator/timer.h"
+#include "eggcubator/core/timer.h"
 
 using namespace eggcubator;
 Timer::Timer() {

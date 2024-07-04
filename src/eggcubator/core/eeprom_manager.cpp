@@ -4,10 +4,10 @@
  * See end of the file for extended copyright information
  */
 
-#include "eggcubator/module/eeprom_manager.h"
+#include "eggcubator/core/eeprom_manager.h"
 
 #include "EEPROM.h"
-#include "eggcubator/configuration.h"
+#include "eggcubator/config/configuration.h"
 #include "eggcubator/egg.h"
 
 // TODO: Add to eeprom the temperature offset and humidity offset correction

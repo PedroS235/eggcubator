@@ -8,7 +8,7 @@
 #define EGG_H
 #include <Arduino.h>
 
-#include "eggcubator/configuration.h"
+#include "eggcubator/config/configuration.h"
 
 /*
  * Egg types:
