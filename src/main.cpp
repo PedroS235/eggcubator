@@ -11,14 +11,13 @@
 #include "eggcubator/config/configuration.h"
 #include "eggcubator/config/pins.h"
 #include "eggcubator/core/eeprom_manager.h"
+#include "eggcubator/core/heater.h"
 #include "eggcubator/core/humidifier.h"
-#include "eggcubator/core/motor_controller.h"
-#include "eggcubator/core/thermostat.h"
 #include "eggcubator/egg.h"
-#include "eggcubator/extras/pid_control.h"
 #include "eggcubator/incubation.h"
 #include "eggcubator/ui/display_manager.h"
 #include "eggcubator/ui/eggcubator_ui.h"
+#include "esp32-hal-log.h"
 
 // -----------------------------------------------------------------------------
 // -                             Global Variables                              -
@@ -30,7 +29,7 @@ float curr_humd = 0;
 egg_t selected_egg;
 unsigned long prev_screen_refresh;
 
-Thermostat *thermostat;
+Heater *heater;
 Humidifier *humidifier;
 IncubationRoutine *routine;
 RotaryEncoder *encoder;
@@ -47,7 +46,7 @@ void encoder_ISR() { encoder->tick(); }
 void setup_constructers() {
     dht_sensor = new DHT(PIN_DHT, TYPE_DHT);
     dht_sensor->begin();
-    thermostat = new Thermostat(dht_sensor);
+    heater = new Heater(dht_sensor);
     humidifier = new Humidifier(dht_sensor);
     routine = new IncubationRoutine();
     encoder = new RotaryEncoder(PIN_ENCODER_CLK, PIN_ENCODER_DT);
@@ -71,6 +70,7 @@ void setup() {
     delay(500);
     Wire.begin(PIN_I2C_SDA, PIN_I2C_SCK);  // Define which pins are to be used for i2c
     Serial.begin(115200);
+    Serial.setDebugOutput(true);
     eeprom_setup();
 
     setup_constructers();
@@ -83,10 +83,10 @@ void setup() {
 }
 
 void loop() {
-    thermostat->routine(temp_target);
+    heater->routine(temp_target);
     humidifier->routine(humd_target);
     routine->routine();
-    curr_temp = thermostat->get_temp();
+    curr_temp = heater->get_temp();
     curr_humd = humidifier->get_humidity();
     if (millis() - prev_screen_refresh > 2) {
         ui->render();

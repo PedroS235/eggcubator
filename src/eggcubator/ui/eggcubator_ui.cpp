@@ -4,7 +4,7 @@
 #include "RotaryEncoder.h"
 #include "eggcubator/config/pins.h"
 #include "eggcubator/core/eeprom_manager.h"
-#include "eggcubator/core/thermostat.h"
+#include "eggcubator/core/heater.h"
 #include "eggcubator/egg.h"
 #include "eggcubator/incubation.h"
 #include "eggcubator/ui/menu.h"
@@ -60,7 +60,7 @@ extern float curr_temp;
 extern float curr_humd;
 extern egg_t selected_egg;
 extern IncubationRoutine *routine;
-extern Thermostat *thermostat;
+extern Heater *heater;
 extern RotaryEncoder *encoder;
 
 bool is_button_pressed() {
@@ -349,7 +349,7 @@ void EggCubatorUI::create_calibrate_menu() {
     calibrate_menu_items[0] = {GO_BACK_STR, NULL, 0, false, 0};
     calibrate_menu_items[1] = {TEMPERATURE_OFFSET_STR,
                                calibrate_temp_offset_menu_callback,
-                               thermostat->get_temp_correction(),
+                               heater->get_temp_correction(),
                                true,
                                0};
     calibrate_menu_items[2] = {
@@ -373,8 +373,8 @@ void calibrate_temp_offset_menu_callback() {
         step = 1.0;
     }
 
-    changing_value(item, -20, 20, thermostat->get_temp_correction());
-    thermostat->set_temp_correction(item->value);
+    changing_value(item, -20, 20, heater->get_temp_correction());
+    heater->set_temp_correction(item->value);
 }
 void calibrate_humd_offset_menu_callback() {
     menu_item_t *item = curr_menu->selected_item_ptr();

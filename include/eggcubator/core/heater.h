@@ -4,8 +4,8 @@
  * See end of the file for extended copyright information
  */
 
-#ifndef THERMOSTAT_H
-#define THERMOSTAT_H
+#ifndef HEATER_H
+#define HEATER_H
 
 #include <DHT.h>
 
@@ -16,7 +16,7 @@
  * @brief Controlls the temperature of a chamber to a desired target
  * temperature, by controlling an heater with a PWM signal
  */
-class Thermostat {
+class Heater {
    private:
     float temp;
     float temp_correction;
@@ -30,23 +30,23 @@ class Thermostat {
 
    private:
     /**
-     * @brief Method which updates the current thermostat temperature giving
+     * @brief Method which updates the current heater temperature giving
      * a specified interval
      */
     void update_temp();
 
    public:
     /**
-     * @brief Constructor of the class Thermostat
+     * @brief Constructor of the class Heater
      *
      * @param temp_reading_interval_ is the interval at wich a new temperature
      * reading is made
      * @param temp_correction_ is a correction that will be applied to the
      * temperature reading to calibrate the sensor
      */
-    Thermostat(DHT* dht_sensor,
-               unsigned long temp_reading_interval_ = 100,
-               float temp_correction_ = 0);
+    Heater(DHT* dht_sensor,
+           unsigned long temp_reading_interval_ = 100,
+           float temp_correction_ = 0);
 
     /**
      * @brief Method to return the current temperature reading
@@ -64,7 +64,7 @@ class Thermostat {
     float get_temp_correction();
 
     /**
-     * @brief Method to set the current temperature target the thermostat
+     * @brief Method to set the current temperature target the heater
      * should aim for
      *
      * @param new_target is the new temperature target that should be applied
@@ -109,7 +109,7 @@ class Thermostat {
      * It is responsible of reading the temperature and controlling the heating
      * source in order to maintain the targeted temperature
      *
-     * @param temp_target is the targeted temperature that the thermostat should
+     * @param temp_target is the targeted temperature that the heater should
      * aim for
      *
      * @return True if temperature sensor is working as expected, false otherwise
@@ -117,7 +117,7 @@ class Thermostat {
     bool routine(float temp_target);
 };
 
-#endif  // !THERMOSTAT_H
+#endif  // !HEATER_H
 
 /*
  *
