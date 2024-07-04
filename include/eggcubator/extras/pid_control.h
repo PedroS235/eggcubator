@@ -4,8 +4,8 @@
  * See end of the file for extended copyright information
  */
 
-#ifndef PID_H
-#define PID_H
+#ifndef PID_CONTROL_H
+#define PID_CONTROL_H
 
 typedef struct {
     float kp;
@@ -83,7 +83,7 @@ class PID {
     float compute(float setpoint, float current_term);
 };
 
-#endif  // !PID_H
+#endif  // !PID_CONTROL_H
 
 /*
  *

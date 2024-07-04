@@ -10,7 +10,7 @@
 #include <DHT.h>
 
 #include "eggcubator/config/configuration.h"
-#include "eggcubator/extras/pid.h"
+#include "eggcubator/extras/pid_control.h"
 
 /**
  * @brief Controlls the temperature of a chamber to a desired target

@@ -10,7 +10,7 @@
 #include <DHT.h>
 
 #include "eggcubator/config/configuration.h"
-#include "eggcubator/extras/pid.h"
+#include "eggcubator/extras/pid_control.h"
 
 class Humidifier {
    private:

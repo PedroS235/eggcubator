@@ -15,7 +15,7 @@
 #include "eggcubator/core/motor_controller.h"
 #include "eggcubator/core/thermostat.h"
 #include "eggcubator/egg.h"
-#include "eggcubator/extras/pid.h"
+#include "eggcubator/extras/pid_control.h"
 #include "eggcubator/incubation.h"
 #include "eggcubator/ui/display_manager.h"
 #include "eggcubator/ui/eggcubator_ui.h"
