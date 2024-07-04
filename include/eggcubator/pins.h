@@ -13,32 +13,22 @@
 #ifndef PINS_H
 #define PINS_H
 
-// DHT22 data pin
-#define PIN_DHT 32
+#define PIN_WATER_LEVEL_SENSOR 1
+#define PIN_DHT 2
 
-// Heater MOSFET
-#define PIN_HEATER 12
+#define PIN_ENCODER_CLK 3
+#define PIN_ENCODER_DT 4
+#define PIN_ENCODER_SW 5
 
-// Fan MOSFET
-// #define PIN_FAN -1
+#define PIN_BUZZER 6
+#define PIN_THERMISTOR 7
+#define PIN_HEATER 8
+#define PIN_MOTOR 9
+#define PIN_FAN 10
+#define PIN_SERVO 11
 
-// Eggs rotation motor
-#define PIN_MOTOR 14
-
-// Speaker pin
-#define PIN_BUZZER 4
-
-// Rotary encoder pins
-#define PIN_ENCODER_CLK 25
-#define PIN_ENCODER_DT 26
-#define PIN_ENCODER_SW 27
-
-// Servo data pins
-// #define PIN_SERVO
-
-// I2C PINS (Don't change if using an ESP32)
-#define PIN_I2C_SDA 21
-#define PIN_I2C_SCK 22
+#define PIN_I2C_SCK 12  // 22 for esp32 dev
+#define PIN_I2C_SDA 13  // 21 for esp32 dev
 
 #endif  // !PINS_H
 
