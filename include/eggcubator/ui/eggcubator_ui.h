@@ -80,13 +80,15 @@ void tune_target_temp_menu_callback();
 void tune_target_humd_menu_callback();
 void tune_rot_period_menu_callback();
 
+static RotaryEncoder *encoder = new RotaryEncoder(PIN_ENCODER_CLK, PIN_ENCODER_DT);
+void encoder_ISR();
+
 class EggCubatorUI {
    private:
     DisplayManager display;
 
     // Encoder Related
    private:
-    RotaryEncoder *encoder;
     bool button_pressed;
 
     // menus
@@ -139,7 +141,7 @@ class EggCubatorUI {
     void incubation_info_screen_callback();
 
    public:
-    EggCubatorUI(RotaryEncoder *encoder_);
+    EggCubatorUI();
     ~EggCubatorUI();
     void render();
 };

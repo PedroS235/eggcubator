@@ -61,7 +61,8 @@ extern float curr_humd;
 extern egg_t selected_egg;
 extern IncubationRoutine *routine;
 extern Heater *heater;
-extern RotaryEncoder *encoder;
+
+void encoder_ISR() { encoder->tick(); }
 
 bool is_button_pressed() {
     bool pressed = false;
@@ -91,11 +92,14 @@ void changing_value(menu_item_t *item, float min, float max, float value) {
     }
 }
 
-EggCubatorUI::EggCubatorUI(RotaryEncoder *encoder_) : display() {
-    encoder = encoder_;
+EggCubatorUI::EggCubatorUI() : display() {
     pinMode(PIN_ENCODER_SW, INPUT_PULLUP);
     button_pressed = false;
     curr_menu = NULL;
+
+    attachInterrupt(digitalPinToInterrupt(PIN_ENCODER_CLK), encoder_ISR, CHANGE);
+    attachInterrupt(digitalPinToInterrupt(PIN_ENCODER_DT), encoder_ISR, CHANGE);
+
     create_menus();
 }
 
