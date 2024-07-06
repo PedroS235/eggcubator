@@ -7,7 +7,6 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-#include "RotaryEncoder.h"
 #include "eggcubator/config/configuration.h"
 #include "eggcubator/config/pins.h"
 #include "eggcubator/core/eeprom_manager.h"
@@ -17,7 +16,6 @@
 #include "eggcubator/incubation.h"
 #include "eggcubator/ui/display_manager.h"
 #include "eggcubator/ui/eggcubator_ui.h"
-#include "esp32-hal-log.h"
 
 // -----------------------------------------------------------------------------
 // -                             Global Variables                              -
@@ -32,32 +30,8 @@ unsigned long prev_screen_refresh;
 Heater *heater;
 Humidifier *humidifier;
 IncubationRoutine *routine;
-RotaryEncoder *encoder;
 EggCubatorUI *ui;
 DisplayManager *display;
-DHT *dht_sensor;
-
-// -----------------------------------------------------------------------------
-// -                            Helper Functions                               -
-// -----------------------------------------------------------------------------
-
-void encoder_ISR() { encoder->tick(); }
-
-void setup_constructers() {
-    dht_sensor = new DHT(PIN_DHT, TYPE_DHT);
-    dht_sensor->begin();
-    heater = new Heater(dht_sensor);
-    humidifier = new Humidifier(dht_sensor);
-    routine = new IncubationRoutine();
-    encoder = new RotaryEncoder(PIN_ENCODER_CLK, PIN_ENCODER_DT);
-    ui = new EggCubatorUI(encoder);
-    display = new DisplayManager();
-}
-
-void setup_interrupts() {
-    attachInterrupt(digitalPinToInterrupt(PIN_ENCODER_CLK), encoder_ISR, CHANGE);
-    attachInterrupt(digitalPinToInterrupt(PIN_ENCODER_DT), encoder_ISR, CHANGE);
-}
 
 void startup_sound() {
     tone(PIN_BUZZER, 523, 100);
@@ -73,8 +47,12 @@ void setup() {
     Serial.setDebugOutput(true);
     eeprom_setup();
 
-    setup_constructers();
-    setup_interrupts();
+    heater = new Heater();
+    humidifier = new Humidifier();
+    routine = new IncubationRoutine();
+    ui = new EggCubatorUI();
+    display = new DisplayManager();
+
     display->draw_boot_screen("EGGCUBATOR");
     delay(BOOTSCREEN_DURATION);
     /* eeprom_reset(); */
@@ -83,7 +61,8 @@ void setup() {
 }
 
 void loop() {
-    heater->routine(temp_target);
+    // TODO: missing checks on outputs
+    heater->run(temp_target);
     humidifier->routine(humd_target);
     routine->routine();
     curr_temp = heater->get_temp();
