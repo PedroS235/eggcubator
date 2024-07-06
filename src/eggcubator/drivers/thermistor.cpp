@@ -11,24 +11,24 @@ static const float STEINHART_COEFF_B =
     0.000234125;  // Note the correction in the coefficient
 static const float STEINHART_COEFF_C = 0.0000000876741;
 
-Thermistor::Thermistor(uint8_t pin, uint32_t pullup_res) {
+Thermistor::Thermistor(uint8_t pin, uint32_t series_res) {
     _pin = pin;
-    _pullup_res = pullup_res;
+    _series_res = series_res;
     pinMode(_pin, ANALOG);
     analogReadResolution(ADC_RESOLUTION);
 }
 
-float Thermistor::read() {
+esp_err_t Thermistor::read(float *output) {
     int reading = analogRead(_pin);
 
     // Prevent division by zero error
-    if (reading == 0) {
+    if (reading <= 20) {
         log_e("Thermistor reading is not correct. Is thermistor connected?");
-        return -KELVIN_IN_CELSIUS;
+        return ESP_FAIL;
     }
 
     // Calculate the resistance of the thermistor
-    float resistance = _pullup_res * ((MAX_ADC_VALUE / (float)reading) - 1.0);
+    float resistance = _series_res * ((MAX_ADC_VALUE / (float)reading) - 1.0);
     float resistance_ln = log(resistance);
 
     // Steinhart-Hart equation
@@ -38,5 +38,7 @@ float Thermistor::read() {
 
     float tempC = tempK - KELVIN_IN_CELSIUS;
 
-    return tempC;
+    *output = tempC;
+
+    return ESP_OK;
 }

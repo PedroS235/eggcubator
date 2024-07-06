@@ -6,7 +6,7 @@
 class Thermistor {
    public:
     Thermistor(uint8_t pin, uint32_t pullup_res);
-    float read();
+    esp_err_t read(float* output);
 
    private:
     float _resistance_to_temperature(float resistance);
@@ -14,7 +14,7 @@ class Thermistor {
 
    private:
     uint8_t _pin;
-    uint32_t _pullup_res;
+    uint32_t _series_res;
 };
 
 #endif  // !THERMISTOR_H
