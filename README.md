@@ -42,11 +42,12 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ### Higher Priority
 
-- [ ] Implement a Thermistor Driver
+- [x] Implement a Thermistor Driver
 - [x] Change Thermostat to be named heater
-- [ ] Use the thermistor for the heater instead of DHT
+- [x] Use the thermistor for the heater instead of DHT
 - [ ] Implement a better timer management using esp_timer
 - [ ] Implement a Humidifier
+- [ ] Implement Logging for error and debug
 
 ### Low Priority
 
