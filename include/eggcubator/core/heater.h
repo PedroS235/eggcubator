@@ -7,8 +7,6 @@
 #ifndef HEATER_H
 #define HEATER_H
 
-#include <DHT.h>
-
 #include "eggcubator/drivers/thermistor.h"
 #include "eggcubator/extras/pid_control.h"
 
@@ -22,18 +20,9 @@ class Heater {
     float temp_correction;
     float temp_target;
     float prev_temp_target;
-    unsigned long last_temp_reading_time;
-    unsigned long temp_reading_interval;
 
     PID* pid;
     Thermistor* sensor;
-
-   private:
-    /**
-     * @brief Method which updates the current heater temperature giving
-     * a specified interval
-     */
-    void update_temp();
 
    public:
     /**
@@ -44,7 +33,7 @@ class Heater {
      * @param temp_correction_ is a correction that will be applied to the
      * temperature reading to calibrate the sensor
      */
-    Heater(unsigned long temp_reading_interval_ = 100, float temp_correction_ = 0);
+    Heater(float temp_correction_ = 0);
 
     /**
      * @brief Method to return the current temperature reading
@@ -69,27 +58,6 @@ class Heater {
      *
      */
     void set_temp_target(float new_target);
-
-    /**
-     * @brief Updates the current proportional term of the PID controller
-     *
-     * @param new_p is the new proportional term to be set
-     */
-    void update_pid_p_term(float new_p);
-
-    /**
-     * @brief Updates the current proportional term of the PID controller
-     *
-     * @param new_p is the new proportional term to be set
-     */
-    void update_pid_i_term(float new_i);
-
-    /**
-     * @brief Updates the current proportional term of the PID controller
-     *
-     * @param new_p is the new proportional term to be set
-     */
-    void update_pid_d_term(float new_d);
 
     /**
      * @brief Updates the current PID term values of the PID controller
