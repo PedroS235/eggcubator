@@ -9,7 +9,7 @@
 
 #include <DHT.h>
 
-#include "eggcubator/config/configuration.h"
+#include "eggcubator/drivers/thermistor.h"
 #include "eggcubator/extras/pid_control.h"
 
 /**
@@ -26,7 +26,7 @@ class Heater {
     unsigned long temp_reading_interval;
 
     PID* pid;
-    DHT* temp_sensor;
+    Thermistor* sensor;
 
    private:
     /**
@@ -44,9 +44,7 @@ class Heater {
      * @param temp_correction_ is a correction that will be applied to the
      * temperature reading to calibrate the sensor
      */
-    Heater(DHT* dht_sensor,
-           unsigned long temp_reading_interval_ = 100,
-           float temp_correction_ = 0);
+    Heater(unsigned long temp_reading_interval_ = 100, float temp_correction_ = 0);
 
     /**
      * @brief Method to return the current temperature reading
@@ -114,7 +112,7 @@ class Heater {
      *
      * @return True if temperature sensor is working as expected, false otherwise
      */
-    bool routine(float temp_target);
+    bool run(float temp_target);
 };
 
 #endif  // !HEATER_H

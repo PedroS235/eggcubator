@@ -8,12 +8,15 @@
 
 #include "eggcubator/config/configuration.h"
 #include "eggcubator/config/pins.h"
-Heater::Heater(DHT* dht_sensor,
-               unsigned long temp_reading_interval_,
-               float temp_correction_)
+
+// TODO: clean heater and make it safer in case thermistor is not connected
+// In addition, a watchdog could also be beneficial, where if thetemperature does not
+// change something could be wrong
+
+Heater::Heater(unsigned long temp_reading_interval_, float temp_correction_)
     : temp(NAN), temp_target(0), prev_temp_target(0), last_temp_reading_time(0) {
-    temp_sensor = dht_sensor;
     pid = new PID(PID_TEMP_KP, PID_TEMP_KI, PID_TEMP_KD);
+    sensor = new Thermistor(PIN_THERMISTOR, 10000);
 
     temp_reading_interval = temp_reading_interval_;
     temp_correction = temp_correction_;
@@ -23,7 +26,9 @@ Heater::Heater(DHT* dht_sensor,
 void Heater::update_temp() {
     unsigned long now = millis();
     if (now - last_temp_reading_time >= temp_reading_interval) {
-        const float reading = temp_sensor->readTemperature();
+        // TODO: if sesor reading is very low, -273.15, it means that the th is not
+        // connected
+        const float reading = sensor->read();
         if (!isnan(reading)) {
             temp = reading + temp_correction;
         } else {
@@ -58,7 +63,7 @@ void Heater::update_pid_terms(pid_terms_t new_pid_terms) {
 
 pid_terms_t Heater::get_pid_terms() { return pid->get_pid_terms(); }
 
-bool Heater::routine(float temp_target) {
+bool Heater::run(float temp_target) {
     update_temp();
 
     if (isnan(temp)) {
