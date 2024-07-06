@@ -9,8 +9,10 @@
 
 #include <DHT.h>
 
-#include "eggcubator/config/configuration.h"
 #include "eggcubator/extras/pid_control.h"
+
+// TODO: also read temperature if needed. could be used to compare with thermistor
+// reading
 
 class Humidifier {
    private:
@@ -22,14 +24,13 @@ class Humidifier {
     unsigned long humidity_reading_interval;
 
     PID* pid;
-    DHT* humidity_sensor;
+    DHT* sensor;
 
    private:
     void update_humidity();
 
    public:
-    Humidifier(DHT* dht_sensor,
-               unsigned long humidity_reading_interval_ = 100,
+    Humidifier(unsigned long humidity_reading_interval_ = 2000,
                float humidity_correction_ = 0);
 
     /**
@@ -55,27 +56,6 @@ class Humidifier {
      *
      */
     void set_humidity_target(float new_target);
-
-    /**
-     * @brief Updates the current proportional term of the PID controller
-     *
-     * @param new_p is the new proportional term to be set
-     */
-    void update_pid_p_term(float new_p);
-
-    /**
-     * @brief Updates the current proportional term of the PID controller
-     *
-     * @param new_p is the new proportional term to be set
-     */
-    void update_pid_i_term(float new_i);
-
-    /**
-     * @brief Updates the current proportional term of the PID controller
-     *
-     * @param new_p is the new proportional term to be set
-     */
-    void update_pid_d_term(float new_d);
 
     /**
      * @brief Updates the current PID term values of the PID controller

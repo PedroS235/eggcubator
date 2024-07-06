@@ -1,25 +1,26 @@
 #include "eggcubator/core/humidifier.h"
 
+#include "eggcubator/config/configuration.h"
 #include "eggcubator/config/pins.h"
 
-Humidifier::Humidifier(DHT *dht_sensor,
-                       unsigned long humidity_reading_interval_,
+Humidifier::Humidifier(unsigned long humidity_reading_interval_,
                        float humidity_correction_)
     : humidity(NAN),
       humidity_target(0),
       prev_humidity_target(0),
       last_humidity_reading_time(0) {
-    humidity_sensor = dht_sensor;
+    sensor = new DHT(PIN_DHT, TYPE_DHT);
     pid = new PID(PID_SERVO_KP, PID_SERVO_KI, PID_SERVO_KD);
 
     humidity_reading_interval = humidity_reading_interval_;
     humidity_correction = humidity_correction_;
+    sensor->begin();
 }
 
 void Humidifier::update_humidity() {
     unsigned long now = millis();
     if (now - last_humidity_reading_time >= humidity_reading_interval) {
-        const float reading = humidity_sensor->readHumidity();
+        const float reading = sensor->readHumidity();
         if (!isnan(reading)) {
             humidity = reading + humidity_correction;
         } else {
@@ -38,12 +39,6 @@ void Humidifier::set_humidity_correction(float new_correction) {
 float Humidifier::get_humidity_correction() { return humidity_correction; }
 
 void Humidifier::set_humidity_target(float new_target) { humidity_target = new_target; }
-
-void Humidifier::update_pid_p_term(float new_p) { pid->update_p_term(new_p); }
-
-void Humidifier::update_pid_i_term(float new_i) { pid->update_i_term(new_i); }
-
-void Humidifier::update_pid_d_term(float new_d) { pid->update_d_term(new_d); }
 
 void Humidifier::update_pid_terms(float new_p, float new_i, float new_d) {
     pid->update_pid_terms(new_p, new_i, new_d);
