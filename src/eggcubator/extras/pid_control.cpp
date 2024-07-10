@@ -9,8 +9,6 @@
 
 #include "eggcubator/extras/pid_control.h"
 
-#include "esp32-hal-log.h"
-
 PidControl::PidControl(pid_config_t *config) : _error_sum(0), _prev_error(0) {
     _config = config;
 }
@@ -48,8 +46,8 @@ float PidControl::compute(float setpoint, float current_value) {
     _prev_error = error;
     _error_sum += error;
 
-    correction = MIN(MAX(i, _config->min_output), _config->max_output);
-    correction = MAX(MIN(i, _config->max_output), _config->min_output);
+    correction = MIN(MAX(correction, _config->min_output), _config->max_output);
+    correction = MAX(MIN(correction, _config->max_output), _config->min_output);
 
     return correction;
 }
