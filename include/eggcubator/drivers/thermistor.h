@@ -3,6 +3,8 @@
 
 #include <Arduino.h>
 
+#include "eggcubator/extras/moving_avg_filter.h"
+
 class Thermistor {
    public:
     Thermistor(uint8_t pin, uint32_t pullup_res);
@@ -15,6 +17,7 @@ class Thermistor {
    private:
     uint8_t _pin;
     uint32_t _series_res;
+    MovingAvgFilter* _filter;
 };
 
 #endif  // !THERMISTOR_H

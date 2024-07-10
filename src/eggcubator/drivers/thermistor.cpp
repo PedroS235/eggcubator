@@ -1,5 +1,6 @@
 #include "eggcubator/drivers/thermistor.h"
 
+#include "eggcubator/extras/moving_avg_filter.h"
 #include "esp32-hal-adc.h"
 #include "esp32-hal-log.h"
 
@@ -14,6 +15,8 @@ static const float STEINHART_COEFF_C = 0.0000000876741;
 Thermistor::Thermistor(uint8_t pin, uint32_t series_res) {
     _pin = pin;
     _series_res = series_res;
+    _filter = new MovingAvgFilter();
+
     pinMode(_pin, ANALOG);
     analogReadResolution(ADC_RESOLUTION);
 }
@@ -37,6 +40,7 @@ esp_err_t Thermistor::read(float *output) {
                STEINHART_COEFF_C * resistance_ln * resistance_ln * resistance_ln);
 
     float tempC = tempK - KELVIN_IN_CELSIUS;
+    tempC = _filter->compute(tempC);
 
     *output = tempC;
 
