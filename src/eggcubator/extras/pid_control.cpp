@@ -4,61 +4,49 @@
  * See end of the file for extended copyright information
  */
 
+#define MIN(a, b) (((a) < (b)) ? (a) : (b))
+#define MAX(a, b) (((a) > (b)) ? (a) : (b))
+
 #include "eggcubator/extras/pid_control.h"
 
-PID::PID(float kp_, float ki_, float kd_) : error_sum(0), prev_error(0) {
-    pid_terms.kp = kp_;
-    pid_terms.ki = ki_;
-    pid_terms.kd = kd_;
+#include "esp32-hal-log.h"
+
+PidControl::PidControl(pid_config_t *config) : _error_sum(0), _prev_error(0) {
+    _config = config;
 }
 
-PID::PID(pid_terms_t pid_terms_) : error_sum(0), prev_error(0) {
-    pid_terms = pid_terms_;
+void PidControl::update_pid_config(pid_config_t *config) { _config = config; }
+
+pid_config_t PidControl::get_pid_config() { return *_config; }
+
+void PidControl::reset() {
+    _error_sum = 0;
+    _prev_error = 0;
 }
 
-void PID::update_p_term(float new_p) { pid_terms.kp = new_p; }
-
-void PID::update_i_term(float new_i) { pid_terms.ki = new_i; }
-
-void PID::update_d_term(float new_d) { pid_terms.kd = new_d; }
-
-void PID::update_pid_terms(float new_p, float new_i, float new_d) {
-    pid_terms.kp = new_p;
-    pid_terms.ki = new_i;
-    pid_terms.kd = new_d;
-}
-
-void PID::update_pid_terms(pid_terms_t new_pid_terms) { pid_terms = new_pid_terms; }
-
-pid_terms_t PID::get_pid_terms() { return pid_terms; }
-
-void PID::reset() {
-    error_sum = 0;
-    prev_error = 0;
-}
-
-float PID::compute(float setpoint, float current_value) {
+float PidControl::compute(float setpoint, float current_value) {
     const float error = setpoint - current_value;
-    error_sum += error;
 
     // Compute P term
-    const float p = pid_terms.kp * error;
+    const float p = _config->kp * error;
 
     // Compute I term
-    const float i = pid_terms.ki * error_sum;
+    float i = _config->ki * _error_sum;
+    i = MIN(MAX(i, _config->min_integral), _config->max_integral);
+    i = MAX(MIN(i, _config->max_integral), _config->min_integral);
 
     // Compute D term
-    const float d = pid_terms.kd * (error - prev_error);
-
-    prev_error = error;
+    const float d = _config->kd * (error - _prev_error);
 
     float correction = p + i + d;
 
-    if (correction >= 0 && correction <= 255) {
-        return correction;
-    } else {
-        return correction < 0 ? 0 : 255;
-    }
+    _prev_error = error;
+    _error_sum += error;
+
+    correction = MIN(MAX(i, _config->min_output), _config->max_output);
+    correction = MAX(MIN(i, _config->max_output), _config->min_output);
+
+    return correction;
 }
 
 /*

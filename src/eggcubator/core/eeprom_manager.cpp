@@ -52,37 +52,37 @@ void eeprom_read_egg_config(egg_t *egg_config, int address) {
     egg_config->target_humd = EEPROM.readFloat(pointer);
 }
 
-void eeprom_write_pid(const pid_terms_t pid_terms, int address) {
+void eeprom_write_pid(const pid_config_t pid_config, int address) {
     int pointer = address;
-    EEPROM.writeFloat(pointer, pid_terms.kp);
+    EEPROM.writeFloat(pointer, pid_config.kp);
     pointer += sizeof(float);
-    EEPROM.writeFloat(pointer, pid_terms.ki);
+    EEPROM.writeFloat(pointer, pid_config.ki);
     pointer += sizeof(float);
-    EEPROM.writeFloat(pointer, pid_terms.kd);
+    EEPROM.writeFloat(pointer, pid_config.kd);
     EEPROM.commit();
 }
 
-void eeprom_read_pid(pid_terms_t *pid_terms, int address) {
+void eeprom_read_pid(pid_config_t *pid_config, int address) {
     int pointer = address;
-    pid_terms->kp = EEPROM.readFloat(pointer);
+    pid_config->kp = EEPROM.readFloat(pointer);
     pointer += sizeof(float);
-    pid_terms->ki = EEPROM.readFloat(pointer);
+    pid_config->ki = EEPROM.readFloat(pointer);
     pointer += sizeof(float);
-    pid_terms->kd = EEPROM.readFloat(pointer);
+    pid_config->kd = EEPROM.readFloat(pointer);
 }
 
-void eeprom_write_temp_pid(const pid_terms_t pid_terms) {
-    eeprom_write_pid(pid_terms, EEPROM_TEMP_PID_ADDRESS);
+void eeprom_write_temp_pid(const pid_config_t pid_config) {
+    eeprom_write_pid(pid_config, EEPROM_TEMP_PID_ADDRESS);
 }
-void eeprom_read_temp_pid(pid_terms_t *pid_terms) {
-    eeprom_read_pid(pid_terms, EEPROM_TEMP_PID_ADDRESS);
+void eeprom_read_temp_pid(pid_config_t *pid_config) {
+    eeprom_read_pid(pid_config, EEPROM_TEMP_PID_ADDRESS);
 }
 
-void eeprom_write_servo_pid(const pid_terms_t pid_terms) {
-    eeprom_write_pid(pid_terms, EEPROM_SERVO_PID_ADDRESS);
+void eeprom_write_servo_pid(const pid_config_t pid_config) {
+    eeprom_write_pid(pid_config, EEPROM_SERVO_PID_ADDRESS);
 }
-void eeprom_read_servo_pid(pid_terms_t *pid_terms) {
-    eeprom_read_pid(pid_terms, EEPROM_SERVO_PID_ADDRESS);
+void eeprom_read_servo_pid(pid_config_t *pid_config) {
+    eeprom_read_pid(pid_config, EEPROM_SERVO_PID_ADDRESS);
 }
 
 void eeprom_write_egg_rotation_duration(const uint8_t duration) {

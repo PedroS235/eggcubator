@@ -10,7 +10,16 @@ Humidifier::Humidifier(unsigned long humidity_reading_interval_,
       prev_humidity_target(0),
       last_humidity_reading_time(0) {
     sensor = new DHT(PIN_DHT, TYPE_DHT);
-    pid = new PID(PID_SERVO_KP, PID_SERVO_KI, PID_SERVO_KD);
+
+    pid_config = {.kp = PID_TEMP_KP,
+                  .ki = PID_TEMP_KI,
+                  .kd = PID_TEMP_KD,
+                  .min_output = 0,
+                  .max_output = 255,
+                  .min_integral = 0,
+                  .max_integral = 100};
+
+    pid = new PidControl(&pid_config);
 
     humidity_reading_interval = humidity_reading_interval_;
     humidity_correction = humidity_correction_;
@@ -41,14 +50,24 @@ float Humidifier::get_humidity_correction() { return humidity_correction; }
 void Humidifier::set_humidity_target(float new_target) { humidity_target = new_target; }
 
 void Humidifier::update_pid_terms(float new_p, float new_i, float new_d) {
-    pid->update_pid_terms(new_p, new_i, new_d);
+    pid_config.kp = new_p;
+    pid_config.ki = new_i;
+    pid_config.kd = new_d;
+    pid->update_pid_config(&pid_config);
 }
 
-void Humidifier::update_pid_terms(pid_terms_t new_pid_terms) {
-    pid->update_pid_terms(new_pid_terms);
+void Humidifier::update_pid_terms(pid_config_t new_config) {
+    pid_config.kp = new_config.kp;
+    pid_config.ki = new_config.ki;
+    pid_config.kd = new_config.kd;
+    pid_config.min_output = new_config.min_output;
+    pid_config.max_output = new_config.max_output;
+    pid_config.min_integral = new_config.min_integral;
+    pid_config.max_integral = new_config.max_integral;
+    pid->update_pid_config(&new_config);
 }
 
-pid_terms_t Humidifier::get_pid_terms() { return pid->get_pid_terms(); }
+pid_config_t Humidifier::get_pid_terms() { return pid->get_pid_config(); }
 
 bool Humidifier::routine(float humidity_target) {
     update_humidity();

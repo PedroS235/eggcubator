@@ -411,12 +411,12 @@ void calibrate_motor_menu_callback() {
 // --------------------------------| PID Menu |---------------------------------
 
 void EggCubatorUI::create_pid_menu() {
-    pid_terms_t pid_terms;
-    eeprom_read_temp_pid(&pid_terms);
+    pid_config_t pid_config;
+    eeprom_read_temp_pid(&pid_config);
     pid_menu_items[0] = {GO_BACK_STR, NULL, 0};
-    pid_menu_items[1] = {"kp", pid_p_menu_callback, pid_terms.kp, true, 0};
-    pid_menu_items[2] = {"ki", pid_i_menu_callback, pid_terms.ki, true, 0};
-    pid_menu_items[3] = {"kd", pid_d_menu_callback, pid_terms.kd, true, 0};
+    pid_menu_items[1] = {"kp", pid_p_menu_callback, pid_config.kp, true, 0};
+    pid_menu_items[2] = {"ki", pid_i_menu_callback, pid_config.ki, true, 0};
+    pid_menu_items[3] = {"kd", pid_d_menu_callback, pid_config.kd, true, 0};
 
     pid_menu = new Menu(pid_menu_items, calibrate_menu, 4);
 }
@@ -430,13 +430,13 @@ void pid_p_menu_callback() {
         step = 1.0;
     }
 
-    pid_terms_t pid_terms;
-    eeprom_read_temp_pid(&pid_terms);
+    pid_config_t pid_config;
+    eeprom_read_temp_pid(&pid_config);
 
-    changing_value(item, 0, 100, pid_terms.kp);
+    changing_value(item, 0, 100, pid_config.kp);
 
-    pid_terms.kp = item->value;
-    eeprom_write_temp_pid(pid_terms);
+    pid_config.kp = item->value;
+    eeprom_write_temp_pid(pid_config);
 }
 void pid_i_menu_callback() {
     menu_item_t *item = curr_menu->selected_item_ptr();
@@ -447,13 +447,13 @@ void pid_i_menu_callback() {
         step = 1.0;
     }
 
-    pid_terms_t pid_terms;
-    eeprom_read_temp_pid(&pid_terms);
+    pid_config_t pid_config;
+    eeprom_read_temp_pid(&pid_config);
 
-    changing_value(item, 0, 100, pid_terms.ki);
+    changing_value(item, 0, 100, pid_config.ki);
 
-    pid_terms.ki = item->value;
-    eeprom_write_temp_pid(pid_terms);
+    pid_config.ki = item->value;
+    eeprom_write_temp_pid(pid_config);
 }
 void pid_d_menu_callback() {
     menu_item_t *item = curr_menu->selected_item_ptr();
@@ -463,7 +463,7 @@ void pid_d_menu_callback() {
         prev_encoder_pos = encoder->getPosition();
         step = 1.0;
     }
-    pid_terms_t pid_terms;
+    pid_config_t pid_terms;
     eeprom_read_temp_pid(&pid_terms);
 
     changing_value(item, 0, 100, pid_terms.kd);
@@ -669,7 +669,7 @@ void tune_rot_period_menu_callback() {}
 
 void EggCubatorUI::create_menus() {
     create_main_menu();
-    create_pid_menu();
+    // create_pid_menu();
     create_incubate_menu();
     create_settings_menu();
     /* create_egg_config_menu(); */

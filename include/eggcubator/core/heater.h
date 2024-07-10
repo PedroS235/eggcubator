@@ -21,7 +21,8 @@ class Heater {
     float temp_target;
     float prev_temp_target;
 
-    PID* pid;
+    pid_config_t pid_config;
+    PidControl* pid;
     Thermistor* sensor;
 
    public:
@@ -67,8 +68,8 @@ class Heater {
      * @param new_d is the new derivative term to be set
      */
     void update_pid_terms(float new_p, float new_i, float new_d);
-    void update_pid_terms(pid_terms_t new_terms);
-    pid_terms_t get_pid_terms();
+    void update_pid_terms(pid_config_t new_terms);
+    pid_config_t get_pid_terms();
 
     /**
      * @brief Main method that should run continuously.

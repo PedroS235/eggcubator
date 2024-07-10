@@ -15,7 +15,15 @@
 
 Heater::Heater(float temp_correction_)
     : temp(NAN), temp_target(0), prev_temp_target(0) {
-    pid = new PID(PID_TEMP_KP, PID_TEMP_KI, PID_TEMP_KD);
+    pid_config = {.kp = PID_TEMP_KP,
+                  .ki = PID_TEMP_KI,
+                  .kd = PID_TEMP_KD,
+                  .min_output = 0,
+                  .max_output = 255,
+                  .min_integral = 0,
+                  .max_integral = 100};
+
+    pid = new PidControl(&pid_config);
     sensor = new Thermistor(PIN_THERMISTOR, 10000);
 
     temp_correction = temp_correction_;
@@ -33,13 +41,23 @@ float Heater::get_temp_correction() { return temp_correction; }
 void Heater::set_temp_target(float new_target) { temp_target = new_target; }
 
 void Heater::update_pid_terms(float new_p, float new_i, float new_d) {
-    pid->update_pid_terms(new_p, new_i, new_d);
+    pid_config.kp = new_p;
+    pid_config.ki = new_i;
+    pid_config.kd = new_d;
+    pid->update_pid_config(&pid_config);
 }
-void Heater::update_pid_terms(pid_terms_t new_pid_terms) {
-    pid->update_pid_terms(new_pid_terms);
+void Heater::update_pid_terms(pid_config_t new_config) {
+    pid_config.kp = new_config.kp;
+    pid_config.ki = new_config.ki;
+    pid_config.kd = new_config.kd;
+    pid_config.min_output = new_config.min_output;
+    pid_config.max_output = new_config.max_output;
+    pid_config.min_integral = new_config.min_integral;
+    pid_config.max_integral = new_config.max_integral;
+    pid->update_pid_config(&new_config);
 }
 
-pid_terms_t Heater::get_pid_terms() { return pid->get_pid_terms(); }
+pid_config_t Heater::get_pid_terms() { return pid->get_pid_config(); }
 
 bool Heater::run(float temp_target) {
     int ret = sensor->read(&temp);
@@ -52,6 +70,7 @@ bool Heater::run(float temp_target) {
         prev_temp_target = temp_target;
     }
     float heater_pwm = pid->compute(temp_target, temp);
+    // float heater_pwm = 0.0;
 
     // Control Heater power using PWM
     analogWrite(PIN_HEATER, heater_pwm);

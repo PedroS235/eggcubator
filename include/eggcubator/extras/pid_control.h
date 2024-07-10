@@ -11,60 +11,32 @@ typedef struct {
     float kp;
     float ki;
     float kd;
-} pid_terms_t;
+    float min_output;
+    float max_output;
+    float min_integral;
+    float max_integral;
+} pid_config_t;
 
 /**
  * @brief Simple PID controller class which can be be used for general purpose
  */
-class PID {
+class PidControl {
    private:
-    pid_terms_t pid_terms;
-    float error_sum;
-    float prev_error;
+    pid_config_t *_config;
+    float _error_sum;
+    float _prev_error;
 
    public:
     /**
      * @brief Constructor for the class PID
      *
-     * @param kp_ is the proportional term
-     * @param ki_ is the integral term
-     * @param kd_ is the derivative term
+     * @param config is the default configuration for the pid
      *
      */
-    PID(float kp_, float ki_, float kd_);
-    PID(pid_terms_t pid_terms_);
+    PidControl(pid_config_t *config);
 
-    /**
-     * @brief Updates the current proportional term
-     *
-     * @param new_p is the new proportional term to be set
-     */
-    void update_p_term(float new_p);
-
-    /**
-     * @brief Updates the current integral term
-     *
-     * @param new_i is the new integral term to be set
-     */
-    void update_i_term(float new_i);
-
-    /**
-     * @brief Updates the current derivative term
-     *
-     * @param new_d is the new derivative term to be set
-     */
-    void update_d_term(float new_d);
-
-    /**
-     * @brief Updates the current PID term values
-     *
-     * @param new_p is the new proportional term to be set
-     * @param new_i is the new integral term to be set
-     * @param new_d is the new derivative term to be set
-     */
-    void update_pid_terms(float new_p, float new_i, float new_d);
-    void update_pid_terms(pid_terms_t pid_terms_);
-    pid_terms_t get_pid_terms();
+    void update_pid_config(pid_config_t *config);
+    pid_config_t get_pid_config();
 
     /**
      * @brief Resets the errors
@@ -78,7 +50,7 @@ class PID {
      * @param setpoint is the desired setpoint
      * @param current_term is the current measured value
      *
-     * @return PWM value (0-255) which correlates to the correction made
+     * @return PWM value (min_output-max_output) which correlates to the correction made
      */
     float compute(float setpoint, float current_term);
 };

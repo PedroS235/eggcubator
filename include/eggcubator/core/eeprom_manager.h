@@ -33,14 +33,14 @@ void eeprom_setup();
 void eeprom_write_egg_config(const egg_t *egg_config, int address);
 void eeprom_read_egg_config(egg_t *egg_config, int address);
 
-void eeprom_write_pid(const pid_terms_t pid_terms, int address);
-void eeprom_read_pid(pid_terms_t *pid_terms, int address);
+void eeprom_write_pid(const pid_config_t pid_terms, int address);
+void eeprom_read_pid(pid_config_t *pid_terms, int address);
 
-void eeprom_write_temp_pid(const pid_terms_t pid_terms);
-void eeprom_read_temp_pid(pid_terms_t *pid_terms);
+void eeprom_write_temp_pid(const pid_config_t pid_terms);
+void eeprom_read_temp_pid(pid_config_t *pid_terms);
 
-void eeprom_write_servo_pid(const pid_terms_t pid_terms);
-void eeprom_read_servo_pid(pid_terms_t *pid_terms);
+void eeprom_write_servo_pid(const pid_config_t pid_terms);
+void eeprom_read_servo_pid(pid_config_t *pid_terms);
 
 void eeprom_write_egg_rotation_duration(const uint8_t duration);
 uint8_t eeprom_read_egg_rotation_duration();
