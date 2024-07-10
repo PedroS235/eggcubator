@@ -669,7 +669,7 @@ void tune_rot_period_menu_callback() {}
 
 void EggCubatorUI::create_menus() {
     create_main_menu();
-    // create_pid_menu();
+    create_pid_menu();
     create_incubate_menu();
     create_settings_menu();
     /* create_egg_config_menu(); */
