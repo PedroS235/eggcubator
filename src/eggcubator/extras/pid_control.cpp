@@ -27,6 +27,11 @@ void PidControl::reset() {
 float PidControl::compute(float setpoint, float current_value) {
     const float error = setpoint - current_value;
 
+    // Eliminate possible noise on the integral term.
+    if (error == 0 && setpoint == 0) {
+        reset();
+    }
+
     // Compute P term
     const float p = _config->kp * error;
 
