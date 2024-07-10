@@ -70,7 +70,6 @@ bool Heater::run(float temp_target) {
         prev_temp_target = temp_target;
     }
     float heater_pwm = pid->compute(temp_target, temp);
-    // float heater_pwm = 0.0;
 
     // Control Heater power using PWM
     analogWrite(PIN_HEATER, heater_pwm);
