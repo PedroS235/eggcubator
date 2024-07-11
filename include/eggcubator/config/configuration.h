@@ -16,6 +16,7 @@
 
 // Change this value to 0 to disable the boot screen
 #define BOOTSCREEN_DURATION 2000
+#define SCREEN_REFRESH_RATE 1 / 30  // 1/Hz
 
 // Set the language to be used by the controller (Change the 2 last letters)
 // Currently supported languages are:
