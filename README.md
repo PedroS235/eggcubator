@@ -45,11 +45,11 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - [x] Implement a Thermistor Driver
 - [x] Change Thermostat to be named heater
 - [x] Use the thermistor for the heater instead of DHT
-- [ ] Implement a better timer management using esp_timer
+- [x] Implement a better timer management using esp_timer (keeping current implementation)
 - [ ] Implement a Humidifier
 - [ ] Implement Logging for error and debug
 
 ### Low Priority
 
-- [ ] Possibly use FreeRTOS for having a scheduler
+- [x] Possibly use FreeRTOS for having a scheduler
 - [x] Use esp_log instead
