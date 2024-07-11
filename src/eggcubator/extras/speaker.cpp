@@ -9,7 +9,7 @@ void Speaker::startup_sound() {
     beep(800, 200);
 }
 
-void Speaker::button_click_sound() {}
+void Speaker::button_click_sound() { beep(523, 50); }
 
 void Speaker::beep(unsigned int frequency, unsigned long duration) {
     tone(_pin, frequency, duration);
