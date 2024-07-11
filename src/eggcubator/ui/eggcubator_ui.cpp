@@ -6,6 +6,7 @@
 #include "eggcubator/core/eeprom_manager.h"
 #include "eggcubator/core/heater.h"
 #include "eggcubator/egg.h"
+#include "eggcubator/extras/speaker.h"
 #include "eggcubator/incubation.h"
 #include "eggcubator/ui/menu.h"
 
@@ -61,6 +62,7 @@ extern float curr_humd;
 extern egg_t selected_egg;
 extern IncubationRoutine *routine;
 extern Heater *heater;
+extern Speaker *speaker;
 
 void encoder_ISR() { encoder->tick(); }
 
@@ -69,6 +71,7 @@ bool is_button_pressed() {
     if (digitalRead(PIN_ENCODER_SW) == LOW) {
         if (millis() - last_button_press > 50) {
             tone(PIN_BUZZER, 523, 50);
+            speaker->button_click_sound();
             pressed = true;
         }
         last_button_press = millis();

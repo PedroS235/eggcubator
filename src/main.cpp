@@ -13,6 +13,7 @@
 #include "eggcubator/core/heater.h"
 #include "eggcubator/core/humidifier.h"
 #include "eggcubator/egg.h"
+#include "eggcubator/extras/speaker.h"
 #include "eggcubator/incubation.h"
 #include "eggcubator/ui/display_manager.h"
 #include "eggcubator/ui/eggcubator_ui.h"
@@ -32,13 +33,7 @@ Humidifier *humidifier;
 IncubationRoutine *routine;
 EggCubatorUI *ui;
 DisplayManager *display;
-
-void startup_sound() {
-    tone(PIN_BUZZER, 523, 100);
-    tone(PIN_BUZZER, 600, 50);
-    tone(PIN_BUZZER, 700, 100);
-    tone(PIN_BUZZER, 800, 200);
-}
+Speaker *speaker;
 
 void setup() {
     delay(500);
@@ -47,6 +42,7 @@ void setup() {
     Serial.setDebugOutput(true);
     eeprom_setup();
 
+    speaker = new Speaker(PIN_BUZZER);
     heater = new Heater();
     humidifier = new Humidifier();
     routine = new IncubationRoutine();
@@ -55,9 +51,9 @@ void setup() {
 
     display->draw_boot_screen("EGGCUBATOR");
     delay(BOOTSCREEN_DURATION);
-    /* eeprom_reset(); */
+    // eeprom_reset();
 
-    startup_sound();
+    speaker->startup_sound();
 }
 
 void loop() {
