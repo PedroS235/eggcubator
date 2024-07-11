@@ -7,6 +7,7 @@
 #include <Arduino.h>
 #include <Wire.h>
 
+#include "FreeRTOS.h"
 #include "eggcubator/config/configuration.h"
 #include "eggcubator/config/pins.h"
 #include "eggcubator/core/eeprom_manager.h"
@@ -26,7 +27,6 @@ float humd_target = 0;
 float curr_temp = 0;
 float curr_humd = 0;
 egg_t selected_egg;
-unsigned long prev_screen_refresh;
 
 Heater *heater;
 Humidifier *humidifier;
@@ -34,6 +34,40 @@ IncubationRoutine *routine;
 EggCubatorUI *ui;
 DisplayManager *display;
 Speaker *speaker;
+
+void HeaterTask(void *pvParameters) {
+    for (;;) {
+        heater->run(temp_target);
+        curr_temp = heater->get_temp();
+        vTaskDelay(100 / portTICK_PERIOD_MS);
+    }
+}
+
+void HumidifierTask(void *pvParameters) {
+    for (;;) {
+        humidifier->routine(humd_target);
+        curr_humd = humidifier->get_humidity();
+        // NOTE: The dht sensor only update every 2 seconds.
+        // Thus, running the humidifier every 2 seconcs should be enough.
+        // This needs to be checked if he pid does not get affected
+        vTaskDelay(2000 / portTICK_PERIOD_MS);  // Adjust the delay as needed
+    }
+}
+
+void IncubationTask(void *pvParameters) {
+    for (;;) {
+        routine->routine();
+        // NOTE: The incubation should work fine with seconds precision
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+    }
+}
+
+void UiTask(void *pvParameters) {
+    for (;;) {
+        ui->render();
+        vTaskDelay(SCREEN_REFRESH_RATE / portTICK_PERIOD_MS);
+    }
+}
 
 void setup() {
     delay(500);
@@ -54,19 +88,15 @@ void setup() {
     // eeprom_reset();
 
     speaker->startup_sound();
+
+    xTaskCreate(HeaterTask, "HeaterTask", 5000, NULL, 1, NULL);
+    xTaskCreate(HumidifierTask, "HumidifierTask", 5000, NULL, 3, NULL);
+    xTaskCreate(IncubationTask, "RoutineTask", 5000, NULL, 1, NULL);
+    xTaskCreate(UiTask, "ScreenTask", 10000, NULL, 2, NULL);
 }
 
 void loop() {
-    // TODO: missing checks on outputs
-    heater->run(temp_target);
-    humidifier->routine(humd_target);
-    routine->routine();
-    curr_temp = heater->get_temp();
-    curr_humd = humidifier->get_humidity();
-    if (millis() - prev_screen_refresh > 2) {
-        ui->render();
-        prev_screen_refresh = millis();
-    }
+    // Handled by FreeRTOS tasks.
 }
 
 /*
