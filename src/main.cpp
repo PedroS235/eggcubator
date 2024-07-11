@@ -77,7 +77,7 @@ void setup() {
     eeprom_setup();
 
     speaker = new Speaker(PIN_BUZZER);
-    heater = new Heater();
+    heater = new Heater(PIN_HEATER);
     humidifier = new Humidifier();
     routine = new IncubationRoutine();
     ui = new EggCubatorUI();

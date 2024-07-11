@@ -13,8 +13,8 @@
 // In addition, a watchdog could also be beneficial, where if thetemperature does not
 // change something could be wrong
 
-Heater::Heater(float temp_correction_)
-    : temp(NAN), temp_target(0), prev_temp_target(0) {
+Heater::Heater(uint8_t pin, float temp_correction_)
+    : temp(NAN), temp_target(0), prev_temp_target(0), _pin(pin) {
     pid_config = {.kp = PID_TEMP_KP,
                   .ki = PID_TEMP_KI,
                   .kd = PID_TEMP_KD,
@@ -27,7 +27,7 @@ Heater::Heater(float temp_correction_)
     sensor = new Thermistor(PIN_THERMISTOR, 10000);
 
     temp_correction = temp_correction_;
-    pinMode(PIN_HEATER, OUTPUT);
+    pinMode(_pin, OUTPUT);
 }
 
 float Heater::get_temp() { return temp; }
@@ -59,10 +59,17 @@ void Heater::update_pid_terms(pid_config_t new_config) {
 
 pid_config_t Heater::get_pid_terms() { return pid->get_pid_config(); }
 
+void Heater::_set_duty(uint8_t duty) { analogWrite(_pin, duty); }
+
 bool Heater::run(float temp_target) {
     int ret = sensor->read(&temp);
 
-    if (ret == ESP_FAIL) return false;
+    // TODO: create a config parameter for min and max accepted temperture
+    if (ret == ESP_FAIL || temp < 20.0) {
+        log_w("Thermistor reading not valid. Shutting down heater for safety");
+        _set_duty(0);
+        return false;
+    }
 
     // Reset PID in case the temperature target changes
     if (prev_temp_target != temp_target) {
@@ -72,7 +79,7 @@ bool Heater::run(float temp_target) {
     float heater_pwm = pid->compute(temp_target, temp);
 
     // Control Heater power using PWM
-    analogWrite(PIN_HEATER, heater_pwm);
+    _set_duty(heater_pwm);
 
     return true;
 }
