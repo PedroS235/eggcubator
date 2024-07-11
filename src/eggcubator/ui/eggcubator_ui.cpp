@@ -70,7 +70,6 @@ bool is_button_pressed() {
     bool pressed = false;
     if (digitalRead(PIN_ENCODER_SW) == LOW) {
         if (millis() - last_button_press > 50) {
-            tone(PIN_BUZZER, 523, 50);
             speaker->button_click_sound();
             pressed = true;
         }
