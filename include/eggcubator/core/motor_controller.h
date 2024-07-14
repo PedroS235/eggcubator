@@ -77,7 +77,7 @@ class MotorController {
     /**
      * @brief This method is the motor controller loop function
      */
-    void routine();
+    void tick();
 };
 
 #endif  // !MOTOR_CONTROLLER_H
