@@ -14,6 +14,8 @@
 
 #pragma once
 
+#define DEBUG
+
 // Change this value to 0 to disable the boot screen
 #define BOOTSCREEN_DURATION 2000
 #define SCREEN_REFRESH_RATE 1 / 30  // 1/Hz
