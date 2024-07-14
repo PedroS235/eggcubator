@@ -70,7 +70,7 @@ esp_err_t Heater::tick(float temp_target) {
 
     if (temp > MAX_HEATER_TEMP || temp < MIN_HEATER_TEMP) {
         log_w(
-            "Temperature is not within allowed temperature range. Shuting down heater "
+            "Temperature is not within allowed range. Shutting down heater "
             "for safety.");
         _set_duty(0);
         return ESP_FAIL;
