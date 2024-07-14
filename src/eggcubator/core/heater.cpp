@@ -9,10 +9,6 @@
 #include "eggcubator/config/configuration.h"
 #include "eggcubator/config/pins.h"
 
-// TODO: clean heater and make it safer in case thermistor is not connected
-// In addition, a watchdog could also be beneficial, where if thetemperature does not
-// change something could be wrong
-
 Heater::Heater(uint8_t pin, float temp_correction_)
     : temp(NAN), temp_target(0), prev_temp_target(0), _pin(pin) {
     pid_config = {.kp = PID_TEMP_KP,
@@ -61,14 +57,23 @@ pid_config_t Heater::get_pid_terms() { return pid->get_pid_config(); }
 
 void Heater::_set_duty(uint8_t duty) { analogWrite(_pin, duty); }
 
-bool Heater::tick(float temp_target) {
+esp_err_t Heater::tick(float temp_target) {
+    log_v("Ticking heater");
     int ret = sensor->read(&temp);
 
     // TODO: create a config parameter for min and max accepted temperture
-    if (ret == ESP_FAIL || temp < 20.0) {
-        log_w("Thermistor reading not valid. Shutting down heater for safety");
+    if (ret == ESP_FAIL) {
+        log_e("Thermistor reading not valid. Shutting down heater for safety.");
         _set_duty(0);
-        return false;
+        return ESP_FAIL;
+    }
+
+    if (temp > MAX_HEATER_TEMP || temp < MIN_HEATER_TEMP) {
+        log_w(
+            "Temperature is not within allowed temperature range. Shuting down heater "
+            "for safety.");
+        _set_duty(0);
+        return ESP_FAIL;
     }
 
     // Reset PID in case the temperature target changes
@@ -81,7 +86,7 @@ bool Heater::tick(float temp_target) {
     // Control Heater power using PWM
     _set_duty(heater_pwm);
 
-    return true;
+    return ESP_OK;
 }
 
 /*

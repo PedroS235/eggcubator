@@ -14,7 +14,12 @@
 
 #pragma once
 
+// TODO: Separate better the configuratio parameters
+
 #define DEBUG
+
+#define MIN_HEATER_TEMP -10.0
+#define MAX_HEATER_TEMP 40.0
 
 // Change this value to 0 to disable the boot screen
 #define BOOTSCREEN_DURATION 2000
