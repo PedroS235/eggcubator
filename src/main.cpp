@@ -18,6 +18,7 @@
 #include "eggcubator/incubation.h"
 #include "eggcubator/ui/display_manager.h"
 #include "eggcubator/ui/eggcubator_ui.h"
+#include "esp32-hal.h"
 
 // -----------------------------------------------------------------------------
 // -                             Global Variables                              -
@@ -37,7 +38,7 @@ Speaker *speaker;
 
 void HeaterTask(void *pvParameters) {
     for (;;) {
-        heater->run(temp_target);
+        heater->tick(temp_target);
         curr_temp = heater->get_temp();
         vTaskDelay(100 / portTICK_PERIOD_MS);
     }
@@ -45,7 +46,7 @@ void HeaterTask(void *pvParameters) {
 
 void HumidifierTask(void *pvParameters) {
     for (;;) {
-        humidifier->routine(humd_target);
+        humidifier->tick(humd_target);
         curr_humd = humidifier->get_humidity();
         // NOTE: The dht sensor only update every 2 seconds.
         // Thus, running the humidifier every 2 seconcs should be enough.
@@ -56,7 +57,7 @@ void HumidifierTask(void *pvParameters) {
 
 void IncubationTask(void *pvParameters) {
     for (;;) {
-        routine->routine();
+        routine->tick();
         // NOTE: The incubation should work fine with seconds precision
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
@@ -64,7 +65,7 @@ void IncubationTask(void *pvParameters) {
 
 void UiTask(void *pvParameters) {
     for (;;) {
-        ui->render();
+        ui->tick();
         vTaskDelay(SCREEN_REFRESH_RATE / portTICK_PERIOD_MS);
     }
 }
@@ -73,7 +74,9 @@ void setup() {
     delay(500);
     Wire.begin(PIN_I2C_SDA, PIN_I2C_SCK);  // Define which pins are to be used for i2c
     Serial.begin(115200);
+#ifdef DEBUG
     Serial.setDebugOutput(true);
+#endif  // DEBUG
     eeprom_setup();
 
     speaker = new Speaker(PIN_BUZZER);
@@ -89,10 +92,14 @@ void setup() {
 
     speaker->startup_sound();
 
+    log_v("Create Heater Task");
     xTaskCreate(HeaterTask, "HeaterTask", 5000, NULL, 1, NULL);
+    log_v("Create Humidifer Task");
     xTaskCreate(HumidifierTask, "HumidifierTask", 5000, NULL, 3, NULL);
+    log_v("Create incubation Task");
     xTaskCreate(IncubationTask, "RoutineTask", 5000, NULL, 1, NULL);
-    xTaskCreate(UiTask, "ScreenTask", 10000, NULL, 2, NULL);
+    log_v("Create UI Task");
+    xTaskCreate(UiTask, "UITask", 10000, NULL, 2, NULL);
 }
 
 void loop() {

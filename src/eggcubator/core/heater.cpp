@@ -61,7 +61,7 @@ pid_config_t Heater::get_pid_terms() { return pid->get_pid_config(); }
 
 void Heater::_set_duty(uint8_t duty) { analogWrite(_pin, duty); }
 
-bool Heater::run(float temp_target) {
+bool Heater::tick(float temp_target) {
     int ret = sensor->read(&temp);
 
     // TODO: create a config parameter for min and max accepted temperture

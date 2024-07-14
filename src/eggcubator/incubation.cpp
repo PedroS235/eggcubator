@@ -62,7 +62,7 @@ egg_t IncubationRoutine::curr_egg_in_incubation() { return *curr_egg; }
 
 bool IncubationRoutine::in_incubation() { return curr_state == IN_INCUBATION_STATE; }
 
-bool IncubationRoutine::routine() {
+bool IncubationRoutine::tick() {
     motor_controller.routine();
     switch (curr_state) {
         case IDDLE_INCUBATION_STATE:

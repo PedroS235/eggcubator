@@ -146,7 +146,7 @@ void EggCubatorUI::encoder_update() {
         button_pressed = false;
 }
 
-void EggCubatorUI::render() {
+void EggCubatorUI::tick() {
     if (selected_callback == NULL) {
         encoder_update();
         if (curr_menu == NULL) {

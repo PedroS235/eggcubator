@@ -79,7 +79,7 @@ class Humidifier {
      *
      * @return True if temperature sensor is working as expected, false otherwise
      */
-    bool routine(float humidity_target_);
+    bool tick(float humidity_target_);
 };
 
 #endif  // !HUMIDIFIER_H

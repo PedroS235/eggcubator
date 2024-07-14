@@ -143,7 +143,7 @@ class EggCubatorUI {
    public:
     EggCubatorUI();
     ~EggCubatorUI();
-    void render();
+    void tick();
 };
 
 #endif  // !EGGCUBATOR_UI_H

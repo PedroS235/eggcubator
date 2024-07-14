@@ -85,7 +85,7 @@ class Heater {
      *
      * @return True if temperature sensor is working as expected, false otherwise
      */
-    bool run(float temp_target);
+    bool tick(float temp_target);
 };
 
 #endif  // !HEATER_H

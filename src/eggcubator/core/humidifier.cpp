@@ -69,7 +69,7 @@ void Humidifier::update_pid_terms(pid_config_t new_config) {
 
 pid_config_t Humidifier::get_pid_terms() { return pid->get_pid_config(); }
 
-bool Humidifier::routine(float humidity_target) {
+bool Humidifier::tick(float humidity_target) {
     update_humidity();
 
     if (isnan(humidity)) {
