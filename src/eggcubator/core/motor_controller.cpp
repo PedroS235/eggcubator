@@ -10,16 +10,21 @@
 
 MotorController::MotorController() {
     pinMode(PIN_MOTOR, OUTPUT);
+    log_v("Setting MotorController state to IDDLE");
     curr_state = IDDLE_MOTOR_STATE;
 }
 
 void MotorController::start_motor_rotation() {
     prev_rotation = millis();
     trigger_timer = millis();
+    log_v("Changing MotorController state: START state -> WAITING state");
     curr_state = WAITING_MOTOR_STATE;
 }
 
-void MotorController::stop_motor_rotation() { curr_state = IDDLE_MOTOR_STATE; }
+void MotorController::stop_motor_rotation() {
+    log_v("Changing MotorController state: STOP state -> IDDLE state");
+    curr_state = IDDLE_MOTOR_STATE;
+}
 
 void MotorController::set_rotation_interval_hours(unsigned long interval) {
     rotation_interval = hour_to_millis(interval);
@@ -41,6 +46,7 @@ void MotorController::waiting_state() {
     unsigned long now = millis();
     if (now - prev_rotation >= rotation_interval) {
         digitalWrite(PIN_MOTOR, HIGH);
+        log_v("Changing MotorController state: WAITING state -> ROTATING state");
         curr_state = ROTATING_MOTOR_STATE;
         prev_rotation = now;
         start_of_rotation = now;
@@ -51,11 +57,13 @@ void MotorController::rotating_state() {
     unsigned long now = millis();
     if (now - start_of_rotation >= rotation_duration) {
         digitalWrite(PIN_MOTOR, LOW);
+        log_v("Changing MotorController state: ROTATING state -> WAITING state");
         curr_state = WAITING_MOTOR_STATE;
     }
 }
 
-void MotorController::routine() {
+void MotorController::tick() {
+    log_v("Ticking motor controller");
     switch (curr_state) {
         case IDDLE_MOTOR_STATE:
             break;

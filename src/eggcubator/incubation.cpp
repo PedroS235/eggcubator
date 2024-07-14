@@ -9,6 +9,7 @@
 #include "HardwareSerial.h"
 
 IncubationRoutine::IncubationRoutine() : curr_time(), motor_controller() {
+    log_v("Setting Incubation state to IDDLE");
     curr_state = IDDLE_INCUBATION_STATE;
 }
 
@@ -27,11 +28,13 @@ void IncubationRoutine::before_incubation_state() {
     // TODO(PedroS): Before starting the incubation, wait for the temperature to settle
 
     curr_time.start();
+    log_v("Changing Incubation state: BEFORE state -> IN state");
     curr_state = IN_INCUBATION_STATE;
 }
 
 void IncubationRoutine::in_incubation_state() {
     if (curr_time.get_day() >= curr_egg->incubation_days) {
+        log_v("Changing Incubation state: IN state -> AFTER state");
         curr_state = AFTER_INCUBATION_STATE;
     }
 
@@ -49,21 +52,27 @@ void IncubationRoutine::after_incubation_state() {
     extern float humd_target;
     temp_target = 0;
     humd_target = 0;
+    log_v("Changing Incubation state: AFTER state -> IDDLE state");
     curr_state = IDDLE_INCUBATION_STATE;
 }
 
 void IncubationRoutine::start_incubation(egg_t *egg) {
     curr_egg = egg;
+    log_v("Changing Incubation state: START state -> BEFORE state");
     curr_state = BEFORE_INCUBATION_STATE;
 }
-void IncubationRoutine::stop_incubation() { curr_state = AFTER_INCUBATION_STATE; }
+void IncubationRoutine::stop_incubation() {
+    log_v("Changing Incubation state: STOP state -> AFTER state");
+    curr_state = AFTER_INCUBATION_STATE;
+}
 
 egg_t IncubationRoutine::curr_egg_in_incubation() { return *curr_egg; }
 
 bool IncubationRoutine::in_incubation() { return curr_state == IN_INCUBATION_STATE; }
 
 bool IncubationRoutine::tick() {
-    motor_controller.routine();
+    log_v("Ticking incubation");
+    motor_controller.tick();
     switch (curr_state) {
         case IDDLE_INCUBATION_STATE:
             break;

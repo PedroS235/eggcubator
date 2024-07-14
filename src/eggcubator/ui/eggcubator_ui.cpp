@@ -147,6 +147,7 @@ void EggCubatorUI::encoder_update() {
 }
 
 void EggCubatorUI::tick() {
+    log_v("Ticking UI");
     if (selected_callback == NULL) {
         encoder_update();
         if (curr_menu == NULL) {

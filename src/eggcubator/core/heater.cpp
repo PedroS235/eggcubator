@@ -29,20 +29,46 @@ Heater::Heater(uint8_t pin, float temp_correction_)
 float Heater::get_temp() { return temp; }
 
 void Heater::set_temp_correction(float new_correction) {
+    log_v("Setting new temperature correction from %f to %f",
+          temp_correction,
+          new_correction);
     temp_correction = new_correction;
 }
 
 float Heater::get_temp_correction() { return temp_correction; }
 
-void Heater::set_temp_target(float new_target) { temp_target = new_target; }
+void Heater::set_temp_target(float new_target) {
+    log_v("Setting new temperature target from %f to %f", temp_target, new_target);
+    temp_target = new_target;
+}
 
 void Heater::update_pid_terms(float new_p, float new_i, float new_d) {
+    log_v(
+        "Updating PID values | from: kp: %f, ki: %f, kd: %f - to: kp: %f, ki: %f, kd: "
+        "%f",
+        pid_config.kp,
+        pid_config.ki,
+        pid_config.kd,
+        new_p,
+        new_i,
+        new_d);
+
     pid_config.kp = new_p;
     pid_config.ki = new_i;
     pid_config.kd = new_d;
     pid->update_pid_config(&pid_config);
 }
 void Heater::update_pid_terms(pid_config_t new_config) {
+    log_v(
+        "Updating PID values | from: kp: %f, ki: %f, kd: %f - to: kp: %f, ki: %f, kd: "
+        "%f",
+        pid_config.kp,
+        pid_config.ki,
+        pid_config.kd,
+        new_config.kp,
+        new_config.ki,
+        new_config.kd);
+
     pid_config.kp = new_config.kp;
     pid_config.ki = new_config.ki;
     pid_config.kd = new_config.kd;
@@ -58,10 +84,10 @@ pid_config_t Heater::get_pid_terms() { return pid->get_pid_config(); }
 void Heater::_set_duty(uint8_t duty) { analogWrite(_pin, duty); }
 
 esp_err_t Heater::tick(float temp_target) {
+    // TODO: use set_temp_target instead of passing as a parameter to tick()
     log_v("Ticking heater");
     int ret = sensor->read(&temp);
 
-    // TODO: create a config parameter for min and max accepted temperture
     if (ret == ESP_FAIL) {
         log_e("Thermistor reading not valid. Shutting down heater for safety.");
         _set_duty(0);

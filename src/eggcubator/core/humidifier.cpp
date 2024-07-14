@@ -11,9 +11,9 @@ Humidifier::Humidifier(unsigned long humidity_reading_interval_,
       last_humidity_reading_time(0) {
     sensor = new DHT(PIN_DHT, TYPE_DHT);
 
-    pid_config = {.kp = PID_TEMP_KP,
-                  .ki = PID_TEMP_KI,
-                  .kd = PID_TEMP_KD,
+    pid_config = {.kp = PID_SERVO_KP,
+                  .ki = PID_SERVO_KI,
+                  .kd = PID_SERVO_KD,
                   .min_output = 0,
                   .max_output = 255,
                   .min_integral = 0,
@@ -42,14 +42,30 @@ void Humidifier::update_humidity() {
 float Humidifier::get_humidity() { return humidity; }
 
 void Humidifier::set_humidity_correction(float new_correction) {
+    log_v("Setting new humidity correction from %f to %f",
+          humidity_correction,
+          new_correction);
     humidity_correction = new_correction;
 }
 
 float Humidifier::get_humidity_correction() { return humidity_correction; }
 
-void Humidifier::set_humidity_target(float new_target) { humidity_target = new_target; }
+void Humidifier::set_humidity_target(float new_target) {
+    log_v("Setting new humidity target from %f to %f", humidity_target, new_target);
+    humidity_target = new_target;
+}
 
 void Humidifier::update_pid_terms(float new_p, float new_i, float new_d) {
+    log_v(
+        "Updating PID values | from: kp: %f, ki: %f, kd: %f - to: kp: %f, ki: %f, kd: "
+        "%f",
+        pid_config.kp,
+        pid_config.ki,
+        pid_config.kd,
+        new_p,
+        new_i,
+        new_d);
+
     pid_config.kp = new_p;
     pid_config.ki = new_i;
     pid_config.kd = new_d;
@@ -57,6 +73,16 @@ void Humidifier::update_pid_terms(float new_p, float new_i, float new_d) {
 }
 
 void Humidifier::update_pid_terms(pid_config_t new_config) {
+    log_v(
+        "Updating PID values | from: kp: %f, ki: %f, kd: %f - to: kp: %f, ki: %f, kd: "
+        "%f",
+        pid_config.kp,
+        pid_config.ki,
+        pid_config.kd,
+        new_config.kp,
+        new_config.ki,
+        new_config.kd);
+
     pid_config.kp = new_config.kp;
     pid_config.ki = new_config.ki;
     pid_config.kd = new_config.kd;
@@ -70,6 +96,7 @@ void Humidifier::update_pid_terms(pid_config_t new_config) {
 pid_config_t Humidifier::get_pid_terms() { return pid->get_pid_config(); }
 
 bool Humidifier::tick(float humidity_target) {
+    log_v("Ticking humidifier");
     update_humidity();
 
     if (isnan(humidity)) {
