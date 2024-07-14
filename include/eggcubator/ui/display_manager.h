@@ -14,7 +14,7 @@
 #include "eggcubator/ui/menu.h"
 
 class DisplayManager {
-    TYPE_DISPLAY* display;
+    UI_OLED_TYPE* display;
 
    private:
     void draw_menu_item_cell(uint8_t x, uint8_t y, const char* item_name, bool select);

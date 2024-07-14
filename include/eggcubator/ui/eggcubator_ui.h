@@ -9,9 +9,8 @@
 
 #include <RotaryEncoder.h>
 
-#include "eggcubator/config/pins.h"
+#include "eggcubator/config/configuration.h"
 #include "eggcubator/ui/display_manager.h"
-#include "eggcubator/ui/language/language.h"
 #include "eggcubator/ui/menu.h"
 
 bool is_button_pressed();
@@ -80,7 +79,8 @@ void tune_target_temp_menu_callback();
 void tune_target_humd_menu_callback();
 void tune_rot_period_menu_callback();
 
-static RotaryEncoder *encoder = new RotaryEncoder(PIN_ENCODER_CLK, PIN_ENCODER_DT);
+static RotaryEncoder *encoder =
+    new RotaryEncoder(UI_ENCODER_CLK_PIN, UI_ENCODER_DT_PIN);
 void encoder_ISR();
 
 class EggCubatorUI {

@@ -4,12 +4,12 @@
  * See end of the file for extended copyright information
  */
 
-#include <eggcubator/config/pins.h>
+#include <eggcubator/config/configuration.h>
 #include <eggcubator/core/motor_controller.h>
 #include <eggcubator/extras/time_conversions.h>
 
 MotorController::MotorController() {
-    pinMode(PIN_MOTOR, OUTPUT);
+    pinMode(MOTOR_PIN, OUTPUT);
     log_v("Setting MotorController state to IDDLE");
     curr_state = IDDLE_MOTOR_STATE;
 }
@@ -45,7 +45,7 @@ void MotorController::set_rotation_duration_seconds(unsigned long interval) {
 void MotorController::waiting_state() {
     unsigned long now = millis();
     if (now - prev_rotation >= rotation_interval) {
-        digitalWrite(PIN_MOTOR, HIGH);
+        digitalWrite(MOTOR_PIN, HIGH);
         log_v("Changing MotorController state: WAITING state -> ROTATING state");
         curr_state = ROTATING_MOTOR_STATE;
         prev_rotation = now;
@@ -56,7 +56,7 @@ void MotorController::waiting_state() {
 void MotorController::rotating_state() {
     unsigned long now = millis();
     if (now - start_of_rotation >= rotation_duration) {
-        digitalWrite(PIN_MOTOR, LOW);
+        digitalWrite(MOTOR_PIN, LOW);
         log_v("Changing MotorController state: ROTATING state -> WAITING state");
         curr_state = WAITING_MOTOR_STATE;
     }

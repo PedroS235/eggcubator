@@ -13,7 +13,7 @@
 #include "eggcubator/ui/menu.h"
 
 DisplayManager::DisplayManager() {
-    display = new TYPE_DISPLAY(U8G2_R0, U8X8_PIN_NONE);
+    display = new UI_OLED_TYPE(U8G2_R0, U8X8_PIN_NONE);
     display->begin();
     display->setFontPosTop();
 }

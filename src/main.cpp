@@ -7,7 +7,6 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-#include "FreeRTOS.h"
 #include "eggcubator/config/configuration.h"
 #include "eggcubator/config/pins.h"
 #include "eggcubator/core/eeprom_manager.h"
@@ -66,28 +65,29 @@ void IncubationTask(void *pvParameters) {
 void UiTask(void *pvParameters) {
     for (;;) {
         ui->tick();
-        vTaskDelay(SCREEN_REFRESH_RATE / portTICK_PERIOD_MS);
+        vTaskDelay(UI_REFRESH_RATE / portTICK_PERIOD_MS);
     }
 }
 
 void setup() {
     delay(500);
-    Wire.begin(PIN_I2C_SDA, PIN_I2C_SCK);  // Define which pins are to be used for i2c
+    Wire.begin(UI_I2C_SDA_PIN,
+               UI_I2C_SCK_PIN);  // Define which pins are to be used for i2c
     Serial.begin(115200);
 #ifdef DEBUG
     Serial.setDebugOutput(true);
 #endif  // DEBUG
     eeprom_setup();
 
-    speaker = new Speaker(PIN_BUZZER);
-    heater = new Heater(PIN_HEATER);
+    speaker = new Speaker(UI_SPEAKER_PIN);
+    heater = new Heater(HEATER_PIN);
     humidifier = new Humidifier();
     routine = new IncubationRoutine();
     ui = new EggCubatorUI();
     display = new DisplayManager();
 
     display->draw_boot_screen("EGGCUBATOR");
-    delay(BOOTSCREEN_DURATION);
+    delay(UI_BOOTSCREEN_DURATION);
     // eeprom_reset();
 
     speaker->startup_sound();

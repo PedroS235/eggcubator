@@ -2,12 +2,12 @@
 
 #include "Arduino.h"
 #include "RotaryEncoder.h"
-#include "eggcubator/config/pins.h"
 #include "eggcubator/core/eeprom_manager.h"
 #include "eggcubator/core/heater.h"
 #include "eggcubator/egg.h"
 #include "eggcubator/extras/speaker.h"
 #include "eggcubator/incubation.h"
+#include "eggcubator/ui/language/language.h"
 #include "eggcubator/ui/menu.h"
 
 static Menu *curr_menu = NULL;
@@ -68,7 +68,7 @@ void encoder_ISR() { encoder->tick(); }
 
 bool is_button_pressed() {
     bool pressed = false;
-    if (digitalRead(PIN_ENCODER_SW) == LOW) {
+    if (digitalRead(UI_ENCODER_SW_PIN) == LOW) {
         if (millis() - last_button_press > 50) {
             speaker->button_click_sound();
             pressed = true;
@@ -95,12 +95,12 @@ void changing_value(menu_item_t *item, float min, float max, float value) {
 }
 
 EggCubatorUI::EggCubatorUI() : display() {
-    pinMode(PIN_ENCODER_SW, INPUT_PULLUP);
+    pinMode(UI_ENCODER_SW_PIN, INPUT_PULLUP);
     button_pressed = false;
     curr_menu = NULL;
 
-    attachInterrupt(digitalPinToInterrupt(PIN_ENCODER_CLK), encoder_ISR, CHANGE);
-    attachInterrupt(digitalPinToInterrupt(PIN_ENCODER_DT), encoder_ISR, CHANGE);
+    attachInterrupt(digitalPinToInterrupt(UI_ENCODER_CLK_PIN), encoder_ISR, CHANGE);
+    attachInterrupt(digitalPinToInterrupt(UI_ENCODER_DT_PIN), encoder_ISR, CHANGE);
 
     create_menus();
 }

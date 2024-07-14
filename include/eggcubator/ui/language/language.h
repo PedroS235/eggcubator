@@ -9,7 +9,7 @@
 
 #include <eggcubator/config/configuration.h>
 
-#ifdef LANGUAGE_PT
+#ifdef UI_LOCALE_PT
 #include "eggcubator/gui/language/language_pt.h"
 #else
 

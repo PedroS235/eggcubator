@@ -14,53 +14,67 @@
 
 #pragma once
 
-// TODO: Separate better the configuratio parameters
-
+#define __EGGCUBATOR_VERSION__ "0.1.0"
 #define DEBUG
 
-#define MIN_HEATER_TEMP -10.0
-#define MAX_HEATER_TEMP 40.0
+// Extras
+#define WATER_LEVEL_SENSOR_PIN 1
+#define FAN_PIN 10
 
-// Change this value to 0 to disable the boot screen
-#define BOOTSCREEN_DURATION 2000
-#define SCREEN_REFRESH_RATE 1 / 30  // 1/Hz
+// -----------------------------------------------------------------------------
+// |                           Heater Config Section                           |
+// -----------------------------------------------------------------------------
 
-// Set the language to be used by the controller (Change the 2 last letters)
-// Currently supported languages are:
-// + EN - English
-// + PT - Portuguese
-#define LANGUAGE_EN
+#define HEATER_PIN 8
+#define HEATER_SENSOR_PIN 7  // Thermistor
+#define HEATER_MIN_TEMP -10.0
+#define HEATER_MAX_TEMP 40.0
+#define HEATER_PID_KP 5.0
+#define HEATER_PID_KI 0.0
+#define HEATER_PID_KD 0.0
+#define HEATER_CONTROL_TYPE 0  // 0: PID, 1: BANGBANG
 
-// ------------------------
-// - Sensor Types Section -
-// ------------------------
+// -----------------------------------------------------------------------------
+// |                         Humidifier Config Section                         |
+// -----------------------------------------------------------------------------
 
-// DHT temperate & humidity sensor type
-// Possible values are DHT11 or DHT22
-#define TYPE_DHT DHT11
+#define HUMIDIFIER_PIN
+#define HUMIDIFIER_SENSOR_PIN 2
+#define HUMIDIFIER_SENSOR_TYPE DHT11
+#define HUMIDIFIER_SERVO_PIN 11
+#define HUMIDIFIER_PID_KP 5.0
+#define HUMIDIFIER_PID_KI 0.0
+#define HUMIDIFIER_PID_KD 0.0
 
-// Oled display type
-// To know what is your desplay type, you can check it in U8g2 repo,
-// found here: https://github.com/olikraus/u8g2/wiki/u8g2setupcpp
-#define TYPE_DISPLAY U8G2_SH1106_128X64_NONAME_1_HW_I2C
+// -----------------------------------------------------------------------------
+// |                            Motor Config Section                           |
+// -----------------------------------------------------------------------------
 
-// ---------------
-// - PID Section -
-// ---------------
+#define MOTOR_PIN 9
+#define MOTOR_ROTATION_DURATION 5  // in seconds
 
-// Temperature PID values
-#define PID_TEMP_KP 5.0
-#define PID_TEMP_KI 0.0
-#define PID_TEMP_KD 0.0
+// -----------------------------------------------------------------------------
+// |                             UI Config Section                             |
+// -----------------------------------------------------------------------------
 
-// Servo PID values
-#define PID_SERVO_KP 1.0
-#define PID_SERVO_KI 0.2
-#define PID_SERVO_KD 0.2
+/* To know what is your oled type, you can check it in U8g2 repo,
+ * found here: https://github.com/olikraus/u8g2/wiki/u8g2setupcpp
+ */
 
-// -----------------------------
-// - Egg Configuration Section -
-// -----------------------------
+#define UI_LOCALE_EN                 // use _PT for portuguese
+#define UI_BOOTSCREEN_DURATION 1000  // in milliseconds
+#define UI_REFRESH_RATE 1 / 30       // 1/Hz
+#define UI_OLED_TYPE U8G2_SH1106_128X64_NONAME_1_HW_I2C
+#define UI_I2C_SCK_PIN 12  // 22 for esp32 dev
+#define UI_I2C_SDA_PIN 13  // 21 for esp32 dev
+#define UI_SPEAKER_PIN 6
+#define UI_ENCODER_CLK_PIN 3
+#define UI_ENCODER_DT_PIN 4
+#define UI_ENCODER_SW_PIN 5
+
+// -----------------------------------------------------------------------------
+// |                              Egg Config Section                           |
+// -----------------------------------------------------------------------------
 
 // Chicken eggs
 #define EGG_CHICKEN_TYPE 0  // DO NOT CHANGE THIS VALUE
@@ -115,8 +129,6 @@
 #define EGG_PIGEON_STOP_MOTOR_ROTATION_PERIOD 3
 #define EGG_PIGEON_TARGET_TEMP 37.5
 #define EGG_PIGEON_TARGET_HUMD 57.0
-
-#define EGG_MOTOR_ROTATION_DURATION 5  // seconds
 
 #endif  // !CONFIGURATION_H
 

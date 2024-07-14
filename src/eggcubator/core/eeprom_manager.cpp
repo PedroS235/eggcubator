@@ -190,10 +190,10 @@ void eeprom_reset() {
     eeprom_write_goose_egg_config(&goose_egg);
     eeprom_write_pigeon_egg_config(&pigeon_egg);
 
-    eeprom_write_temp_pid({PID_TEMP_KP, PID_TEMP_KI, PID_TEMP_KD});
-    eeprom_write_servo_pid({PID_SERVO_KP, PID_SERVO_KI, PID_SERVO_KD});
+    eeprom_write_temp_pid({HEATER_PID_KP, HEATER_PID_KI, HEATER_PID_KD});
+    eeprom_write_servo_pid({HUMIDIFIER_PID_KP, HUMIDIFIER_PID_KI, HUMIDIFIER_PID_KD});
 
-    eeprom_write_egg_rotation_duration(EGG_MOTOR_ROTATION_DURATION);
+    eeprom_write_egg_rotation_duration(MOTOR_ROTATION_DURATION);
 }
 
 bool is_eeprom_mismatched() {
@@ -324,7 +324,7 @@ bool is_eeprom_mismatched() {
 
     // TODO: missing pid
 
-    if (eeprom_read_egg_rotation_duration() != EGG_MOTOR_ROTATION_DURATION) {
+    if (eeprom_read_egg_rotation_duration() != MOTOR_ROTATION_DURATION) {
         return true;
     }
 

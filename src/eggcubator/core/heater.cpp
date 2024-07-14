@@ -11,16 +11,16 @@
 
 Heater::Heater(uint8_t pin, float temp_correction_)
     : temp(NAN), temp_target(0), prev_temp_target(0), _pin(pin) {
-    pid_config = {.kp = PID_TEMP_KP,
-                  .ki = PID_TEMP_KI,
-                  .kd = PID_TEMP_KD,
+    pid_config = {.kp = HEATER_PID_KP,
+                  .ki = HEATER_PID_KI,
+                  .kd = HEATER_PID_KD,
                   .min_output = 0,
                   .max_output = 255,
                   .min_integral = 0,
                   .max_integral = 100};
 
     pid = new PidControl(&pid_config);
-    sensor = new Thermistor(PIN_THERMISTOR, 10000);
+    sensor = new Thermistor(HEATER_SENSOR_PIN, 10000);
 
     temp_correction = temp_correction_;
     pinMode(_pin, OUTPUT);
@@ -94,7 +94,7 @@ esp_err_t Heater::tick(float temp_target) {
         return ESP_FAIL;
     }
 
-    if (temp > MAX_HEATER_TEMP || temp < MIN_HEATER_TEMP) {
+    if (temp > HEATER_MAX_TEMP || temp < HEATER_MIN_TEMP) {
         log_w(
             "Temperature is not within allowed range. Shutting down heater "
             "for safety.");

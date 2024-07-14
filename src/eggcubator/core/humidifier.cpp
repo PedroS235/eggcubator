@@ -9,11 +9,11 @@ Humidifier::Humidifier(unsigned long humidity_reading_interval_,
       humidity_target(0),
       prev_humidity_target(0),
       last_humidity_reading_time(0) {
-    sensor = new DHT(PIN_DHT, TYPE_DHT);
+    sensor = new DHT(HUMIDIFIER_SENSOR_PIN, HUMIDIFIER_SENSOR_TYPE);
 
-    pid_config = {.kp = PID_SERVO_KP,
-                  .ki = PID_SERVO_KI,
-                  .kd = PID_SERVO_KD,
+    pid_config = {.kp = HUMIDIFIER_PID_KP,
+                  .ki = HUMIDIFIER_PID_KI,
+                  .kd = HUMIDIFIER_PID_KD,
                   .min_output = 0,
                   .max_output = 255,
                   .min_integral = 0,

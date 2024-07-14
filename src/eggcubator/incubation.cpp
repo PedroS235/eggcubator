@@ -23,7 +23,7 @@ void IncubationRoutine::before_incubation_state() {
     humd_target = curr_egg->target_humd;
 
     motor_controller.set_rotation_interval_hours(curr_egg->eggs_rotation_period);
-    motor_controller.set_rotation_duration_seconds(EGG_MOTOR_ROTATION_DURATION);
+    motor_controller.set_rotation_duration_seconds(MOTOR_ROTATION_DURATION);
 
     // TODO(PedroS): Before starting the incubation, wait for the temperature to settle
 
