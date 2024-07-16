@@ -1,7 +1,6 @@
 #include "eggcubator/core/humidifier.h"
 
 #include "eggcubator/config/configuration.h"
-#include "eggcubator/config/pins.h"
 
 Humidifier::Humidifier(unsigned long humidity_reading_interval_,
                        float humidity_correction_)
@@ -24,19 +23,6 @@ Humidifier::Humidifier(unsigned long humidity_reading_interval_,
     humidity_reading_interval = humidity_reading_interval_;
     humidity_correction = humidity_correction_;
     sensor->begin();
-}
-
-void Humidifier::update_humidity() {
-    unsigned long now = millis();
-    if (now - last_humidity_reading_time >= humidity_reading_interval) {
-        const float reading = sensor->readHumidity();
-        if (!isnan(reading)) {
-            humidity = reading + humidity_correction;
-        } else {
-            humidity = NAN;
-        }
-        last_humidity_reading_time = now;
-    }
 }
 
 float Humidifier::get_humidity() { return humidity; }
@@ -95,21 +81,27 @@ void Humidifier::update_pid_terms(pid_config_t new_config) {
 
 pid_config_t Humidifier::get_pid_terms() { return pid->get_pid_config(); }
 
-bool Humidifier::tick(float humidity_target) {
-    log_v("Ticking humidifier");
-    update_humidity();
+void Humidifier::task(void *pvParameters) {
+    for (;;) {
+        log_v("Ticking humidifier");
 
-    if (isnan(humidity)) {
-        return false;
+        const float reading = sensor->readHumidity();
+        if (!isnan(reading)) {
+            humidity = reading + humidity_correction;
+        } else {
+            humidity = NAN;
+        }
+
+        log_v("Humidity Reading %f", humidity);
+
+        // Reset PID in case the temperature target changes
+        if (prev_humidity_target != humidity_target) {
+            pid->reset();
+            prev_humidity_target = humidity_target;
+        }
+
+        // Calculate PID output for servo
+
+        vTaskDelay(2000 / portTICK_PERIOD_MS);  // Adjust the delay as needed
     }
-
-    // Reset PID in case the temperature target changes
-    if (prev_humidity_target != humidity_target) {
-        pid->reset();
-        prev_humidity_target = humidity_target;
-    }
-
-    // Calculate PID output for servo
-
-    return true;
 }

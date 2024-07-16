@@ -7,7 +7,6 @@
 #include "eggcubator/core/heater.h"
 
 #include "eggcubator/config/configuration.h"
-#include "eggcubator/config/pins.h"
 
 Heater::Heater(uint8_t pin, float temp_correction_)
     : temp(NAN), temp_target(0), prev_temp_target(0), _pin(pin) {
@@ -83,36 +82,38 @@ pid_config_t Heater::get_pid_terms() { return pid->get_pid_config(); }
 
 void Heater::_set_duty(uint8_t duty) { analogWrite(_pin, duty); }
 
-esp_err_t Heater::tick(float temp_target) {
-    // TODO: use set_temp_target instead of passing as a parameter to tick()
-    log_v("Ticking heater");
-    int ret = sensor->read(&temp);
+void Heater::task(void* pvParameters) {
+    for (;;) {
+        // TODO: use set_temp_target instead of passing as a parameter to tick()
+        log_v("Ticking heater");
+        int ret = sensor->read(&temp);
 
-    if (ret == ESP_FAIL) {
-        log_e("Thermistor reading not valid. Shutting down heater for safety.");
-        _set_duty(0);
-        return ESP_FAIL;
+        if (ret == ESP_FAIL) {
+            log_e("Thermistor reading not valid. Shutting down heater for safety.");
+            _set_duty(0);
+        }
+
+        log_v("Temperature Reading %f", temp);
+
+        if (temp > HEATER_MAX_TEMP || temp < HEATER_MIN_TEMP) {
+            log_w(
+                "Temperature is not within allowed range. Shutting down heater "
+                "for safety.");
+            _set_duty(0);
+        }
+
+        // Reset PID in case the temperature target changes
+        if (prev_temp_target != temp_target) {
+            pid->reset();
+            prev_temp_target = temp_target;
+        }
+        float heater_pwm = pid->compute(temp_target, temp);
+
+        // Control Heater power using PWM
+        _set_duty(heater_pwm);
+
+        vTaskDelay(100 / portTICK_PERIOD_MS);
     }
-
-    if (temp > HEATER_MAX_TEMP || temp < HEATER_MIN_TEMP) {
-        log_w(
-            "Temperature is not within allowed range. Shutting down heater "
-            "for safety.");
-        _set_duty(0);
-        return ESP_FAIL;
-    }
-
-    // Reset PID in case the temperature target changes
-    if (prev_temp_target != temp_target) {
-        pid->reset();
-        prev_temp_target = temp_target;
-    }
-    float heater_pwm = pid->compute(temp_target, temp);
-
-    // Control Heater power using PWM
-    _set_duty(heater_pwm);
-
-    return ESP_OK;
 }
 
 /*

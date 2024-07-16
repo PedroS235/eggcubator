@@ -85,7 +85,7 @@ class Heater {
      *
      * @return True if temperature sensor is working as expected, false otherwise
      */
-    esp_err_t tick(float temp_target);
+    void task(void* pvParameters);
 };
 
 #endif  // !HEATER_H

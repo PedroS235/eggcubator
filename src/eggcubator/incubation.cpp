@@ -70,26 +70,28 @@ egg_t IncubationRoutine::curr_egg_in_incubation() { return *curr_egg; }
 
 bool IncubationRoutine::in_incubation() { return curr_state == IN_INCUBATION_STATE; }
 
-bool IncubationRoutine::tick() {
-    log_v("Ticking incubation");
-    motor_controller.tick();
-    switch (curr_state) {
-        case IDDLE_INCUBATION_STATE:
-            break;
-        case BEFORE_INCUBATION_STATE:
-            before_incubation_state();
-            break;
-        case IN_INCUBATION_STATE:
-            curr_time.update();
-            in_incubation_state();
-            return true;
-        case AFTER_INCUBATION_STATE:
-            after_incubation_state();
-            break;
-        default:
-            break;
+void IncubationRoutine::task(void *pvParameters) {
+    for (;;) {
+        log_v("Ticking incubation");
+        motor_controller.tick();
+        switch (curr_state) {
+            case IDDLE_INCUBATION_STATE:
+                break;
+            case BEFORE_INCUBATION_STATE:
+                before_incubation_state();
+                break;
+            case IN_INCUBATION_STATE:
+                curr_time.update();
+                in_incubation_state();
+                break;
+            case AFTER_INCUBATION_STATE:
+                after_incubation_state();
+                break;
+            default:
+                break;
+        }
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
-    return false;
 }
 
 /*

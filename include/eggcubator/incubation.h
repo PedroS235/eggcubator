@@ -73,7 +73,7 @@ class IncubationRoutine {
      *
      * @returns true if incubation is in place, false otherwise
      */
-    bool tick();
+    void task(void *pvParameters);
 
     egg_t curr_egg_in_incubation();
 

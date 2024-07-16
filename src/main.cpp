@@ -8,7 +8,6 @@
 #include <Wire.h>
 
 #include "eggcubator/config/configuration.h"
-#include "eggcubator/config/pins.h"
 #include "eggcubator/core/eeprom_manager.h"
 #include "eggcubator/core/heater.h"
 #include "eggcubator/core/humidifier.h"
@@ -35,32 +34,11 @@ EggCubatorUI *ui;
 DisplayManager *display;
 Speaker *speaker;
 
-void HeaterTask(void *pvParameters) {
-    for (;;) {
-        heater->tick(temp_target);
-        curr_temp = heater->get_temp();
-        vTaskDelay(100 / portTICK_PERIOD_MS);
-    }
-}
+void HeaterTask(void *pvParameters) { heater->task(pvParameters); }
 
-void HumidifierTask(void *pvParameters) {
-    for (;;) {
-        humidifier->tick(humd_target);
-        curr_humd = humidifier->get_humidity();
-        // NOTE: The dht sensor only update every 2 seconds.
-        // Thus, running the humidifier every 2 seconcs should be enough.
-        // This needs to be checked if he pid does not get affected
-        vTaskDelay(2000 / portTICK_PERIOD_MS);  // Adjust the delay as needed
-    }
-}
+void HumidifierTask(void *pvParameters) { humidifier->task(pvParameters); }
 
-void IncubationTask(void *pvParameters) {
-    for (;;) {
-        routine->tick();
-        // NOTE: The incubation should work fine with seconds precision
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
-    }
-}
+void IncubationTask(void *pvParameters) { routine->task(pvParameters); }
 
 void UiTask(void *pvParameters) {
     for (;;) {
