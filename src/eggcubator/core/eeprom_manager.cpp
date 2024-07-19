@@ -8,7 +8,6 @@
 
 #include "EEPROM.h"
 #include "eggcubator/config/configuration.h"
-#include "eggcubator/egg.h"
 
 // TODO: Add to eeprom the temperature offset and humidity offset correction
 

@@ -7,9 +7,10 @@
 #include "eggcubator/core/heater.h"
 
 #include "eggcubator/config/configuration.h"
+#include "esp32-hal-log.h"
 
-Heater::Heater(uint8_t pin, float temp_correction_)
-    : temp(NAN), temp_target(0), prev_temp_target(0), _pin(pin) {
+Heater::Heater(float temp_correction_)
+    : temp(NAN), temp_target(0), prev_temp_target(0), _pin(HEATER_PIN) {
     pid_config = {.kp = HEATER_PID_KP,
                   .ki = HEATER_PID_KI,
                   .kd = HEATER_PID_KD,
@@ -26,6 +27,7 @@ Heater::Heater(uint8_t pin, float temp_correction_)
 }
 
 float Heater::get_temp() { return temp; }
+float Heater::get_target() { return temp_target; }
 
 void Heater::set_temp_correction(float new_correction) {
     log_v("Setting new temperature correction from %f to %f",
@@ -40,6 +42,8 @@ void Heater::set_temp_target(float new_target) {
     log_v("Setting new temperature target from %f to %f", temp_target, new_target);
     temp_target = new_target;
 }
+
+void Heater::turn_off() { temp_target = 0; }
 
 void Heater::update_pid_terms(float new_p, float new_i, float new_d) {
     log_v(
@@ -82,6 +86,10 @@ pid_config_t Heater::get_pid_terms() { return pid->get_pid_config(); }
 
 void Heater::_set_duty(uint8_t duty) { analogWrite(_pin, duty); }
 
+void Heater::log_stats() {
+    log_i("Heater: %f/%f°C | Power: %d", temp, temp_target, curr_power);
+}
+
 void Heater::task(void* pvParameters) {
     for (;;) {
         // TODO: use set_temp_target instead of passing as a parameter to tick()
@@ -107,10 +115,10 @@ void Heater::task(void* pvParameters) {
             pid->reset();
             prev_temp_target = temp_target;
         }
-        float heater_pwm = pid->compute(temp_target, temp);
+        curr_power = pid->compute(temp_target, temp);
 
         // Control Heater power using PWM
-        _set_duty(heater_pwm);
+        _set_duty(curr_power);
 
         vTaskDelay(100 / portTICK_PERIOD_MS);
     }

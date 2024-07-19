@@ -26,6 +26,7 @@ Humidifier::Humidifier(unsigned long humidity_reading_interval_,
 }
 
 float Humidifier::get_humidity() { return humidity; }
+float Humidifier::get_target() { return humidity_target; }
 
 void Humidifier::set_humidity_correction(float new_correction) {
     log_v("Setting new humidity correction from %f to %f",
@@ -80,6 +81,10 @@ void Humidifier::update_pid_terms(pid_config_t new_config) {
 }
 
 pid_config_t Humidifier::get_pid_terms() { return pid->get_pid_config(); }
+
+void Humidifier::log_stats() {
+    log_i("Humidifier: %f/%f°C", humidity, humidity_target);
+}
 
 void Humidifier::task(void *pvParameters) {
     for (;;) {
