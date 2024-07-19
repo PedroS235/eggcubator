@@ -17,6 +17,7 @@
 class Heater {
    private:
     float temp;
+    int curr_power;
     float temp_correction;
     float temp_target;
     float prev_temp_target;
@@ -38,7 +39,7 @@ class Heater {
      * @param temp_correction_ is a correction that will be applied to the
      * temperature reading to calibrate the sensor
      */
-    Heater(uint8_t pin, float temp_correction_ = 0);
+    Heater(float temp_correction_ = 0);
 
     /**
      * @brief Method to return the current temperature reading
@@ -46,6 +47,7 @@ class Heater {
      * @returns Last temperature reading
      */
     float get_temp();
+    float get_target();
 
     /**
      * @brief Method to update the current temperature correction
@@ -63,6 +65,7 @@ class Heater {
      *
      */
     void set_temp_target(float new_target);
+    void turn_off();
 
     /**
      * @brief Updates the current PID term values of the PID controller
@@ -74,6 +77,8 @@ class Heater {
     void update_pid_terms(float new_p, float new_i, float new_d);
     void update_pid_terms(pid_config_t new_terms);
     pid_config_t get_pid_terms();
+
+    void log_stats();
 
     /**
      * @brief Main method that should run continuously.
