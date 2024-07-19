@@ -184,25 +184,27 @@ void DisplayManager::draw_menu(const char* menu_items[],
 }
 
 void DisplayManager::draw_menu(Menu* menu) {
-    uint8_t selected_item = menu->selected_index();
-    uint8_t menu_size = menu->size();
-    menu_item_t* items = menu->menu_items();
+    uint8_t selected_item = menu->get_idx();
+    uint8_t menu_size = menu->get_size();
+    menu_item_t* items = menu->get_items();
     display->firstPage();
     do {
         int y = selected_item > 2 ? -22 * (selected_item - 2) : 0;
         for (int i = 0; i < menu_size; i++) {
             if (i == selected_item) {
-                if (items[i].is_value)
-                    draw_menu_item_cell(
-                        0, y, items[i].name, true, items[i].value, items[i].precision);
+                if (items[i].has_value)
+                    // draw_menu_item_cell(
+                    //     0, y, items[i].text, true, items[i].value);
+                    draw_menu_item_cell(0, y, items[i].text, true);
                 else
-                    draw_menu_item_cell(0, y, items[i].name, true);
+                    draw_menu_item_cell(0, y, items[i].text, true);
             } else {
-                if (items[i].is_value)
-                    draw_menu_item_cell(
-                        0, y, items[i].name, false, items[i].value, items[i].precision);
+                if (items[i].has_value)
+                    // draw_menu_item_cell(
+                    //     0, y, items[i].text, false, items[i].value);
+                    draw_menu_item_cell(0, y, items[i].text, false);
                 else
-                    draw_menu_item_cell(0, y, items[i].name, false);
+                    draw_menu_item_cell(0, y, items[i].text, false);
             }
             y += 22;
         }
