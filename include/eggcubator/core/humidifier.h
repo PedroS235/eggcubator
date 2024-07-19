@@ -37,6 +37,7 @@ class Humidifier {
      * @returns Last humidity reading
      */
     float get_humidity();
+    float get_target();
 
     /**
      * @brief Method to update the current humidity correction
@@ -65,6 +66,8 @@ class Humidifier {
     void update_pid_terms(float new_p, float new_i, float new_d);
     void update_pid_terms(pid_config_t new_terms);
     pid_config_t get_pid_terms();
+
+    void log_stats();
 
     /**
      * @brief Main method that should run continuously.
