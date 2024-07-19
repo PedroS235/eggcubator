@@ -11,77 +11,58 @@
 #include "eggcubator/core/eeprom_manager.h"
 #include "eggcubator/core/heater.h"
 #include "eggcubator/core/humidifier.h"
-#include "eggcubator/egg.h"
-#include "eggcubator/extras/speaker.h"
 #include "eggcubator/incubation.h"
-#include "eggcubator/ui/display_manager.h"
-#include "eggcubator/ui/eggcubator_ui.h"
+#include "eggcubator/ui/interface.h"
 #include "esp32-hal.h"
 
 // -----------------------------------------------------------------------------
 // -                             Global Variables                              -
 // -----------------------------------------------------------------------------
-float temp_target = 0;
-float humd_target = 0;
-float curr_temp = 0;
-float curr_humd = 0;
-egg_t selected_egg;
 
 Heater *heater;
 Humidifier *humidifier;
-IncubationRoutine *routine;
-EggCubatorUI *ui;
-DisplayManager *display;
-Speaker *speaker;
+IncubationRoutine *incubation;
+Interface *interface;
 
-void HeaterTask(void *pvParameters) { heater->task(pvParameters); }
-
-void HumidifierTask(void *pvParameters) { humidifier->task(pvParameters); }
-
-void IncubationTask(void *pvParameters) { routine->task(pvParameters); }
-
-void UiTask(void *pvParameters) {
-    for (;;) {
-        ui->tick();
-        vTaskDelay(UI_REFRESH_RATE / portTICK_PERIOD_MS);
-    }
-}
+void heater_task(void *pvParameters) { heater->task(pvParameters); }
+void humidifier_task(void *pvParameters) { humidifier->task(pvParameters); }
+void incubation_task(void *pvParameters) { incubation->task(pvParameters); }
+void interface_task(void *pvParameters) { interface->task(pvParameters); }
 
 void setup() {
     delay(500);
-    Wire.begin(UI_I2C_SDA_PIN,
-               UI_I2C_SCK_PIN);  // Define which pins are to be used for i2c
-    Serial.begin(115200);
+    Wire.begin(UI_I2C_SDA_PIN, UI_I2C_SCK_PIN);
+    Serial.begin(460800);
+
 #ifdef DEBUG
     Serial.setDebugOutput(true);
 #endif  // DEBUG
+
     eeprom_setup();
 
-    speaker = new Speaker(UI_SPEAKER_PIN);
-    heater = new Heater(HEATER_PIN);
+    heater = new Heater();
     humidifier = new Humidifier();
-    routine = new IncubationRoutine();
-    ui = new EggCubatorUI();
-    display = new DisplayManager();
+    incubation = new IncubationRoutine(heater, humidifier);
+    interface = new Interface(heater, humidifier, incubation);
 
-    display->draw_boot_screen("EGGCUBATOR");
-    delay(UI_BOOTSCREEN_DURATION);
-    // eeprom_reset();
+    interface->init();
 
-    speaker->startup_sound();
-
-    log_v("Create Heater Task");
-    xTaskCreate(HeaterTask, "HeaterTask", 5000, NULL, 1, NULL);
-    log_v("Create Humidifer Task");
-    xTaskCreate(HumidifierTask, "HumidifierTask", 5000, NULL, 3, NULL);
-    log_v("Create incubation Task");
-    xTaskCreate(IncubationTask, "RoutineTask", 5000, NULL, 1, NULL);
-    log_v("Create UI Task");
-    xTaskCreate(UiTask, "UITask", 10000, NULL, 2, NULL);
+    log_d("Create Heater Task");
+    xTaskCreate(heater_task, "HeaterTask", 5000, NULL, 1, NULL);
+    log_d("Create Humidifer Task");
+    xTaskCreate(humidifier_task, "HumidifierTask", 5000, NULL, 3, NULL);
+    log_d("Create incubation Task");
+    xTaskCreate(incubation_task, "RoutineTask", 5000, NULL, 1, NULL);
+    log_d("Create UI Task");
+    xTaskCreate(interface_task, "UITask", 10000, NULL, 2, NULL);
 }
 
 void loop() {
     // Handled by FreeRTOS tasks.
+    heater->log_stats();
+    humidifier->log_stats();
+    incubation->log_stats();
+    vTaskDelay(3000 / portTICK_PERIOD_MS);
 }
 
 /*
