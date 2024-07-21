@@ -68,7 +68,6 @@ class DisplayManager {
      * @param menu_size: the total number of menus
      * @param selected_item: index of the selected item (0-menu_size)
      */
-    void draw_menu(const char* menu_items[], uint8_t menu_size, uint8_t selected_item);
     void draw_menu(Menu* menu);
 
     void draw_number_change(const char* title, float number);
