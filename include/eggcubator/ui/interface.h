@@ -19,7 +19,6 @@ class Interface {
     DisplayManager _display;
     MenuStateMachine _menuStateMachine;
     static Interface* _instance;  // Static instance pointer
-    Menu* _curr_menu = nullptr;
     bool _button_has_been_pressed;
 
     void handle_encoder_events(menu_event_e event);

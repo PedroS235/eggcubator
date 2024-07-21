@@ -67,7 +67,7 @@ void Interface::task(void* pvParameters) {
 
         handle_encoder_button_event();
 
-        _curr_menu = _menuStateMachine.get_curr_menu();
+        Menu* _curr_menu = _menuStateMachine.get_curr_menu();
 
         if (_curr_menu == nullptr) {
             if (_incubation->in_incubation()) {
