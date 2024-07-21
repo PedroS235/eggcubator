@@ -53,8 +53,8 @@ void setup() {
     xTaskCreate(humidifier_task, "HumidifierTask", 5000, NULL, 3, NULL);
     log_d("Create incubation Task");
     xTaskCreate(incubation_task, "RoutineTask", 5000, NULL, 1, NULL);
-    log_d("Create UI Task");
-    xTaskCreate(interface_task, "UITask", 10000, NULL, 2, NULL);
+    log_d("Create Interface Task");
+    xTaskCreate(interface_task, "InterfaceTask", 10000, NULL, 2, NULL);
 }
 
 void loop() {
