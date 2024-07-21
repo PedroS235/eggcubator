@@ -64,13 +64,9 @@ class DisplayManager {
     /**
      * @brief Draws a menu based on the items passed as a parameter. It also
      * highlights the selected item.
-     * @param menu_items: menu items to be displayed
-     * @param menu_size: the total number of menus
-     * @param selected_item: index of the selected item (0-menu_size)
      */
     void draw_menu(Menu* menu);
 
-    void draw_number_change(const char* title, float number);
     void draw_boot_screen(const char* text);
 };
 

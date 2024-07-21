@@ -198,20 +198,6 @@ void DisplayManager::draw_menu(Menu* menu) {
     } while (display->nextPage());
 }
 
-void DisplayManager::draw_number_change(const char* title, float number) {
-    display->firstPage();
-    do {
-        draw_title(title);
-        int x, y;
-        x = display->getWidth() / 2 - 10;
-        y = display->getMaxCharHeight() + 1 +
-            (display->getHeight() - display->getMaxCharHeight() + 1) / 2 -
-            display->getMaxCharHeight() / 2;
-        display->setCursor(x, y);
-        display->print(number, 1);
-    } while (display->nextPage());
-}
-
 void DisplayManager::draw_boot_screen(const char* text) {
     display->clearBuffer();
     display->setFont(u8g2_font_tenthinnerguys_tr);

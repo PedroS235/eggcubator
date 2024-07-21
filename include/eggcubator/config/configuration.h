@@ -64,9 +64,10 @@
 #define UI_LOCALE_EN                 // use _PT for portuguese
 #define UI_BOOTSCREEN_DURATION 1000  // in milliseconds
 #define UI_REFRESH_RATE 1 / 30       // 1/Hz
-#define UI_OLED_TYPE U8G2_SH1106_128X64_NONAME_F_HW_I2C
-#define UI_I2C_SCK_PIN 12  // 22 for esp32 dev
-#define UI_I2C_SDA_PIN 13  // 21 for esp32 dev
+#define UI_OLED_TYPE \
+    U8G2_SH1106_128X64_NONAME_F_HW_I2C  // Make sure to use full frame buffer
+#define UI_I2C_SCK_PIN 12               // 22 for esp32 dev
+#define UI_I2C_SDA_PIN 13               // 21 for esp32 dev
 #define UI_SPEAKER_PIN 6
 #define UI_ENCODER_CLK_PIN 3
 #define UI_ENCODER_DT_PIN 4
