@@ -193,16 +193,16 @@ void DisplayManager::draw_menu(Menu* menu) {
         for (int i = 0; i < menu_size; i++) {
             if (i == selected_item) {
                 if (items[i].has_value)
-                    // draw_menu_item_cell(
-                    //     0, y, items[i].text, true, items[i].value);
-                    draw_menu_item_cell(0, y, items[i].text, true);
+                    draw_menu_item_cell(
+                        0, y, items[i].text, true, items[i].value, items[i].precision);
                 else
                     draw_menu_item_cell(0, y, items[i].text, true);
             } else {
                 if (items[i].has_value)
                     // draw_menu_item_cell(
                     //     0, y, items[i].text, false, items[i].value);
-                    draw_menu_item_cell(0, y, items[i].text, false);
+                    draw_menu_item_cell(
+                        0, y, items[i].text, false, items[i].value, items[i].precision);
                 else
                     draw_menu_item_cell(0, y, items[i].text, false);
             }

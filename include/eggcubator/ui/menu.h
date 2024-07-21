@@ -41,6 +41,7 @@ class MenuStateMachine {
    public:
     MenuStateMachine(IncubationRoutine *incubation);
     Menu *get_curr_menu();
+    void set_curr_menu(Menu *new_menu);
     void handle_event(menu_event_e event);
     void handle_main_screen_event(menu_event_e event);
     void handle_incubation_screen_event(menu_event_e event);
