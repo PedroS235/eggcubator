@@ -63,6 +63,14 @@ MenuStateMachine::MenuStateMachine(IncubationRoutine *incubation)
 
 Menu *MenuStateMachine::get_curr_menu() { return _curr_menu; }
 
+void MenuStateMachine::set_curr_menu(Menu *new_menu) {
+    if (_curr_menu != nullptr) {
+        delete _curr_menu;
+        _curr_menu = nullptr;
+    }
+    _curr_menu = new_menu;
+}
+
 void MenuStateMachine::handle_event(menu_event_e event) {
     // log_event(event);
     switch (_curr_state) {
@@ -106,7 +114,7 @@ void MenuStateMachine::handle_main_screen_event(menu_event_e event) {
         case CLICK:
             log_state_transition(MAIN_SCREEN, MAIN_MENU);
             _curr_state = MAIN_MENU;
-            _curr_menu = MenuFactory::createMainMenu();
+            set_curr_menu(MenuFactory::createMainMenu());
             break;
         default:
             log_w("MAIN_SCREEN does not have an event %s. Only CLICK is valid.",
@@ -119,7 +127,7 @@ void MenuStateMachine::handle_incubation_screen_event(menu_event_e event) {
         case CLICK:
             log_state_transition(INCUBATION_SCREEN, IN_INCUBATION_MENU);
             _curr_state = IN_INCUBATION_MENU;
-            _curr_menu = MenuFactory::createInIncubationMenu();
+            set_curr_menu(MenuFactory::createInIncubationMenu());
             break;
         default:
             log_w("MAIN_SCREEN does not have an event %s. Only CLICK is valid.",
@@ -144,20 +152,17 @@ void MenuStateMachine::handle_main_menu_event(menu_event_e event) {
                 case 1:
                     log_state_transition(MAIN_MENU, INCUBATION_MENU);
                     _curr_state = INCUBATION_MENU;
-                    delete (_curr_menu);
-                    _curr_menu = MenuFactory::createIncubationMenu();
+                    set_curr_menu(MenuFactory::createIncubationMenu());
                     break;
                 case 2:
                     log_state_transition(MAIN_MENU, PREHEAT_MENU);
                     _curr_state = PREHEAT_MENU;
-                    delete (_curr_menu);
-                    _curr_menu = MenuFactory::createPreheatMenu();
+                    set_curr_menu(MenuFactory::createPreheatMenu());
                     break;
                 case 3:
                     log_state_transition(MAIN_MENU, SETTINGS_MENU);
                     _curr_state = SETTINGS_MENU;
-                    delete (_curr_menu);
-                    _curr_menu = MenuFactory::createSettingsMenu();
+                    set_curr_menu(MenuFactory::createSettingsMenu());
                     break;
             }
             break;
@@ -176,56 +181,45 @@ void MenuStateMachine::handle_incubation_menu_event(menu_event_e event) {
                 case 0:  // Go Back
                     log_state_transition(INCUBATION_MENU, MAIN_MENU);
                     _curr_state = MAIN_MENU;
-                    delete (_curr_menu);
-                    _curr_menu = MenuFactory::createMainMenu();
+                    set_curr_menu(MenuFactory::createMainMenu());
                     break;
-                    // TODO: Start incubation
                 case 1:  // Chicken
                     log_state_transition(INCUBATION_MENU, INCUBATION_SCREEN);
                     _curr_state = INCUBATION_SCREEN;
-                    delete (_curr_menu);
-                    _curr_menu = nullptr;
+                    set_curr_menu(nullptr);
 
                     _incubation->start_incubation(EggFactory::createChickenEgg());
                     break;
                 case 2:  // Quail
                     log_state_transition(INCUBATION_MENU, INCUBATION_SCREEN);
                     _curr_state = INCUBATION_SCREEN;
-                    delete (_curr_menu);
-                    _curr_menu = nullptr;
+                    set_curr_menu(nullptr);
 
                     _incubation->start_incubation(EggFactory::createQuailEgg());
                     break;
                 case 3:  // Duck
                     log_state_transition(INCUBATION_MENU, INCUBATION_SCREEN);
                     _curr_state = INCUBATION_SCREEN;
-                    delete (_curr_menu);
-                    _curr_menu = nullptr;
+                    set_curr_menu(nullptr);
 
                     _incubation->start_incubation(EggFactory::createDuckEgg());
                     break;
                 case 4:  // Turkey
                     log_state_transition(INCUBATION_MENU, INCUBATION_SCREEN);
                     _curr_state = INCUBATION_SCREEN;
-                    delete (_curr_menu);
-
                     _incubation->start_incubation(EggFactory::createTurkeyEgg());
-                    _curr_menu = nullptr;
+                    set_curr_menu(nullptr);
                     break;
                 case 5:  // Goose
                     log_state_transition(INCUBATION_MENU, INCUBATION_SCREEN);
                     _curr_state = INCUBATION_SCREEN;
-                    delete (_curr_menu);
-                    _curr_menu = nullptr;
-
+                    set_curr_menu(nullptr);
                     _incubation->start_incubation(EggFactory::createGooseEgg());
                     break;
                 case 6:  // Pigeon
                     log_state_transition(INCUBATION_MENU, INCUBATION_SCREEN);
                     _curr_state = INCUBATION_SCREEN;
-                    delete (_curr_menu);
-                    _curr_menu = nullptr;
-
+                    set_curr_menu(nullptr);
                     _incubation->start_incubation(EggFactory::createPigeonEgg());
                     break;
             }
@@ -245,12 +239,12 @@ void MenuStateMachine::handle_preheat_menu_event(menu_event_e event) {
                 case 0:  // Go Back
                     log_state_transition(PREHEAT_MENU, MAIN_MENU);
                     _curr_state = MAIN_MENU;
-                    delete (_curr_menu);
-                    _curr_menu = MenuFactory::createMainMenu();
+                    set_curr_menu(MenuFactory::createMainMenu());
                     break;
                 case 1:  // Manual Temperature
                     log_state_transition(PREHEAT_MENU, CHANGING_VALUE);
                     _curr_state = CHANGING_VALUE;
+                    _curr_menu->get_selected_item()->precision++;
                     _state_before_changing_value = PREHEAT_MENU;
                     // TODO: curr menu
                     break;
@@ -258,38 +252,32 @@ void MenuStateMachine::handle_preheat_menu_event(menu_event_e event) {
                 case 2:  // Chicken
                     log_state_transition(PREHEAT_MENU, MAIN_SCREEN);
                     _curr_state = MAIN_SCREEN;
-                    delete (_curr_menu);
-                    _curr_menu = nullptr;
+                    set_curr_menu(nullptr);
                     break;
                 case 3:  // Quail
                     log_state_transition(PREHEAT_MENU, MAIN_SCREEN);
                     _curr_state = MAIN_SCREEN;
-                    delete (_curr_menu);
-                    _curr_menu = nullptr;
+                    set_curr_menu(nullptr);
                     break;
                 case 4:  // Duck
                     log_state_transition(PREHEAT_MENU, MAIN_SCREEN);
                     _curr_state = MAIN_SCREEN;
-                    delete (_curr_menu);
-                    _curr_menu = nullptr;
+                    set_curr_menu(nullptr);
                     break;
                 case 5:  // Turkey
                     log_state_transition(PREHEAT_MENU, MAIN_SCREEN);
                     _curr_state = MAIN_SCREEN;
-                    delete (_curr_menu);
-                    _curr_menu = nullptr;
+                    set_curr_menu(nullptr);
                     break;
                 case 6:  // Goose
                     log_state_transition(PREHEAT_MENU, MAIN_SCREEN);
                     _curr_state = MAIN_SCREEN;
-                    delete (_curr_menu);
-                    _curr_menu = nullptr;
+                    set_curr_menu(nullptr);
                     break;
                 case 7:  // Pigeon
                     log_state_transition(PREHEAT_MENU, MAIN_SCREEN);
                     _curr_state = MAIN_SCREEN;
-                    delete (_curr_menu);
-                    _curr_menu = nullptr;
+                    set_curr_menu(nullptr);
                     break;
             }
             break;
@@ -308,24 +296,22 @@ void MenuStateMachine::handle_settings_menu_event(menu_event_e event) {
                 case 0:  // Go Back
                     log_state_transition(SETTINGS_MENU, MAIN_MENU);
                     _curr_state = MAIN_MENU;
-                    delete (_curr_menu);
-                    _curr_menu = MenuFactory::createMainMenu();
+                    set_curr_menu(MenuFactory::createMainMenu());
                     break;
                 case 1:
                     log_state_transition(SETTINGS_MENU, HEATER_MENU);
                     _curr_state = HEATER_MENU;
-                    delete (_curr_menu);
-                    _curr_menu = MenuFactory::createHeaterMenu();
+                    set_curr_menu(MenuFactory::createHeaterMenu());
                     break;
                 case 2:
                     log_state_transition(SETTINGS_MENU, HUMIDIFIER_MENU);
                     _curr_state = HUMIDIFIER_MENU;
-                    delete (_curr_menu);
                     _curr_menu = MenuFactory::createHumidifierMenu();
-                    break;
+                    ;
                 case 3:
                     log_state_transition(SETTINGS_MENU, CHANGING_VALUE);
                     _curr_state = CHANGING_VALUE;
+                    _curr_menu->get_selected_item()->precision++;
                     _state_before_changing_value = SETTINGS_MENU;
                     break;
                 case 4:  // Save Settings into eeprom
@@ -349,27 +335,30 @@ void MenuStateMachine::handle_heater_menu_event(menu_event_e event) {
                 case 0:  // Go Back
                     log_state_transition(HEATER_MENU, SETTINGS_MENU);
                     _curr_state = SETTINGS_MENU;
-                    delete (_curr_menu);
-                    _curr_menu = MenuFactory::createSettingsMenu();
+                    set_curr_menu(MenuFactory::createSettingsMenu());
                     break;
                 case 1:  // kp
                     log_state_transition(HEATER_MENU, CHANGING_VALUE);
                     _curr_state = CHANGING_VALUE;
+                    _curr_menu->get_selected_item()->precision++;
                     _state_before_changing_value = HEATER_MENU;
                     break;
                 case 2:  // ki
                     log_state_transition(HEATER_MENU, CHANGING_VALUE);
                     _curr_state = CHANGING_VALUE;
+                    _curr_menu->get_selected_item()->precision++;
                     _state_before_changing_value = HEATER_MENU;
                     break;
                 case 3:  // kd
                     log_state_transition(HEATER_MENU, CHANGING_VALUE);
                     _curr_state = CHANGING_VALUE;
+                    _curr_menu->get_selected_item()->precision++;
                     _state_before_changing_value = HEATER_MENU;
                     break;
                 case 4:  // Temp offset
                     log_state_transition(HEATER_MENU, CHANGING_VALUE);
                     _curr_state = CHANGING_VALUE;
+                    _curr_menu->get_selected_item()->precision++;
                     _state_before_changing_value = HEATER_MENU;
                     break;
             }
@@ -389,27 +378,30 @@ void MenuStateMachine::handle_humidifier_menu_event(menu_event_e event) {
                 case 0:  // Go Back
                     log_state_transition(HUMIDIFIER_MENU, SETTINGS_MENU);
                     _curr_state = SETTINGS_MENU;
-                    delete (_curr_menu);
-                    _curr_menu = MenuFactory::createSettingsMenu();
+                    set_curr_menu(MenuFactory::createSettingsMenu());
                     break;
                 case 1:  // kp
                     log_state_transition(HUMIDIFIER_MENU, CHANGING_VALUE);
                     _curr_state = CHANGING_VALUE;
+                    _curr_menu->get_selected_item()->precision++;
                     _state_before_changing_value = HUMIDIFIER_MENU;
                     break;
                 case 2:  // ki
                     log_state_transition(HUMIDIFIER_MENU, CHANGING_VALUE);
                     _curr_state = CHANGING_VALUE;
+                    _curr_menu->get_selected_item()->precision++;
                     _state_before_changing_value = HUMIDIFIER_MENU;
                     break;
                 case 3:  // kd
                     log_state_transition(HUMIDIFIER_MENU, CHANGING_VALUE);
                     _curr_state = CHANGING_VALUE;
+                    _curr_menu->get_selected_item()->precision++;
                     _state_before_changing_value = HUMIDIFIER_MENU;
                     break;
                 case 4:  // Temp offset
                     log_state_transition(HUMIDIFIER_MENU, CHANGING_VALUE);
                     _curr_state = CHANGING_VALUE;
+                    _curr_menu->get_selected_item()->precision++;
                     _state_before_changing_value = HUMIDIFIER_MENU;
                     break;
             }
@@ -430,20 +422,17 @@ void MenuStateMachine::handle_in_incubation_menu_event(menu_event_e event) {
                 case 0:  // Go Back
                     log_state_transition(IN_INCUBATION_MENU, INCUBATION_SCREEN);
                     _curr_state = INCUBATION_SCREEN;
-                    delete (_curr_menu);
-                    _curr_menu = nullptr;
+                    set_curr_menu(nullptr);
                     break;
                 case 1:  // Tune
                     log_state_transition(IN_INCUBATION_MENU, IN_INCUBATION_TUNE_MENU);
                     _curr_state = IN_INCUBATION_TUNE_MENU;
-                    delete (_curr_menu);
-                    _curr_menu = MenuFactory::createInIncubationTuneMenu();
+                    set_curr_menu(MenuFactory::createInIncubationTuneMenu());
                     break;
                 case 2:  // Stop Incubation
                     log_state_transition(IN_INCUBATION_MENU, MAIN_SCREEN);
                     _curr_state = MAIN_SCREEN;
-                    delete (_curr_menu);
-                    _curr_menu = nullptr;
+                    set_curr_menu(nullptr);
                     _incubation->stop_incubation();
                     break;
             }
@@ -464,22 +453,24 @@ void MenuStateMachine::handle_in_incubation_tune_menu_event(menu_event_e event) 
                 case 0:  // Go Back
                     log_state_transition(IN_INCUBATION_TUNE_MENU, IN_INCUBATION_MENU);
                     _curr_state = IN_INCUBATION_MENU;
-                    delete (_curr_menu);
-                    _curr_menu = MenuFactory::createIncubationMenu();
+                    set_curr_menu(MenuFactory::createIncubationMenu());
                     break;
                 case 1:  // Target Temperature
                     log_state_transition(IN_INCUBATION_TUNE_MENU, CHANGING_VALUE);
                     _curr_state = CHANGING_VALUE;
+                    _curr_menu->get_selected_item()->precision++;
                     _state_before_changing_value = IN_INCUBATION_TUNE_MENU;
                     break;
                 case 2:  // Target Humidity
                     log_state_transition(IN_INCUBATION_TUNE_MENU, CHANGING_VALUE);
                     _curr_state = CHANGING_VALUE;
+                    _curr_menu->get_selected_item()->precision++;
                     _state_before_changing_value = IN_INCUBATION_TUNE_MENU;
                     break;
                 case 3:  // Motor Rotation
                     log_state_transition(IN_INCUBATION_TUNE_MENU, CHANGING_VALUE);
                     _curr_state = CHANGING_VALUE;
+                    _curr_menu->get_selected_item()->precision++;
                     _state_before_changing_value = IN_INCUBATION_TUNE_MENU;
                     break;
             }
@@ -491,13 +482,40 @@ void MenuStateMachine::handle_in_incubation_tune_menu_event(menu_event_e event) 
 }
 
 void MenuStateMachine::handle_changing_value_event(menu_event_e event) {
+    menu_item_t *item = _curr_menu->get_selected_item();
     switch (event) {
         case MOVE_UP:
+            switch (item->precision) {
+                case 1:
+                    item->value += 1.0;
+                    log_i("Item value %f", item->value);
+                    break;
+                case 2:
+                    item->value += 0.1;
+                    break;
+            }
+
             break;
-        case CLICK:
-            _curr_state = _state_before_changing_value;
-            break;
+        case CLICK: {
+            item->precision = (item->precision + 1) % 3;
+
+            if (item->precision == 0) {
+                log_state_transition(CHANGING_VALUE, _state_before_changing_value);
+                _curr_state = _state_before_changing_value;
+            }
+        }
+
+        break;
         case MOVE_DOWN:
+            switch (item->precision) {
+                case 1:
+                    item->value -= 1.0;
+                    log_i("Item value %f", item->value);
+                    break;
+                case 2:
+                    item->value -= 0.1;
+                    break;
+            }
             break;
     }
-}
+};
