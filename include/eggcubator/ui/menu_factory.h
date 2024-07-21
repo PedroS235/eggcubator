@@ -5,9 +5,28 @@
 
 typedef struct {
     const char* text;
-    bool has_value;
+} text_item_t;
+
+typedef struct {
+    const char* text;
     double value;
     int precision;
+} value_item_t;
+
+typedef struct {
+    const char* text;
+    bool checked;
+} checkbox_item_t;
+
+typedef enum { TEXT_ITEM, VALUE_ITEM, CHECKBOX_ITEM } menu_item_type_e;
+
+typedef struct {
+    menu_item_type_e type;
+    union {
+        text_item_t text_item;
+        value_item_t value_item;
+        checkbox_item_t checkbox_item;
+    } item;
 } menu_item_t;
 
 class Menu {
@@ -42,109 +61,92 @@ class MenuFactory {
    public:
     static Menu* createMainMenu() {
         static menu_item_t mainMenuItems[] = {
-            {.text = GO_BACK_STR, .has_value = false, .value = 0, .precision = 0},
-            {.text = INCUBATE_STR, .has_value = false, .value = 0, .precision = 0},
-            {.text = PREHEAT_STR, .has_value = false, .value = 0, .precision = 0},
-            {.text = SETTINGS_STR, .has_value = false, .value = 0, .precision = 0},
+            {TEXT_ITEM, {.text_item = {GO_BACK_STR}}},
+            {TEXT_ITEM, {.text_item = {INCUBATE_STR}}},
+            {TEXT_ITEM, {.text_item = {PREHEAT_STR}}},
+            {TEXT_ITEM, {.text_item = {SETTINGS_STR}}},
         };
         return new Menu(mainMenuItems, 4);
     }
+
     static Menu* createIncubationMenu() {
         static menu_item_t incubationMenuItems[] = {
-            {.text = GO_BACK_STR, .has_value = false, .value = 0, .precision = 0},
-            {.text = CHICKEN_STR, .has_value = false, .value = 0, .precision = 0},
-            {.text = QUAIL_STR, .has_value = false, .value = 0, .precision = 0},
-            {.text = DUCK_STR, .has_value = false, .value = 0, .precision = 0},
-            {.text = TURKEY_STR, .has_value = false, .value = 0, .precision = 0},
-            {.text = GOOSE_STR, .has_value = false, .value = 0, .precision = 0},
-            {.text = PIGEON_STR, .has_value = false, .value = 0, .precision = 0},
+            {TEXT_ITEM, {.text_item = {GO_BACK_STR}}},
+            {TEXT_ITEM, {.text_item = {CHICKEN_STR}}},
+            {TEXT_ITEM, {.text_item = {QUAIL_STR}}},
+            {TEXT_ITEM, {.text_item = {DUCK_STR}}},
+            {TEXT_ITEM, {.text_item = {TURKEY_STR}}},
+            {TEXT_ITEM, {.text_item = {GOOSE_STR}}},
+            {TEXT_ITEM, {.text_item = {PIGEON_STR}}},
         };
         return new Menu(incubationMenuItems, 7);
     }
 
     static Menu* createPreheatMenu() {
         static menu_item_t preheatMenuItems[] = {
-            {.text = GO_BACK_STR, .has_value = false, .value = 0, .precision = 0},
-            {.text = MANUAL_STR, .has_value = true, .value = 0.0, .precision = 0},
-            {.text = CHICKEN_STR, .has_value = false, .value = 0, .precision = 0},
-            {.text = QUAIL_STR, .has_value = false, .value = 0, .precision = 0},
-            {.text = DUCK_STR, .has_value = false, .value = 0, .precision = 0},
-            {.text = TURKEY_STR, .has_value = false, .value = 0, .precision = 0},
-            {.text = GOOSE_STR, .has_value = false, .value = 0, .precision = 0},
-            {.text = PIGEON_STR, .has_value = false, .value = 0, .precision = 0},
+            {TEXT_ITEM, {.text_item = {GO_BACK_STR}}},
+            {VALUE_ITEM, {.value_item = {MANUAL_STR, 0.0, 0}}},
+            {TEXT_ITEM, {.text_item = {CHICKEN_STR}}},
+            {TEXT_ITEM, {.text_item = {QUAIL_STR}}},
+            {TEXT_ITEM, {.text_item = {DUCK_STR}}},
+            {TEXT_ITEM, {.text_item = {TURKEY_STR}}},
+            {TEXT_ITEM, {.text_item = {GOOSE_STR}}},
+            {TEXT_ITEM, {.text_item = {PIGEON_STR}}},
         };
         return new Menu(preheatMenuItems, 8);
     }
 
     static Menu* createSettingsMenu() {
         static menu_item_t settingsMenuItems[] = {
-            {.text = GO_BACK_STR, .has_value = false, .value = 0, .precision = 0},
-            {.text = HEATER_STR, .has_value = false, .value = 0, .precision = 0},
-            {.text = HUMIDIFIER_STR, .has_value = false, .value = 0, .precision = 0},
-            {.text = MOTOR_ROTATION_STR,
-             .has_value = true,
-             .value = 0.0,
-             .precision = 0},
-            {.text = SAVE_STR, .has_value = false, .value = 0, .precision = 0},
-            {.text = RESET_STR, .has_value = false, .value = 0, .precision = 0},
+            {TEXT_ITEM, {.text_item = {GO_BACK_STR}}},
+            {TEXT_ITEM, {.text_item = {HEATER_STR}}},
+            {TEXT_ITEM, {.text_item = {HUMIDIFIER_STR}}},
+            {VALUE_ITEM, {.value_item = {MOTOR_ROTATION_STR, 0.0, 0}}},
+            {TEXT_ITEM, {.text_item = {SAVE_STR}}},
+            {TEXT_ITEM, {.text_item = {RESET_STR}}},
         };
         return new Menu(settingsMenuItems, 6);
     }
 
     static Menu* createHeaterMenu() {
         static menu_item_t heaterMenuItems[] = {
-            {.text = GO_BACK_STR, .has_value = false, .value = 0, .precision = 0},
-            {.text = "kp", .has_value = true, .value = 0, .precision = 0},
-            {.text = "ki", .has_value = true, .value = 0, .precision = 0},
-            {.text = "kd", .has_value = true, .value = 0.0, .precision = 0},
-            {.text = TEMPERATURE_OFFSET_STR,
-             .has_value = true,
-             .value = 0,
-             .precision = 0},
+            {TEXT_ITEM, {.text_item = {GO_BACK_STR}}},
+            {VALUE_ITEM, {.value_item = {"kp", 0.0, 0}}},
+            {VALUE_ITEM, {.value_item = {"ki", 0.0, 0}}},
+            {VALUE_ITEM, {.value_item = {"kd", 0.0, 0}}},
+            {VALUE_ITEM, {.value_item = {TEMPERATURE_OFFSET_STR, 0.0, 0}}},
         };
         return new Menu(heaterMenuItems, 5);
     }
 
     static Menu* createHumidifierMenu() {
-        static menu_item_t HumidifierMenuItems[] = {
-            {.text = GO_BACK_STR, .has_value = false, .value = 0, .precision = 0},
-            {.text = "kp", .has_value = true, .value = 0, .precision = 0},
-            {.text = "ki", .has_value = true, .value = 0, .precision = 0},
-            {.text = "kd", .has_value = true, .value = 0.0, .precision = 0},
-            {.text = HUMIDITY_OFFSET_STR,
-             .has_value = true,
-             .value = 0,
-             .precision = 0},
+        static menu_item_t humidifierMenuItems[] = {
+            {TEXT_ITEM, {.text_item = {GO_BACK_STR}}},
+            {VALUE_ITEM, {.value_item = {"kp", 0.0, 0}}},
+            {VALUE_ITEM, {.value_item = {"ki", 0.0, 0}}},
+            {VALUE_ITEM, {.value_item = {"kd", 0.0, 0}}},
+            {VALUE_ITEM, {.value_item = {HUMIDITY_OFFSET_STR, 0.0, 0}}},
         };
-        return new Menu(HumidifierMenuItems, 5);
+        return new Menu(humidifierMenuItems, 5);
     }
 
     static Menu* createInIncubationMenu() {
-        static menu_item_t InIncubationMenuItems[] = {
-            {.text = GO_BACK_STR, .has_value = false, .value = 0, .precision = 0},
-            {.text = TUNE_STR, .has_value = false, .value = 0, .precision = 0},
-            {.text = STOP_INCUBATION_STR,
-             .has_value = false,
-             .value = 0,
-             .precision = 0},
+        static menu_item_t inIncubationMenuItems[] = {
+            {TEXT_ITEM, {.text_item = {GO_BACK_STR}}},
+            {TEXT_ITEM, {.text_item = {TUNE_STR}}},
+            {TEXT_ITEM, {.text_item = {STOP_INCUBATION_STR}}},
         };
-        return new Menu(InIncubationMenuItems, 3);
+        return new Menu(inIncubationMenuItems, 3);
     }
 
     static Menu* createInIncubationTuneMenu() {
-        static menu_item_t InIncubationTuneMenuItems[] = {
-            {.text = GO_BACK_STR, .has_value = false, .value = 0, .precision = 0},
-            {.text = TARGET_TEMPERATURE_STR,
-             .has_value = true,
-             .value = 0,
-             .precision = 0},
-            {.text = TARGET_HUMIDITY_STR,
-             .has_value = true,
-             .value = 0,
-             .precision = 0},
-            {.text = MOTOR_ROTATION_STR, .has_value = true, .value = 0, .precision = 0},
+        static menu_item_t inIncubationTuneMenuItems[] = {
+            {TEXT_ITEM, {.text_item = {GO_BACK_STR}}},
+            {VALUE_ITEM, {.value_item = {TARGET_TEMPERATURE_STR, 0.0, 0}}},
+            {VALUE_ITEM, {.value_item = {TARGET_HUMIDITY_STR, 0.0, 0}}},
+            {VALUE_ITEM, {.value_item = {MOTOR_ROTATION_STR, 0.0, 0}}},
         };
-        return new Menu(InIncubationTuneMenuItems, 4);
+        return new Menu(inIncubationTuneMenuItems, 4);
     }
 };
 

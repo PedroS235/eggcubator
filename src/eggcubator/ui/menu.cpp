@@ -244,7 +244,7 @@ void MenuStateMachine::handle_preheat_menu_event(menu_event_e event) {
                 case 1:  // Manual Temperature
                     log_state_transition(PREHEAT_MENU, CHANGING_VALUE);
                     _curr_state = CHANGING_VALUE;
-                    _curr_menu->get_selected_item()->precision++;
+                    _curr_menu->get_selected_item()->item.value_item.precision++;
                     _state_before_changing_value = PREHEAT_MENU;
                     // TODO: curr menu
                     break;
@@ -311,7 +311,7 @@ void MenuStateMachine::handle_settings_menu_event(menu_event_e event) {
                 case 3:
                     log_state_transition(SETTINGS_MENU, CHANGING_VALUE);
                     _curr_state = CHANGING_VALUE;
-                    _curr_menu->get_selected_item()->precision++;
+                    _curr_menu->get_selected_item()->item.value_item.precision++;
                     _state_before_changing_value = SETTINGS_MENU;
                     break;
                 case 4:  // Save Settings into eeprom
@@ -340,25 +340,25 @@ void MenuStateMachine::handle_heater_menu_event(menu_event_e event) {
                 case 1:  // kp
                     log_state_transition(HEATER_MENU, CHANGING_VALUE);
                     _curr_state = CHANGING_VALUE;
-                    _curr_menu->get_selected_item()->precision++;
+                    _curr_menu->get_selected_item()->item.value_item.precision++;
                     _state_before_changing_value = HEATER_MENU;
                     break;
                 case 2:  // ki
                     log_state_transition(HEATER_MENU, CHANGING_VALUE);
                     _curr_state = CHANGING_VALUE;
-                    _curr_menu->get_selected_item()->precision++;
+                    _curr_menu->get_selected_item()->item.value_item.precision++;
                     _state_before_changing_value = HEATER_MENU;
                     break;
                 case 3:  // kd
                     log_state_transition(HEATER_MENU, CHANGING_VALUE);
                     _curr_state = CHANGING_VALUE;
-                    _curr_menu->get_selected_item()->precision++;
+                    _curr_menu->get_selected_item()->item.value_item.precision++;
                     _state_before_changing_value = HEATER_MENU;
                     break;
                 case 4:  // Temp offset
                     log_state_transition(HEATER_MENU, CHANGING_VALUE);
                     _curr_state = CHANGING_VALUE;
-                    _curr_menu->get_selected_item()->precision++;
+                    _curr_menu->get_selected_item()->item.value_item.precision++;
                     _state_before_changing_value = HEATER_MENU;
                     break;
             }
@@ -383,25 +383,25 @@ void MenuStateMachine::handle_humidifier_menu_event(menu_event_e event) {
                 case 1:  // kp
                     log_state_transition(HUMIDIFIER_MENU, CHANGING_VALUE);
                     _curr_state = CHANGING_VALUE;
-                    _curr_menu->get_selected_item()->precision++;
+                    _curr_menu->get_selected_item()->item.value_item.precision++;
                     _state_before_changing_value = HUMIDIFIER_MENU;
                     break;
                 case 2:  // ki
                     log_state_transition(HUMIDIFIER_MENU, CHANGING_VALUE);
                     _curr_state = CHANGING_VALUE;
-                    _curr_menu->get_selected_item()->precision++;
+                    _curr_menu->get_selected_item()->item.value_item.precision++;
                     _state_before_changing_value = HUMIDIFIER_MENU;
                     break;
                 case 3:  // kd
                     log_state_transition(HUMIDIFIER_MENU, CHANGING_VALUE);
                     _curr_state = CHANGING_VALUE;
-                    _curr_menu->get_selected_item()->precision++;
+                    _curr_menu->get_selected_item()->item.value_item.precision++;
                     _state_before_changing_value = HUMIDIFIER_MENU;
                     break;
                 case 4:  // Temp offset
                     log_state_transition(HUMIDIFIER_MENU, CHANGING_VALUE);
                     _curr_state = CHANGING_VALUE;
-                    _curr_menu->get_selected_item()->precision++;
+                    _curr_menu->get_selected_item()->item.value_item.precision++;
                     _state_before_changing_value = HUMIDIFIER_MENU;
                     break;
             }
@@ -458,19 +458,19 @@ void MenuStateMachine::handle_in_incubation_tune_menu_event(menu_event_e event) 
                 case 1:  // Target Temperature
                     log_state_transition(IN_INCUBATION_TUNE_MENU, CHANGING_VALUE);
                     _curr_state = CHANGING_VALUE;
-                    _curr_menu->get_selected_item()->precision++;
+                    _curr_menu->get_selected_item()->item.value_item.precision++;
                     _state_before_changing_value = IN_INCUBATION_TUNE_MENU;
                     break;
                 case 2:  // Target Humidity
                     log_state_transition(IN_INCUBATION_TUNE_MENU, CHANGING_VALUE);
                     _curr_state = CHANGING_VALUE;
-                    _curr_menu->get_selected_item()->precision++;
+                    _curr_menu->get_selected_item()->item.value_item.precision++;
                     _state_before_changing_value = IN_INCUBATION_TUNE_MENU;
                     break;
                 case 3:  // Motor Rotation
                     log_state_transition(IN_INCUBATION_TUNE_MENU, CHANGING_VALUE);
                     _curr_state = CHANGING_VALUE;
-                    _curr_menu->get_selected_item()->precision++;
+                    _curr_menu->get_selected_item()->item.value_item.precision++;
                     _state_before_changing_value = IN_INCUBATION_TUNE_MENU;
                     break;
             }
@@ -485,21 +485,20 @@ void MenuStateMachine::handle_changing_value_event(menu_event_e event) {
     menu_item_t *item = _curr_menu->get_selected_item();
     switch (event) {
         case MOVE_UP:
-            switch (item->precision) {
+            switch (item->item.value_item.precision) {
                 case 1:
-                    item->value += 1.0;
-                    log_i("Item value %f", item->value);
+                    item->item.value_item.value += 1.0;
                     break;
                 case 2:
-                    item->value += 0.1;
+                    item->item.value_item.value += 0.1;
                     break;
             }
 
             break;
         case CLICK: {
-            item->precision = (item->precision + 1) % 3;
+            item->item.value_item.precision = (item->item.value_item.precision + 1) % 3;
 
-            if (item->precision == 0) {
+            if (item->item.value_item.precision == 0) {
                 log_state_transition(CHANGING_VALUE, _state_before_changing_value);
                 _curr_state = _state_before_changing_value;
             }
@@ -507,13 +506,12 @@ void MenuStateMachine::handle_changing_value_event(menu_event_e event) {
 
         break;
         case MOVE_DOWN:
-            switch (item->precision) {
+            switch (item->item.value_item.precision) {
                 case 1:
-                    item->value -= 1.0;
-                    log_i("Item value %f", item->value);
+                    item->item.value_item.value -= 1.0;
                     break;
                 case 2:
-                    item->value -= 0.1;
+                    item->item.value_item.value -= 0.1;
                     break;
             }
             break;

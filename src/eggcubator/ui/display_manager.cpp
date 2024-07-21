@@ -11,6 +11,7 @@
 #include "eggcubator/core/timer.h"
 #include "eggcubator/ui/icons.h"
 #include "eggcubator/ui/menu.h"
+#include "eggcubator/ui/menu_factory.h"
 
 DisplayManager::DisplayManager() {
     display = new UI_OLED_TYPE(U8G2_R0, U8X8_PIN_NONE);
@@ -18,10 +19,10 @@ DisplayManager::DisplayManager() {
     display->setFontPosTop();
 }
 
-void DisplayManager::draw_menu_item_cell(uint8_t x,
-                                         uint8_t y,
-                                         const char* item_name,
-                                         bool select) {
+void DisplayManager::draw_text_item(uint8_t x,
+                                    uint8_t y,
+                                    const char* item_name,
+                                    bool select) {
     display->setFont(u8g2_font_profont15_tf);
     if (select) {
         display->setDrawColor(1);
@@ -38,12 +39,12 @@ void DisplayManager::draw_menu_item_cell(uint8_t x,
     display->drawRFrame(0, y, display->getWidth(), 20, 2);
 }
 
-void DisplayManager::draw_menu_item_cell(uint8_t x,
-                                         uint8_t y,
-                                         const char* item_name,
-                                         bool select,
-                                         float value,
-                                         uint8_t precision) {
+void DisplayManager::draw_value_item(uint8_t x,
+                                     uint8_t y,
+                                     const char* item_name,
+                                     bool select,
+                                     float value,
+                                     uint8_t precision) {
     display->setFont(u8g2_font_profont15_tf);
     if (select) {
         display->setDrawColor(1);
@@ -174,9 +175,9 @@ void DisplayManager::draw_menu(const char* menu_items[],
         int y = selected_item > 2 ? -22 * (selected_item - 2) : 0;
         for (int i = 0; i < menu_size; i++) {
             if (i == selected_item) {
-                draw_menu_item_cell(0, y, menu_items[i], true);
+                draw_text_item(0, y, menu_items[i], true);
             } else {
-                draw_menu_item_cell(0, y, menu_items[i], false);
+                draw_text_item(0, y, menu_items[i], false);
             }
             y += 22;
         }
@@ -191,20 +192,23 @@ void DisplayManager::draw_menu(Menu* menu) {
     do {
         int y = selected_item > 2 ? -22 * (selected_item - 2) : 0;
         for (int i = 0; i < menu_size; i++) {
-            if (i == selected_item) {
-                if (items[i].has_value)
-                    draw_menu_item_cell(
-                        0, y, items[i].text, true, items[i].value, items[i].precision);
-                else
-                    draw_menu_item_cell(0, y, items[i].text, true);
-            } else {
-                if (items[i].has_value)
-                    // draw_menu_item_cell(
-                    //     0, y, items[i].text, false, items[i].value);
-                    draw_menu_item_cell(
-                        0, y, items[i].text, false, items[i].value, items[i].precision);
-                else
-                    draw_menu_item_cell(0, y, items[i].text, false);
+            switch (items[i].type) {
+                case TEXT_ITEM:
+                    draw_text_item(
+                        0, y, items[i].item.text_item.text, i == selected_item);
+                    break;
+                case VALUE_ITEM:
+                    draw_value_item(0,
+                                    y,
+                                    items[i].item.value_item.text,
+                                    i == selected_item,
+                                    items[i].item.value_item.value,
+                                    items[i].item.value_item.precision);
+                    break;
+                case CHECKBOX_ITEM:
+                    draw_text_item(
+                        0, y, items[i].item.checkbox_item.text, i == selected_item);
+                    break;
             }
             y += 22;
         }
