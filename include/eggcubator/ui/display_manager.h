@@ -17,13 +17,13 @@ class DisplayManager {
     UI_OLED_TYPE* display;
 
    private:
-    void draw_menu_item_cell(uint8_t x, uint8_t y, const char* item_name, bool select);
-    void draw_menu_item_cell(uint8_t x,
-                             uint8_t y,
-                             const char* item_name,
-                             bool select,
-                             float value,
-                             uint8_t precision);
+    void draw_text_item(uint8_t x, uint8_t y, const char* item_name, bool select);
+    void draw_value_item(uint8_t x,
+                         uint8_t y,
+                         const char* item_name,
+                         bool select,
+                         float value,
+                         uint8_t precision);
     void draw_progress_bar(uint8_t x,
                            uint8_t y,
                            uint8_t width,
@@ -64,14 +64,9 @@ class DisplayManager {
     /**
      * @brief Draws a menu based on the items passed as a parameter. It also
      * highlights the selected item.
-     * @param menu_items: menu items to be displayed
-     * @param menu_size: the total number of menus
-     * @param selected_item: index of the selected item (0-menu_size)
      */
-    void draw_menu(const char* menu_items[], uint8_t menu_size, uint8_t selected_item);
     void draw_menu(Menu* menu);
 
-    void draw_number_change(const char* title, float number);
     void draw_boot_screen(const char* text);
 };
 

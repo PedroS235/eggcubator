@@ -29,6 +29,8 @@
 #define START_OF_ROTATION_STR "Início de rot."
 #define STOP_OF_ROTATION_STR "Fim de rot."
 #define ROTATION_PERIOD_STR "Período de rot."
+#define HEATER_STR "Aquecedor"
+#define HUMIDIFIER_STR "Humidificador"
 
 #define CHICKEN_STR "Galinha"
 #define QUAIL_STR "Codorniz"

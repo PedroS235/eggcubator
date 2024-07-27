@@ -18,10 +18,10 @@ DisplayManager::DisplayManager() {
     display->setFontPosTop();
 }
 
-void DisplayManager::draw_menu_item_cell(uint8_t x,
-                                         uint8_t y,
-                                         const char* item_name,
-                                         bool select) {
+void DisplayManager::draw_text_item(uint8_t x,
+                                    uint8_t y,
+                                    const char* item_name,
+                                    bool select) {
     display->setFont(u8g2_font_profont15_tf);
     if (select) {
         display->setDrawColor(1);
@@ -38,12 +38,12 @@ void DisplayManager::draw_menu_item_cell(uint8_t x,
     display->drawRFrame(0, y, display->getWidth(), 20, 2);
 }
 
-void DisplayManager::draw_menu_item_cell(uint8_t x,
-                                         uint8_t y,
-                                         const char* item_name,
-                                         bool select,
-                                         float value,
-                                         uint8_t precision) {
+void DisplayManager::draw_value_item(uint8_t x,
+                                     uint8_t y,
+                                     const char* item_name,
+                                     bool select,
+                                     float value,
+                                     uint8_t precision) {
     display->setFont(u8g2_font_profont15_tf);
     if (select) {
         display->setDrawColor(1);
@@ -60,6 +60,9 @@ void DisplayManager::draw_menu_item_cell(uint8_t x,
                 break;
             case 2:
                 display->print(":>> ");
+                break;
+            default:
+                display->print("::: ");
                 break;
         }
         display->print(value, 1);
@@ -166,74 +169,46 @@ void DisplayManager::draw_incubation_status_screen(float temp,
     } while (display->nextPage());
 }
 
-void DisplayManager::draw_menu(const char* menu_items[],
-                               uint8_t menu_size,
-                               uint8_t selected_item) {
-    display->firstPage();
-    do {
-        int y = selected_item > 2 ? -22 * (selected_item - 2) : 0;
-        for (int i = 0; i < menu_size; i++) {
-            if (i == selected_item) {
-                draw_menu_item_cell(0, y, menu_items[i], true);
-            } else {
-                draw_menu_item_cell(0, y, menu_items[i], false);
-            }
-            y += 22;
-        }
-    } while (display->nextPage());
-}
-
 void DisplayManager::draw_menu(Menu* menu) {
-    uint8_t selected_item = menu->selected_index();
-    uint8_t menu_size = menu->size();
-    menu_item_t* items = menu->menu_items();
+    uint8_t selected_item = menu->get_idx();
+    uint8_t menu_size = menu->get_size();
+    MenuItem** items = menu->get_items();
     display->firstPage();
     do {
         int y = selected_item > 2 ? -22 * (selected_item - 2) : 0;
         for (int i = 0; i < menu_size; i++) {
-            if (i == selected_item) {
-                if (items[i].is_value)
-                    draw_menu_item_cell(
-                        0, y, items[i].name, true, items[i].value, items[i].precision);
-                else
-                    draw_menu_item_cell(0, y, items[i].name, true);
-            } else {
-                if (items[i].is_value)
-                    draw_menu_item_cell(
-                        0, y, items[i].name, false, items[i].value, items[i].precision);
-                else
-                    draw_menu_item_cell(0, y, items[i].name, false);
+            MenuItem* item = items[i];
+            switch (item->get_type()) {
+                case TEXT_ITEM:
+                    draw_text_item(0, y, item->get_text(), i == selected_item);
+                    break;
+                case VALUE_ITEM: {
+                    ValueMenuItem* valueItem = static_cast<ValueMenuItem*>(item);
+                    draw_value_item(0,
+                                    y,
+                                    valueItem->get_text(),
+                                    i == selected_item,
+                                    valueItem->get_value(),
+                                    valueItem->get_precision());
+                    break;
+                }
+                case CHECKBOX_ITEM:
+                    draw_text_item(0, y, item->get_text(), i == selected_item);
+                    break;
             }
             y += 22;
         }
-    } while (display->nextPage());
-}
-
-void DisplayManager::draw_number_change(const char* title, float number) {
-    display->firstPage();
-    do {
-        draw_title(title);
-        int x, y;
-        x = display->getWidth() / 2 - 10;
-        y = display->getMaxCharHeight() + 1 +
-            (display->getHeight() - display->getMaxCharHeight() + 1) / 2 -
-            display->getMaxCharHeight() / 2;
-        display->setCursor(x, y);
-        display->print(number, 1);
     } while (display->nextPage());
 }
 
 void DisplayManager::draw_boot_screen(const char* text) {
-    display->firstPage();
-    do {
-        display->setFont(u8g2_font_tenthinnerguys_tr);
-        display->drawBitmap(
-            display->getWidth() / 2 - 12, 5, 24 / 8, 24, chicken_egg_icon);
-        display->drawStr(
-            display->getWidth() / 2 - display->getStrWidth(text) / 2,
-            display->getHeight() / 2 - display->getMaxCharHeight() / 2 + 10,
-            text);
-    } while (display->nextPage());
+    display->clearBuffer();
+    display->setFont(u8g2_font_tenthinnerguys_tr);
+    display->drawBitmap(display->getWidth() / 2 - 12, 5, 24 / 8, 24, chicken_egg_icon);
+    display->drawStr(display->getWidth() / 2 - display->getStrWidth(text) / 2,
+                     display->getHeight() / 2 - display->getMaxCharHeight() / 2 + 10,
+                     text);
+    display->sendBuffer();
 }
 
 /*

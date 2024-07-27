@@ -9,15 +9,22 @@
 #include <eggcubator/config/configuration.h>
 #include <eggcubator/core/motor_controller.h>
 #include <eggcubator/core/timer.h>
-#include <eggcubator/egg.h>
+#include <eggcubator/egg_factory.h>
+
+#include "eggcubator/core/heater.h"
+#include "eggcubator/core/humidifier.h"
 
 using namespace eggcubator;
 
 // Incubation States
-#define IDDLE_INCUBATION_STATE 0
-#define BEFORE_INCUBATION_STATE 1
-#define IN_INCUBATION_STATE 2
-#define AFTER_INCUBATION_STATE 3
+typedef enum {
+    IDDLE_INCUBATION_STATE,
+    BEFORE_INCUBATION_STATE,
+    IN_INCUBATION_STATE,
+    AFTER_INCUBATION_STATE,
+} incubation_state_e;
+
+const char *state_to_string(incubation_state_e state);
 
 /**
  * @brief Class reponsible for the routine of the incubation.
@@ -27,9 +34,11 @@ using namespace eggcubator;
  */
 class IncubationRoutine {
    private:
-    uint8_t curr_state;
+    incubation_state_e curr_state;
     Timer curr_time;
-    egg_t *curr_egg;
+    egg_t curr_egg;
+    Heater *_heater;
+    Humidifier *_humidifier;
     MotorController motor_controller;
 
    private:
@@ -52,7 +61,7 @@ class IncubationRoutine {
     /**
      * @brief Constructor of the class IncubationRoutine
      */
-    IncubationRoutine();
+    IncubationRoutine(Heater *heater, Humidifier *humidifier);
     /**
      * @brief Method which returns the current time elapsed of incubation
      *
@@ -65,7 +74,7 @@ class IncubationRoutine {
      *
      * @param egg: egg for wihch the incubation should aim for
      */
-    void start_incubation(egg_t *egg);
+    void start_incubation(egg_t egg);
     void stop_incubation();
 
     /**
@@ -73,11 +82,19 @@ class IncubationRoutine {
      *
      * @returns true if incubation is in place, false otherwise
      */
-    bool tick();
+    void task(void *pvParameters);
 
     egg_t curr_egg_in_incubation();
 
     bool in_incubation();
+
+    void log_stats();
+
+    void set_temperature(float temp);
+    void set_humidity(float humd);
+
+    void set_motor_rotation(unsigned long duration);
+    unsigned long get_motor_rotation();
 };
 
 #endif  // !INCUBATION_ROUTINE_H

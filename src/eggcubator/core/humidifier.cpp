@@ -1,7 +1,6 @@
 #include "eggcubator/core/humidifier.h"
 
 #include "eggcubator/config/configuration.h"
-#include "eggcubator/config/pins.h"
 
 Humidifier::Humidifier(unsigned long humidity_reading_interval_,
                        float humidity_correction_)
@@ -26,20 +25,8 @@ Humidifier::Humidifier(unsigned long humidity_reading_interval_,
     sensor->begin();
 }
 
-void Humidifier::update_humidity() {
-    unsigned long now = millis();
-    if (now - last_humidity_reading_time >= humidity_reading_interval) {
-        const float reading = sensor->readHumidity();
-        if (!isnan(reading)) {
-            humidity = reading + humidity_correction;
-        } else {
-            humidity = NAN;
-        }
-        last_humidity_reading_time = now;
-    }
-}
-
 float Humidifier::get_humidity() { return humidity; }
+float Humidifier::get_target() { return humidity_target; }
 
 void Humidifier::set_humidity_correction(float new_correction) {
     log_v("Setting new humidity correction from %f to %f",
@@ -93,23 +80,46 @@ void Humidifier::update_pid_terms(pid_config_t new_config) {
     pid->update_pid_config(&new_config);
 }
 
+void Humidifier::update_pid_kp(float new_p) {
+    pid_config.kp = new_p;
+    pid->update_pid_config(&pid_config);
+}
+void Humidifier::update_pid_ki(float new_i) {
+    pid_config.ki = new_i;
+    pid->update_pid_config(&pid_config);
+}
+void Humidifier::update_pid_kd(float new_d) {
+    pid_config.kd = new_d;
+    pid->update_pid_config(&pid_config);
+}
+
 pid_config_t Humidifier::get_pid_terms() { return pid->get_pid_config(); }
 
-bool Humidifier::tick(float humidity_target) {
-    log_v("Ticking humidifier");
-    update_humidity();
+void Humidifier::log_stats() {
+    log_i("Humidifier: %f/%f°C", humidity, humidity_target);
+}
 
-    if (isnan(humidity)) {
-        return false;
+void Humidifier::task(void *pvParameters) {
+    for (;;) {
+        log_v("Ticking humidifier");
+
+        const float reading = sensor->readHumidity();
+        if (!isnan(reading)) {
+            humidity = reading + humidity_correction;
+        } else {
+            humidity = NAN;
+        }
+
+        log_v("Humidity Reading %f", humidity);
+
+        // Reset PID in case the temperature target changes
+        if (prev_humidity_target != humidity_target) {
+            pid->reset();
+            prev_humidity_target = humidity_target;
+        }
+
+        // Calculate PID output for servo
+
+        vTaskDelay(2000 / portTICK_PERIOD_MS);  // Adjust the delay as needed
     }
-
-    // Reset PID in case the temperature target changes
-    if (prev_humidity_target != humidity_target) {
-        pid->reset();
-        prev_humidity_target = humidity_target;
-    }
-
-    // Calculate PID output for servo
-
-    return true;
 }

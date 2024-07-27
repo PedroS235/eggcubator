@@ -27,9 +27,6 @@ class Humidifier {
     pid_config_t pid_config;
     DHT* sensor;
 
-   private:
-    void update_humidity();
-
    public:
     Humidifier(unsigned long humidity_reading_interval_ = 2000,
                float humidity_correction_ = 0);
@@ -40,6 +37,7 @@ class Humidifier {
      * @returns Last humidity reading
      */
     float get_humidity();
+    float get_target();
 
     /**
      * @brief Method to update the current humidity correction
@@ -67,7 +65,12 @@ class Humidifier {
      */
     void update_pid_terms(float new_p, float new_i, float new_d);
     void update_pid_terms(pid_config_t new_terms);
+    void update_pid_kp(float new_p);
+    void update_pid_ki(float new_i);
+    void update_pid_kd(float new_d);
     pid_config_t get_pid_terms();
+
+    void log_stats();
 
     /**
      * @brief Main method that should run continuously.
@@ -79,7 +82,7 @@ class Humidifier {
      *
      * @return True if temperature sensor is working as expected, false otherwise
      */
-    bool tick(float humidity_target_);
+    void task(void* pvParameters);
 };
 
 #endif  // !HUMIDIFIER_H

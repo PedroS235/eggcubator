@@ -7,10 +7,10 @@
 #include "eggcubator/core/heater.h"
 
 #include "eggcubator/config/configuration.h"
-#include "eggcubator/config/pins.h"
+#include "esp32-hal-log.h"
 
-Heater::Heater(uint8_t pin, float temp_correction_)
-    : temp(NAN), temp_target(0), prev_temp_target(0), _pin(pin) {
+Heater::Heater(float temp_correction_)
+    : temp(NAN), temp_target(0), prev_temp_target(0), _pin(HEATER_PIN) {
     pid_config = {.kp = HEATER_PID_KP,
                   .ki = HEATER_PID_KI,
                   .kd = HEATER_PID_KD,
@@ -27,6 +27,7 @@ Heater::Heater(uint8_t pin, float temp_correction_)
 }
 
 float Heater::get_temp() { return temp; }
+float Heater::get_target() { return temp_target; }
 
 void Heater::set_temp_correction(float new_correction) {
     log_v("Setting new temperature correction from %f to %f",
@@ -41,6 +42,8 @@ void Heater::set_temp_target(float new_target) {
     log_v("Setting new temperature target from %f to %f", temp_target, new_target);
     temp_target = new_target;
 }
+
+void Heater::turn_off() { temp_target = 0; }
 
 void Heater::update_pid_terms(float new_p, float new_i, float new_d) {
     log_v(
@@ -79,40 +82,59 @@ void Heater::update_pid_terms(pid_config_t new_config) {
     pid->update_pid_config(&new_config);
 }
 
+void Heater::update_pid_kp(float new_p) {
+    pid_config.kp = new_p;
+    pid->update_pid_config(&pid_config);
+}
+void Heater::update_pid_ki(float new_i) {
+    pid_config.ki = new_i;
+    pid->update_pid_config(&pid_config);
+}
+void Heater::update_pid_kd(float new_d) {
+    pid_config.kd = new_d;
+    pid->update_pid_config(&pid_config);
+}
+
 pid_config_t Heater::get_pid_terms() { return pid->get_pid_config(); }
 
 void Heater::_set_duty(uint8_t duty) { analogWrite(_pin, duty); }
 
-esp_err_t Heater::tick(float temp_target) {
-    // TODO: use set_temp_target instead of passing as a parameter to tick()
-    log_v("Ticking heater");
-    int ret = sensor->read(&temp);
+void Heater::log_stats() {
+    log_i("Heater: %f/%f°C | Power: %d", temp, temp_target, curr_power);
+}
 
-    if (ret == ESP_FAIL) {
-        log_e("Thermistor reading not valid. Shutting down heater for safety.");
-        _set_duty(0);
-        return ESP_FAIL;
+void Heater::task(void* pvParameters) {
+    for (;;) {
+        // TODO: use set_temp_target instead of passing as a parameter to tick()
+        log_v("Ticking heater");
+        int ret = sensor->read(&temp);
+
+        if (ret == ESP_FAIL) {
+            log_e("Thermistor reading not valid. Shutting down heater for safety.");
+            _set_duty(0);
+        }
+
+        log_v("Temperature Reading %f", temp);
+
+        if (temp > HEATER_MAX_TEMP || temp < HEATER_MIN_TEMP) {
+            log_w(
+                "Temperature is not within allowed range. Shutting down heater "
+                "for safety.");
+            _set_duty(0);
+        }
+
+        // Reset PID in case the temperature target changes
+        if (prev_temp_target != temp_target) {
+            pid->reset();
+            prev_temp_target = temp_target;
+        }
+        curr_power = pid->compute(temp_target, temp);
+
+        // Control Heater power using PWM
+        _set_duty(curr_power);
+
+        vTaskDelay(100 / portTICK_PERIOD_MS);
     }
-
-    if (temp > HEATER_MAX_TEMP || temp < HEATER_MIN_TEMP) {
-        log_w(
-            "Temperature is not within allowed range. Shutting down heater "
-            "for safety.");
-        _set_duty(0);
-        return ESP_FAIL;
-    }
-
-    // Reset PID in case the temperature target changes
-    if (prev_temp_target != temp_target) {
-        pid->reset();
-        prev_temp_target = temp_target;
-    }
-    float heater_pwm = pid->compute(temp_target, temp);
-
-    // Control Heater power using PWM
-    _set_duty(heater_pwm);
-
-    return ESP_OK;
 }
 
 /*

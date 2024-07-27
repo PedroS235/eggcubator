@@ -2,44 +2,98 @@
 #define MENU_H
 
 #include <Arduino.h>
-#include <stdint.h>
 
-typedef struct {
-    const char *name;
-    void (*callback)(void);
-    float value;
-    bool is_value;
-    uint8_t precision;
-} menu_item_t;
+typedef enum { TEXT_ITEM, VALUE_ITEM, CHECKBOX_ITEM } menu_item_type_e;
+
+class MenuItem {
+   protected:
+    const char* text;
+    const menu_item_type_e type;
+
+   public:
+    MenuItem(const char* text, const menu_item_type_e type = TEXT_ITEM)
+        : text(text), type(type) {}
+    const char* get_text() { return text; }
+    virtual bool is_value_item() { return false; }
+    virtual bool is_checkbox_item() { return false; }
+    menu_item_type_e get_type() { return type; }
+};
+
+class ValueMenuItem : public MenuItem {
+   private:
+    const char* text;
+    double value;
+    int precision;
+
+   public:
+    ValueMenuItem(const char* text, double value)
+        : MenuItem(text, VALUE_ITEM), value(value), precision(0) {}
+    bool is_value_item() override { return true; }
+    double get_value() { return value; }
+    void set_value(double value) { this->value = value; }
+    int get_precision() { return precision; }
+    int increment_precision() {
+        precision = (precision + 1) % 3;
+        return precision;
+    }
+    void set_precision(int precision) { this->precision = precision; }
+};
+
+class CheckboxMenuItem : public MenuItem {
+   private:
+    const char* text;
+    bool checked;
+
+   public:
+    CheckboxMenuItem(const char* text, bool checked)
+        : MenuItem(text, CHECKBOX_ITEM), checked(checked) {}
+    bool is_checked() { return checked; }
+    void toggleChecked() { checked = !checked; }
+};
 
 class Menu {
    private:
-    menu_item_t *items;
-    Menu *parent;
-    int items_count;
-    int selected;
+    MenuItem** _items;
+    int _size;
+    int _idx;
 
    public:
-    Menu(menu_item_t *items_, Menu *parent_, int items_count_) {
-        items = items_;
-        parent = parent_;
-        items_count = items_count_;
-        selected = 0;
+    Menu(MenuItem** items, int size) {
+        _items = items;
+        _size = size;
+        _idx = 0;
     }
-
-    void move_selection_w_encoder(int encoder_pos) {
-        selected = (encoder_pos) % items_count;
+    ~Menu() {
+        log_d("Destroing Menu");
+        for (int i = 0; i < _size; ++i) {
+            delete _items[i];
+        }
+        delete[] _items;
     }
-
-    menu_item_t *menu_items() { return items; }
-
-    menu_item_t *selected_item_ptr() { return &items[selected]; }
-    menu_item_t selected_item() { return items[selected]; }
-    uint8_t selected_index() { return selected; }
-
-    Menu *parent_menu() { return parent; }
-
-    uint8_t size() { return items_count; }
+    void move_up() {
+        if (_idx > 0) {
+            _idx--;
+        }
+    }
+    void move_down() {
+        if (_idx < _size - 1) {
+            _idx++;
+        }
+    }
+    int get_idx() { return _idx; }
+    int get_size() { return _size; }
+    MenuItem** get_items() { return _items; }
+    MenuItem** get_selected_item() { return &_items[_idx]; }
+    ValueMenuItem* get_selected_value_item() {
+        if (_items[_idx]->get_type() == VALUE_ITEM)
+            return static_cast<ValueMenuItem*>(_items[_idx]);
+        return nullptr;
+    }
+    CheckboxMenuItem* get_selected_checkbox_item() {
+        if (_items[_idx]->get_type() == CHECKBOX_ITEM)
+            return static_cast<CheckboxMenuItem*>(_items[_idx]);
+        return nullptr;
+    }
 };
 
 #endif  // !MENU_H

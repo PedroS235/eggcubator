@@ -78,6 +78,11 @@ class MotorController {
      * @brief This method is the motor controller loop function
      */
     void tick();
+
+    /**
+     * @return duration of how long the motor rotates for in seconds
+     */
+    unsigned long get_rotation_duration();
 };
 
 #endif  // !MOTOR_CONTROLLER_H

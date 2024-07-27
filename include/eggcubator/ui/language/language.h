@@ -10,7 +10,7 @@
 #include <eggcubator/config/configuration.h>
 
 #ifdef UI_LOCALE_PT
-#include "eggcubator/gui/language/language_pt.h"
+#include "eggcubator/ui/language/language_pt.h"
 #else
 
 // English
@@ -37,6 +37,8 @@
 #define START_OF_ROTATION_STR "Start of rot."
 #define STOP_OF_ROTATION_STR "Stop of rot."
 #define ROTATION_PERIOD_STR "Rot. period"
+#define HEATER_STR "Heater"
+#define HUMIDIFIER_STR "Humidifier"
 
 #define CHICKEN_STR "Chicken"
 #define QUAIL_STR "Quail"
