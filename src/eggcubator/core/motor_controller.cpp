@@ -12,6 +12,7 @@ MotorController::MotorController() {
     pinMode(MOTOR_PIN, OUTPUT);
     log_v("Setting MotorController state to IDDLE");
     curr_state = IDDLE_MOTOR_STATE;
+    set_rotation_duration_seconds(MOTOR_ROTATION_DURATION);
 }
 
 void MotorController::start_motor_rotation() {
@@ -76,6 +77,10 @@ void MotorController::tick() {
         default:
             break;
     }
+}
+
+unsigned long MotorController::get_rotation_duration() {
+    return millis_to_seconds(rotation_duration);
 }
 
 /*
