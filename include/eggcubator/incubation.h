@@ -89,6 +89,12 @@ class IncubationRoutine {
     bool in_incubation();
 
     void log_stats();
+
+    void set_temperature(float temp);
+    void set_humidity(float humd);
+
+    void set_motor_rotation(unsigned long duration);
+    unsigned long get_motor_rotation();
 };
 
 #endif  // !INCUBATION_ROUTINE_H

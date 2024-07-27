@@ -3,57 +3,97 @@
 
 #include <Arduino.h>
 
-#include "eggcubator/incubation.h"
-#include "eggcubator/ui/menu_factory.h"
+typedef enum { TEXT_ITEM, VALUE_ITEM, CHECKBOX_ITEM } menu_item_type_e;
 
-// UI States
-typedef enum {
-    MAIN_SCREEN,
-    INCUBATION_SCREEN,
-    MAIN_MENU,
-    INCUBATION_MENU,
-    PREHEAT_MENU,
-    SETTINGS_MENU,
-    HEATER_MENU,
-    HUMIDIFIER_MENU,
-    IN_INCUBATION_MENU,
-    IN_INCUBATION_TUNE_MENU,
-    CHANGING_VALUE
-} menu_state_e;
-
-typedef enum { MOVE_UP, CLICK, MOVE_DOWN } menu_event_e;
-
-const char *state_to_string(menu_state_e state);
-
-void log_state_transition(menu_state_e from, menu_state_e to);
-void log_event(menu_event_e event);
-
-const char *event_to_string(menu_event_e event);
-
-class MenuStateMachine {
-   private:
-    menu_state_e _state_before_changing_value;
-    menu_state_e _curr_state;
-    Menu *_curr_menu;
-    float chaging_value_precision = 1.0;
-    IncubationRoutine *_incubation;
+class MenuItem {
+   protected:
+    const char* text;
+    const menu_item_type_e type;
 
    public:
-    MenuStateMachine(IncubationRoutine *incubation);
-    Menu *get_curr_menu();
-    void set_curr_menu(Menu *new_menu);
-    void handle_event(menu_event_e event);
-    void handle_main_screen_event(menu_event_e event);
-    void handle_incubation_screen_event(menu_event_e event);
-    void handle_main_menu_event(menu_event_e event);
-    void handle_incubation_menu_event(menu_event_e event);
-    void handle_preheat_menu_event(menu_event_e event);
-    void handle_settings_menu_event(menu_event_e event);
-    void handle_heater_menu_event(menu_event_e event);
-    void handle_humidifier_menu_event(menu_event_e event);
-    void handle_in_incubation_menu_event(menu_event_e event);
-    void handle_in_incubation_tune_menu_event(menu_event_e event);
-    void handle_changing_value_event(menu_event_e event);
+    MenuItem(const char* text, const menu_item_type_e type = TEXT_ITEM)
+        : text(text), type(type) {}
+    const char* get_text() { return text; }
+    virtual bool is_value_item() { return false; }
+    virtual bool is_checkbox_item() { return false; }
+    menu_item_type_e get_type() { return type; }
+};
+
+class ValueMenuItem : public MenuItem {
+   private:
+    const char* text;
+    double value;
+    int precision;
+
+   public:
+    ValueMenuItem(const char* text, double value)
+        : MenuItem(text, VALUE_ITEM), value(value), precision(0) {}
+    bool is_value_item() override { return true; }
+    double get_value() { return value; }
+    void set_value(double value) { this->value = value; }
+    int get_precision() { return precision; }
+    int increment_precision() {
+        precision = (precision + 1) % 3;
+        return precision;
+    }
+    void set_precision(int precision) { this->precision = precision; }
+};
+
+class CheckboxMenuItem : public MenuItem {
+   private:
+    const char* text;
+    bool checked;
+
+   public:
+    CheckboxMenuItem(const char* text, bool checked)
+        : MenuItem(text, CHECKBOX_ITEM), checked(checked) {}
+    bool is_checked() { return checked; }
+    void toggleChecked() { checked = !checked; }
+};
+
+class Menu {
+   private:
+    MenuItem** _items;
+    int _size;
+    int _idx;
+
+   public:
+    Menu(MenuItem** items, int size) {
+        _items = items;
+        _size = size;
+        _idx = 0;
+    }
+    ~Menu() {
+        log_d("Destroing Menu");
+        for (int i = 0; i < _size; ++i) {
+            delete _items[i];
+        }
+        delete[] _items;
+    }
+    void move_up() {
+        if (_idx > 0) {
+            _idx--;
+        }
+    }
+    void move_down() {
+        if (_idx < _size - 1) {
+            _idx++;
+        }
+    }
+    int get_idx() { return _idx; }
+    int get_size() { return _size; }
+    MenuItem** get_items() { return _items; }
+    MenuItem** get_selected_item() { return &_items[_idx]; }
+    ValueMenuItem* get_selected_value_item() {
+        if (_items[_idx]->get_type() == VALUE_ITEM)
+            return static_cast<ValueMenuItem*>(_items[_idx]);
+        return nullptr;
+    }
+    CheckboxMenuItem* get_selected_checkbox_item() {
+        if (_items[_idx]->get_type() == CHECKBOX_ITEM)
+            return static_cast<CheckboxMenuItem*>(_items[_idx]);
+        return nullptr;
+    }
 };
 
 #endif  // !MENU_H

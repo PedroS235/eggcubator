@@ -33,9 +33,7 @@ void IncubationRoutine::before_incubation_state() {
     _heater->set_temp_target(curr_egg.target_temp);
     _humidifier->set_humidity_target(curr_egg.target_humd);
 
-    // 4. Waits untils temperature is set?
     motor_controller.set_rotation_interval_hours(curr_egg.eggs_rotation_period);
-    motor_controller.set_rotation_duration_seconds(MOTOR_ROTATION_DURATION);
 
     // TODO(PedroS): Before starting the incubation, wait for the temperature to settle
 
@@ -85,6 +83,11 @@ void IncubationRoutine::log_stats() {
     log_i("Incubation: State: %s", state_to_string(curr_state));
 }
 
+void IncubationRoutine::set_temperature(float temp) { _heater->set_temp_target(temp); }
+void IncubationRoutine::set_humidity(float humd) {
+    _humidifier->set_humidity_target(humd);
+}
+
 void IncubationRoutine::task(void *pvParameters) {
     for (;;) {
         log_v("Ticking incubation");
@@ -107,6 +110,14 @@ void IncubationRoutine::task(void *pvParameters) {
         }
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
+}
+
+void IncubationRoutine::set_motor_rotation(unsigned long duration) {
+    motor_controller.set_rotation_duration_seconds(duration);
+}
+
+unsigned long IncubationRoutine::get_motor_rotation() {
+    return motor_controller.get_rotation_duration();
 }
 
 /*

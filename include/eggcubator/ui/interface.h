@@ -7,7 +7,7 @@
 #include "eggcubator/extras/speaker.h"
 #include "eggcubator/incubation.h"
 #include "eggcubator/ui/display_manager.h"
-#include "eggcubator/ui/menu.h"
+#include "eggcubator/ui/menu_state_machine.h"
 
 class Interface {
    private:

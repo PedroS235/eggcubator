@@ -11,7 +11,6 @@
 #include "eggcubator/core/timer.h"
 #include "eggcubator/ui/icons.h"
 #include "eggcubator/ui/menu.h"
-#include "eggcubator/ui/menu_factory.h"
 
 DisplayManager::DisplayManager() {
     display = new UI_OLED_TYPE(U8G2_R0, U8X8_PIN_NONE);
@@ -61,6 +60,9 @@ void DisplayManager::draw_value_item(uint8_t x,
                 break;
             case 2:
                 display->print(":>> ");
+                break;
+            default:
+                display->print("::: ");
                 break;
         }
         display->print(value, 1);
@@ -170,27 +172,28 @@ void DisplayManager::draw_incubation_status_screen(float temp,
 void DisplayManager::draw_menu(Menu* menu) {
     uint8_t selected_item = menu->get_idx();
     uint8_t menu_size = menu->get_size();
-    menu_item_t* items = menu->get_items();
+    MenuItem** items = menu->get_items();
     display->firstPage();
     do {
         int y = selected_item > 2 ? -22 * (selected_item - 2) : 0;
         for (int i = 0; i < menu_size; i++) {
-            switch (items[i].type) {
+            MenuItem* item = items[i];
+            switch (item->get_type()) {
                 case TEXT_ITEM:
-                    draw_text_item(
-                        0, y, items[i].item.text_item.text, i == selected_item);
+                    draw_text_item(0, y, item->get_text(), i == selected_item);
                     break;
-                case VALUE_ITEM:
+                case VALUE_ITEM: {
+                    ValueMenuItem* valueItem = static_cast<ValueMenuItem*>(item);
                     draw_value_item(0,
                                     y,
-                                    items[i].item.value_item.text,
+                                    valueItem->get_text(),
                                     i == selected_item,
-                                    items[i].item.value_item.value,
-                                    items[i].item.value_item.precision);
+                                    valueItem->get_value(),
+                                    valueItem->get_precision());
                     break;
+                }
                 case CHECKBOX_ITEM:
-                    draw_text_item(
-                        0, y, items[i].item.checkbox_item.text, i == selected_item);
+                    draw_text_item(0, y, item->get_text(), i == selected_item);
                     break;
             }
             y += 22;

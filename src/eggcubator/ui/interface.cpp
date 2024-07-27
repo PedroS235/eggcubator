@@ -2,7 +2,7 @@
 
 #include "eggcubator/core/humidifier.h"
 #include "eggcubator/extras/speaker.h"
-#include "eggcubator/ui/menu.h"
+#include "eggcubator/ui/menu_state_machine.h"
 #include "esp32-hal.h"
 
 Interface* Interface::_instance = nullptr;
@@ -15,7 +15,7 @@ Interface::Interface(Heater* heater,
       _humidifier(humidifier),
       _speaker(UI_SPEAKER_PIN),
       _encoder(UI_ENCODER_CLK_PIN, UI_ENCODER_DT_PIN, UI_ENCODER_SW_PIN),
-      _menuStateMachine(incubator),
+      _menuStateMachine(incubator, heater, humidifier),
       _display() {
     _instance = this;
     _button_has_been_pressed = _encoder.is_button_pressed();
@@ -53,7 +53,7 @@ void Interface::handle_encoder_events(menu_event_e event) {
 void Interface::handle_encoder_button_event() {
     bool button_state = _encoder.is_button_pressed();
     if (button_state && !_button_has_been_pressed) {
-        _speaker.button_click_sound();
+        // _speaker.button_click_sound();
         handle_encoder_events(CLICK);
         _button_has_been_pressed = true;
     } else if (!button_state) {
