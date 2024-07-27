@@ -82,6 +82,19 @@ void Heater::update_pid_terms(pid_config_t new_config) {
     pid->update_pid_config(&new_config);
 }
 
+void Heater::update_pid_kp(float new_p) {
+    pid_config.kp = new_p;
+    pid->update_pid_config(&pid_config);
+}
+void Heater::update_pid_ki(float new_i) {
+    pid_config.ki = new_i;
+    pid->update_pid_config(&pid_config);
+}
+void Heater::update_pid_kd(float new_d) {
+    pid_config.kd = new_d;
+    pid->update_pid_config(&pid_config);
+}
+
 pid_config_t Heater::get_pid_terms() { return pid->get_pid_config(); }
 
 void Heater::_set_duty(uint8_t duty) { analogWrite(_pin, duty); }

@@ -65,6 +65,9 @@ class Humidifier {
      */
     void update_pid_terms(float new_p, float new_i, float new_d);
     void update_pid_terms(pid_config_t new_terms);
+    void update_pid_kp(float new_p);
+    void update_pid_ki(float new_i);
+    void update_pid_kd(float new_d);
     pid_config_t get_pid_terms();
 
     void log_stats();

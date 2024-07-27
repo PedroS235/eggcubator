@@ -80,6 +80,19 @@ void Humidifier::update_pid_terms(pid_config_t new_config) {
     pid->update_pid_config(&new_config);
 }
 
+void Humidifier::update_pid_kp(float new_p) {
+    pid_config.kp = new_p;
+    pid->update_pid_config(&pid_config);
+}
+void Humidifier::update_pid_ki(float new_i) {
+    pid_config.ki = new_i;
+    pid->update_pid_config(&pid_config);
+}
+void Humidifier::update_pid_kd(float new_d) {
+    pid_config.kd = new_d;
+    pid->update_pid_config(&pid_config);
+}
+
 pid_config_t Humidifier::get_pid_terms() { return pid->get_pid_config(); }
 
 void Humidifier::log_stats() {
