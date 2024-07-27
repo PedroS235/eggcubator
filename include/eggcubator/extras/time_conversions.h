@@ -20,6 +20,10 @@ inline unsigned long day_to_millis(unsigned long days) {
     return days * DAY_TO_SEC * SEC_IN_MILLIS;
 }
 
+inline unsigned long millis_to_seconds(unsigned long mill) {
+    return mill / SEC_IN_MILLIS;
+}
+
 #endif  // !TIME_CONVERSIONS_H
 
 /*
