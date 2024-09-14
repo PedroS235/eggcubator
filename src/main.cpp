@@ -62,7 +62,7 @@ void loop() {
     heater->log_stats();
     humidifier->log_stats();
     incubation->log_stats();
-    vTaskDelay(3000 / portTICK_PERIOD_MS);
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
 }
 
 /*
