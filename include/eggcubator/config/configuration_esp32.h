@@ -55,7 +55,7 @@
  * found here: https://github.com/olikraus/u8g2/wiki/u8g2setupcpp
  */
 
-#define UI_LOCALE_EN                 // use _PT for portuguese
+#define UI_LOCALE_PT                 // use _PT for portuguese
 #define UI_BOOTSCREEN_DURATION 1000  // in milliseconds
 #define UI_REFRESH_RATE 1 / 30       // 1/Hz
 #define UI_OLED_TYPE \
@@ -93,7 +93,7 @@
 #define EGG_DUCK_TYPE 2  // DO NOT CHANGE THIS VALUE
 #define EGG_DUCK_INCUBATION_PERIOD 28
 #define EGG_DUCK_MOTOR_ROTATION_PERIOD 1
-#define EGG_DUCK_START_MOTOR_ROTATION_PERIOD 2
+#define EGG_DUCK_START_MOTOR_ROTATION_PERIOD 0  // TODO: change back to 2 once tested
 #define EGG_DUCK_STOP_MOTOR_ROTATION_PERIOD 3
 #define EGG_DUCK_TARGET_TEMP 37.5
 #define EGG_DUCK_TARGET_HUMD 55.0
