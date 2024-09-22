@@ -195,7 +195,8 @@ void MenuStateMachine::handle_incubation_menu_event(menu_event_e event) {
                     log_state_transition(INCUBATION_MENU, INCUBATION_SCREEN);
                     _curr_state = INCUBATION_SCREEN;
                     set_curr_menu(nullptr);
-                    _incubation->start_incubation(EggFactory::createEggFromIdx(idx));
+                    _incubation->start_incubation(
+                        EggFactory::createEggFromIdx(idx - 1));
                     break;
             }
             break;
