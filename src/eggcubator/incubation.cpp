@@ -36,6 +36,8 @@ void IncubationRoutine::before_incubation_state() {
     motor_controller.set_rotation_interval_hours(curr_egg.eggs_rotation_period);
 
     // TODO(PedroS): Before starting the incubation, wait for the temperature to settle
+    started_motor_rotation = false;
+    stoped_motor_rotation = false;
 
     curr_time.start();
     log_d("Changing Incubation state: BEFORE state -> IN state");
@@ -48,12 +50,16 @@ void IncubationRoutine::in_incubation_state() {
         curr_state = AFTER_INCUBATION_STATE;
     }
 
-    if (curr_time.get_day() >= curr_egg.start_of_motor_rotation) {
+    if (!started_motor_rotation &&
+        curr_time.get_day() >= curr_egg.start_of_motor_rotation) {
         motor_controller.start_motor_rotation();
+        started_motor_rotation = true;
     }
 
-    if (curr_time.get_day() >= curr_egg.end_of_motor_rotation) {
+    if (!stoped_motor_rotation &&
+        curr_time.get_day() >= curr_egg.end_of_motor_rotation) {
         motor_controller.stop_motor_rotation();
+        stoped_motor_rotation = true;
     }
 }
 
@@ -108,7 +114,7 @@ void IncubationRoutine::task(void *pvParameters) {
             default:
                 break;
         }
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        vTaskDelay(500 / portTICK_PERIOD_MS);
     }
 }
 

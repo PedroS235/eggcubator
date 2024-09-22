@@ -40,6 +40,8 @@ class IncubationRoutine {
     Heater *_heater;
     Humidifier *_humidifier;
     MotorController motor_controller;
+    bool started_motor_rotation = false;
+    bool stoped_motor_rotation = false;
 
    private:
     /**

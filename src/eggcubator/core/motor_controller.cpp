@@ -10,20 +10,22 @@
 
 MotorController::MotorController() {
     pinMode(MOTOR_PIN, OUTPUT);
-    log_v("Setting MotorController state to IDDLE");
+    log_d("Setting MotorController state to IDDLE");
     curr_state = IDDLE_MOTOR_STATE;
     set_rotation_duration_seconds(MOTOR_ROTATION_DURATION);
 }
 
 void MotorController::start_motor_rotation() {
-    prev_rotation = millis();
-    trigger_timer = millis();
-    log_v("Changing MotorController state: START state -> WAITING state");
-    curr_state = WAITING_MOTOR_STATE;
+    unsigned long now = millis();
+    digitalWrite(MOTOR_PIN, HIGH);
+    log_d("Changing MotorController state: WAITING state -> ROTATING state");
+    curr_state = ROTATING_MOTOR_STATE;
+    prev_rotation = now;
+    start_of_rotation = now;
 }
 
 void MotorController::stop_motor_rotation() {
-    log_v("Changing MotorController state: STOP state -> IDDLE state");
+    log_d("Changing MotorController state: STOP state -> IDDLE state");
     curr_state = IDDLE_MOTOR_STATE;
 }
 
@@ -47,7 +49,7 @@ void MotorController::waiting_state() {
     unsigned long now = millis();
     if (now - prev_rotation >= rotation_interval) {
         digitalWrite(MOTOR_PIN, HIGH);
-        log_v("Changing MotorController state: WAITING state -> ROTATING state");
+        log_d("Changing MotorController state: WAITING state -> ROTATING state");
         curr_state = ROTATING_MOTOR_STATE;
         prev_rotation = now;
         start_of_rotation = now;
@@ -58,7 +60,7 @@ void MotorController::rotating_state() {
     unsigned long now = millis();
     if (now - start_of_rotation >= rotation_duration) {
         digitalWrite(MOTOR_PIN, LOW);
-        log_v("Changing MotorController state: ROTATING state -> WAITING state");
+        log_d("Changing MotorController state: ROTATING state -> WAITING state");
         curr_state = WAITING_MOTOR_STATE;
     }
 }
