@@ -105,13 +105,13 @@ void Heater::log_stats() {
 
 void Heater::task(void* pvParameters) {
     for (;;) {
-        // TODO: use set_temp_target instead of passing as a parameter to tick()
-        log_v("Ticking heater");
+        vTaskDelay(100 / portTICK_PERIOD_MS);
         int ret = sensor->read(&temp);
 
         if (ret == ESP_FAIL) {
             log_e("Thermistor reading not valid. Shutting down heater for safety.");
             _set_duty(0);
+            continue;
         }
 
         log_v("Temperature Reading %f", temp);
@@ -121,6 +121,7 @@ void Heater::task(void* pvParameters) {
                 "Temperature is not within allowed range. Shutting down heater "
                 "for safety.");
             _set_duty(0);
+            continue;
         }
 
         // Reset PID in case the temperature target changes
@@ -132,8 +133,6 @@ void Heater::task(void* pvParameters) {
 
         // Control Heater power using PWM
         _set_duty(curr_power);
-
-        vTaskDelay(100 / portTICK_PERIOD_MS);
     }
 }
 
