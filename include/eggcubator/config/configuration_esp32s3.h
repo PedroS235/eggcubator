@@ -20,8 +20,8 @@
 // |                           Heater Config Section                           |
 // -----------------------------------------------------------------------------
 
-#define HEATER_PIN 8
-#define HEATER_SENSOR_PIN 7  // Thermistor
+#define HEATER_PIN 7
+#define HEATER_SENSOR_PIN 6  // Thermistor
 #define HEATER_MIN_TEMP -10.0
 #define HEATER_MAX_TEMP 40.0
 #define HEATER_PID_KP 5.0
@@ -45,8 +45,12 @@
 // |                            Motor Config Section                           |
 // -----------------------------------------------------------------------------
 
-#define MOTOR_PIN 9
-#define MOTOR_ROTATION_DURATION 5  // in seconds
+#define MOTOR_PIN 9  // Deprecated in favor of stepper motor
+#define MOTOR_IN1 8
+#define MOTOR_IN2 9
+#define MOTOR_IN3 10
+#define MOTOR_IN4 11
+#define MOTOR_ROTATION_DURATION 10  // in seconds
 
 // -----------------------------------------------------------------------------
 // |                             UI Config Section                             |

@@ -17,7 +17,8 @@
 #define __EGGCUBATOR_VERSION__ "0.1.0"
 #define DEBUG
 
-#include "eggcubator/config/configuration_esp32.h"
+// #include "eggcubator/config/configuration_esp32.h"
+#include "eggcubator/config/configuration_esp32s3.h"
 
 #endif  // !CONFIGURATION_H
 
