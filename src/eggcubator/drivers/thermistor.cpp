@@ -1392,8 +1392,6 @@ Thermistor::Thermistor(uint8_t pin, uint32_t series_res) {
 esp_err_t Thermistor::read(float *output) {
     int reading = analogRead(_pin);
 
-    log_i("ADC_Reading: %d", reading);
-
     if (reading < 0 || reading > MAX_ADC_VALUE) {
         log_e("ADC reading out of range");
         return ESP_FAIL;
