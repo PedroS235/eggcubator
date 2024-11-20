@@ -7,7 +7,7 @@
 #ifndef MOVING_AVG_FILTER_H
 #define MOVING_AVG_FILTER_H
 
-#define MOVING_AVG_FILTER_WINDOW_SIZE 10
+#define MOVING_AVG_FILTER_WINDOW_SIZE 15
 
 #include <Arduino.h>
 
