@@ -8,16 +8,20 @@
 #include <eggcubator/core/motor_controller.h>
 #include <eggcubator/extras/time_conversions.h>
 
-MotorController::MotorController() {
-    pinMode(MOTOR_PIN, OUTPUT);
+#include "AccelStepper.h"
+
+MotorController::MotorController()
+    : stepper(AccelStepper::FULL4WIRE, MOTOR_IN1, MOTOR_IN2, MOTOR_IN3, MOTOR_IN4) {
     log_d("Setting MotorController state to IDDLE");
+    stepper.setMaxSpeed(1000);
+    stepper.setAcceleration(100);
     curr_state = IDDLE_MOTOR_STATE;
     set_rotation_duration_seconds(MOTOR_ROTATION_DURATION);
 }
 
 void MotorController::start_motor_rotation() {
     unsigned long now = millis();
-    digitalWrite(MOTOR_PIN, HIGH);
+    stepper.setSpeed(200);
     log_d("Changing MotorController state: WAITING state -> ROTATING state");
     curr_state = ROTATING_MOTOR_STATE;
     prev_rotation = now;
@@ -48,7 +52,7 @@ void MotorController::set_rotation_duration_seconds(unsigned long interval) {
 void MotorController::waiting_state() {
     unsigned long now = millis();
     if (now - prev_rotation >= rotation_interval) {
-        digitalWrite(MOTOR_PIN, HIGH);
+        stepper.setSpeed(200);
         log_d("Changing MotorController state: WAITING state -> ROTATING state");
         curr_state = ROTATING_MOTOR_STATE;
         prev_rotation = now;
@@ -59,7 +63,9 @@ void MotorController::waiting_state() {
 void MotorController::rotating_state() {
     unsigned long now = millis();
     if (now - start_of_rotation >= rotation_duration) {
-        digitalWrite(MOTOR_PIN, LOW);
+        stepper.setSpeed(0);
+        stepper.stop();
+        stepper.disableOutputs();
         log_d("Changing MotorController state: ROTATING state -> WAITING state");
         curr_state = WAITING_MOTOR_STATE;
     }
@@ -67,6 +73,7 @@ void MotorController::rotating_state() {
 
 void MotorController::tick() {
     log_v("Ticking motor controller");
+    stepper.runSpeed();
     switch (curr_state) {
         case IDDLE_MOTOR_STATE:
             break;
