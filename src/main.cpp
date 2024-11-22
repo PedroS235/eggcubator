@@ -12,6 +12,7 @@
 #include "eggcubator/core/heater.h"
 #include "eggcubator/core/humidifier.h"
 #include "eggcubator/incubation.h"
+#include "eggcubator/server.hpp"
 #include "eggcubator/ui/interface.h"
 #include "esp32-hal.h"
 
@@ -23,6 +24,7 @@ Heater *heater;
 Humidifier *humidifier;
 IncubationRoutine *incubation;
 Interface *interface;
+eggcubator::Server *server;
 
 void heater_task(void *pvParameters) { heater->task(pvParameters); }
 void humidifier_task(void *pvParameters) { humidifier->task(pvParameters); }
@@ -44,6 +46,7 @@ void setup() {
     humidifier = new Humidifier();
     incubation = new IncubationRoutine(heater, humidifier);
     interface = new Interface(heater, humidifier, incubation);
+    server = new eggcubator::Server(heater, humidifier, incubation);
 
     interface->init();
 
@@ -55,14 +58,17 @@ void setup() {
     xTaskCreate(incubation_task, "RoutineTask", 5000, NULL, 1, NULL);
     log_d("Create Interface Task");
     xTaskCreate(interface_task, "InterfaceTask", 10000, NULL, 2, NULL);
+
+    server->init(WIFI_SSID, WIFI_PW);
 }
 
 void loop() {
     // Handled by FreeRTOS tasks.
-    heater->log_stats();
-    humidifier->log_stats();
-    incubation->log_stats();
-    vTaskDelay(1000 / portTICK_PERIOD_MS);
+    // heater->log_stats();
+    // humidifier->log_stats();
+    // incubation->log_stats();
+    // vTaskDelay(1000 / portTICK_PERIOD_MS);
+    server->handle_client();
 }
 
 /*
