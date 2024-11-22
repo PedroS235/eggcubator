@@ -20,6 +20,9 @@
 // #include "eggcubator/config/configuration_esp32.h"
 #include "eggcubator/config/configuration_esp32s3.h"
 
+#define WIFI_SSID "AndroidAPf97b"
+#define WIFI_PW "yourpassword"
+
 #endif  // !CONFIGURATION_H
 
 /*
