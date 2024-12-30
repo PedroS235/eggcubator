@@ -34,7 +34,7 @@ void interface_task(void *pvParameters) { interface->task(pvParameters); }
 void setup() {
     delay(500);
     Wire.begin(UI_I2C_SDA_PIN, UI_I2C_SCK_PIN);
-    Serial.begin(460800);
+    Serial.begin(115200);
 
 #ifdef DEBUG
     Serial.setDebugOutput(true);
