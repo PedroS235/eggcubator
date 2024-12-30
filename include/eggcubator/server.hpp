@@ -28,6 +28,7 @@ class Server {
     void api();
     void handle_request(WiFiClient client, const String &request);
     void handle_root();
+    bool _connect_wifi(char *ssid, char *password);
 };
 
 }  // namespace eggcubator
