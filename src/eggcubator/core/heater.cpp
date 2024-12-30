@@ -43,6 +43,8 @@ void Heater::set_temp_target(float new_target) {
     temp_target = new_target;
 }
 
+int Heater::get_curr_power() { return curr_power; }
+
 void Heater::turn_off() { temp_target = 0; }
 
 void Heater::update_pid_terms(float new_p, float new_i, float new_d) {

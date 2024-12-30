@@ -68,6 +68,11 @@ class Heater {
     void turn_off();
 
     /**
+     * @brief Method to retrieve the current power being used by the heater (0-255)
+     */
+    int get_curr_power();
+
+    /**
      * @brief Updates the current PID term values of the PID controller
      *
      * @param new_p is the new proportional term to be set

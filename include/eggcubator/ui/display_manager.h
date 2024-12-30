@@ -24,6 +24,11 @@ class DisplayManager {
                          bool select,
                          float value,
                          uint8_t precision);
+    void draw_vert_progress_bar(uint8_t x,
+                                uint8_t y,
+                                uint8_t width,
+                                uint8_t height,
+                                uint8_t percetange);
     void draw_progress_bar(uint8_t x,
                            uint8_t y,
                            uint8_t width,
@@ -44,7 +49,8 @@ class DisplayManager {
     void draw_status_screen(float temp,
                             float target_temp,
                             float humd,
-                            float target_humd);
+                            float target_humd,
+                            int heater_power);
 
     /**
      * @brief Draws the information about the current incubation in place, such

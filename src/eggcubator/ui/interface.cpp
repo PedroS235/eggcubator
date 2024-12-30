@@ -83,7 +83,8 @@ void Interface::task(void* pvParameters) {
             _display.draw_status_screen(_heater->get_temp(),
                                         _heater->get_target(),
                                         _humidifier->get_humidity(),
-                                        _humidifier->get_target());
+                                        _humidifier->get_target(),
+                                        _heater->get_curr_power());
             continue;
         }
 

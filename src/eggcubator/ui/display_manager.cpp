@@ -80,6 +80,16 @@ void DisplayManager::draw_value_item(uint8_t x,
     display->drawRFrame(0, y, display->getWidth(), 20, 2);
 }
 
+void DisplayManager::draw_vert_progress_bar(uint8_t x,
+                                            uint8_t y,
+                                            uint8_t width,
+                                            uint8_t height,
+                                            uint8_t percetange) {
+    display->drawFrame(x, y, width, height);
+    uint8_t h = height * percetange / 100;
+    display->drawBox(x, y, width, h);
+}
+
 void DisplayManager::draw_progress_bar(uint8_t x,
                                        uint8_t y,
                                        uint8_t width,
@@ -144,11 +154,17 @@ void DisplayManager::draw_title(const char* title) {
 void DisplayManager::draw_status_screen(float temp,
                                         float target_temp,
                                         float humd,
-                                        float target_humd) {
+                                        float target_humd,
+                                        int heater_power) {
     display->firstPage();
     do {
         draw_temperature(0, 0, temp, target_temp);
         draw_humidity(display->getWidth() - 25, 0, humd, target_humd);
+        draw_vert_progress_bar(display->getWidth() / 2 - 5,
+                               2,
+                               4,
+                               display->getHeight() / 2,
+                               heater_power * 100 / 255);
     } while (display->nextPage());
 }
 
