@@ -22,6 +22,7 @@
 
 #define WIFI_SSID "AndroidAPf97b"
 #define WIFI_PW "yourpassword"
+// #define USE_WIFI
 
 #endif  // !CONFIGURATION_H
 

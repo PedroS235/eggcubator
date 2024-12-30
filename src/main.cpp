@@ -24,7 +24,9 @@ Heater *heater;
 Humidifier *humidifier;
 IncubationRoutine *incubation;
 Interface *interface;
+#ifdef USE_WIFI
 eggcubator::Server *server;
+#endif
 
 void heater_task(void *pvParameters) { heater->task(pvParameters); }
 void humidifier_task(void *pvParameters) { humidifier->task(pvParameters); }
@@ -46,7 +48,9 @@ void setup() {
     humidifier = new Humidifier();
     incubation = new IncubationRoutine(heater, humidifier);
     interface = new Interface(heater, humidifier, incubation);
+#ifdef USE_WIFI
     server = new eggcubator::Server(heater, humidifier, incubation);
+#endif
 
     interface->init();
 
@@ -59,16 +63,20 @@ void setup() {
     log_d("Create Interface Task");
     xTaskCreate(interface_task, "InterfaceTask", 10000, NULL, 2, NULL);
 
+#ifdef USE_WIFI
     server->init(WIFI_SSID, WIFI_PW);
+#endif
 }
 
 void loop() {
     // Handled by FreeRTOS tasks.
-    // heater->log_stats();
+    heater->log_stats();
     // humidifier->log_stats();
     // incubation->log_stats();
-    // vTaskDelay(1000 / portTICK_PERIOD_MS);
+    vTaskDelay(5000 / portTICK_PERIOD_MS);
+#ifdef USE_WIFI
     server->handle_client();
+#endif
 }
 
 /*

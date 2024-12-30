@@ -24,9 +24,9 @@
 #define HEATER_SENSOR_PIN 6  // Thermistor
 #define HEATER_MIN_TEMP -10.0
 #define HEATER_MAX_TEMP 40.0
-#define HEATER_PID_KP 5.0
-#define HEATER_PID_KI 0.0
-#define HEATER_PID_KD 0.0
+#define HEATER_PID_KP 10.0
+#define HEATER_PID_KI 2.0
+#define HEATER_PID_KD 1.0
 #define HEATER_CONTROL_TYPE 0  // 0: PID, 1: BANGBANG
 
 // -----------------------------------------------------------------------------
