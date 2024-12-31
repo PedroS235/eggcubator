@@ -1,6 +1,8 @@
 #include "eggcubator/drivers/thermistor.h"
 
 #include "Arduino.h"
+#include "eggcubator/extras/ema_filter.h"
+#include "eggcubator/extras/holt_winters_filter.h"
 #include "eggcubator/extras/moving_avg_filter.h"
 #include "esp32-hal-adc.h"
 #include "esp32-hal-log.h"
@@ -1383,7 +1385,7 @@ const float lookup_table[] = {
 Thermistor::Thermistor(uint8_t pin, uint32_t series_res) {
     _pin = pin;
     _series_res = series_res;
-    _filter = new MovingAvgFilter();
+    _filter = new HoltWintersFilter();
 
     pinMode(_pin, ANALOG);
     analogReadResolution(ADC_RESOLUTION);

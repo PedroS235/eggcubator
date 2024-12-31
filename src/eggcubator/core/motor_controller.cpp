@@ -21,7 +21,7 @@ MotorController::MotorController()
 
 void MotorController::start_motor_rotation() {
     unsigned long now = millis();
-    stepper.setSpeed(200);
+    stepper.setSpeed(60);
     log_d("Changing MotorController state: WAITING state -> ROTATING state");
     curr_state = ROTATING_MOTOR_STATE;
     prev_rotation = now;

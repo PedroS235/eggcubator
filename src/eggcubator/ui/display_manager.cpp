@@ -173,13 +173,19 @@ void DisplayManager::draw_incubation_status_screen(float temp,
                                                    float humd,
                                                    float target_humd,
                                                    eggcubator::time_t curr_time,
-                                                   long total_days) {
+                                                   long total_days,
+                                                   int heater_power) {
     display->firstPage();
     do {
         draw_temperature(0, 0, temp, target_temp);
         draw_humidity(display->getWidth() - 25, 0, humd, target_humd);
         draw_progress_bar(
             2, 60, display->getWidth() - 4, 4, curr_time.day * 100 / total_days);
+        draw_vert_progress_bar(display->getWidth() / 2 - 5,
+                               2,
+                               4,
+                               display->getHeight() / 2,
+                               heater_power * 100 / 255);
         draw_time(0, 50, curr_time);
 
     } while (display->nextPage());

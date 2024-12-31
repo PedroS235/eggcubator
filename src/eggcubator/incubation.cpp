@@ -27,7 +27,10 @@ IncubationRoutine::IncubationRoutine(Heater *heater, Humidifier *humidifier)
     curr_state = IDDLE_INCUBATION_STATE;
 }
 
-void IncubationRoutine::rotate_motor() { motor_controller.start_motor_rotation(); }
+void IncubationRoutine::rotate_motor() {
+    motor_controller.set_rotation_interval_seconds(3600);
+    motor_controller.start_motor_rotation();
+}
 
 Timer IncubationRoutine::get_curr_time() { return curr_time; }
 
@@ -36,7 +39,6 @@ void IncubationRoutine::before_incubation_state() {
     _humidifier->set_humidity_target(curr_egg.target_humd);
 
     motor_controller.set_rotation_interval_hours(curr_egg.eggs_rotation_period);
-    motor_controller.set_rotation_interval_seconds(curr_egg.eggs_rotation_period);
 
     // TODO(PedroS): Before starting the incubation, wait for the temperature to settle
     started_motor_rotation = false;

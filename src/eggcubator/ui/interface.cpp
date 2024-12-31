@@ -77,7 +77,8 @@ void Interface::task(void* pvParameters) {
                     _humidifier->get_humidity(),
                     _humidifier->get_target(),
                     _incubation->get_curr_time().get_time_t(),
-                    29);
+                    29,
+                    _heater->get_curr_power());
                 continue;
             }
             _display.draw_status_screen(_heater->get_temp(),

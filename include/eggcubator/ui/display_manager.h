@@ -65,7 +65,8 @@ class DisplayManager {
                                        float humd,
                                        float target_humd,
                                        eggcubator::time_t curr_time,
-                                       long total_days);
+                                       long total_days,
+                                       int heater_power);
 
     /**
      * @brief Draws a menu based on the items passed as a parameter. It also
