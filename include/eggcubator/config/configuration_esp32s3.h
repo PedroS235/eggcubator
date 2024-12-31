@@ -25,8 +25,8 @@
 #define HEATER_MIN_TEMP -10.0
 #define HEATER_MAX_TEMP 40.0
 #define HEATER_PID_KP 10.0
-#define HEATER_PID_KI 2.0
-#define HEATER_PID_KD 1.0
+#define HEATER_PID_KI 1.0
+#define HEATER_PID_KD 1.5
 #define HEATER_CONTROL_TYPE 0  // 0: PID, 1: BANGBANG
 
 // -----------------------------------------------------------------------------
@@ -50,7 +50,7 @@
 #define MOTOR_IN2 9
 #define MOTOR_IN3 10
 #define MOTOR_IN4 11
-#define MOTOR_ROTATION_DURATION 10  // in seconds
+#define MOTOR_ROTATION_DURATION 5  // in seconds
 
 // -----------------------------------------------------------------------------
 // |                             UI Config Section                             |
