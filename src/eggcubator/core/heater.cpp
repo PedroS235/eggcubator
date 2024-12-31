@@ -17,7 +17,7 @@ Heater::Heater(float temp_correction_)
                   .min_output = 0,
                   .max_output = 255,
                   .min_integral = 0,
-                  .max_integral = 100};
+                  .max_integral = 150};
 
     pid = new PidControl(&pid_config);
     sensor = new Thermistor(HEATER_SENSOR_PIN, 10000);
