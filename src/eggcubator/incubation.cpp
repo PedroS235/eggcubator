@@ -27,6 +27,8 @@ IncubationRoutine::IncubationRoutine(Heater *heater, Humidifier *humidifier)
     curr_state = IDDLE_INCUBATION_STATE;
 }
 
+void IncubationRoutine::rotate_motor() { motor_controller.start_motor_rotation(); }
+
 Timer IncubationRoutine::get_curr_time() { return curr_time; }
 
 void IncubationRoutine::before_incubation_state() {

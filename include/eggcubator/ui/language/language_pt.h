@@ -39,6 +39,8 @@
 #define GOOSE_STR "Ganso"
 #define PIGEON_STR "Pombo"
 
+#define MOTOR_ON_STR "Ligar motor"
+
 #endif  // !#ifndef LANGUAGE_PT_H
 
 /*

@@ -47,6 +47,8 @@
 #define GOOSE_STR "Goose"
 #define PIGEON_STR "Pigeon"
 
+#define MOTOR_ON_STR "Motor on"
+
 #endif
 
 #endif  // !LANGUAGE_H

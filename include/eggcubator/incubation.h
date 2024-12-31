@@ -78,6 +78,7 @@ class IncubationRoutine {
      */
     void start_incubation(egg_t egg);
     void stop_incubation();
+    void rotate_motor();
 
     /**
      * @brief Method which acts like the internal loop cycle for the incubation routine

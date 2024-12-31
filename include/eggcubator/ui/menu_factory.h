@@ -44,13 +44,14 @@ class MenuFactory {
     }
 
     static Menu* createSettingsMenu(float motor_rotation) {
-        MenuItem** settingsMenuItems = new MenuItem*[6];
+        MenuItem** settingsMenuItems = new MenuItem*[7];
         settingsMenuItems[0] = new MenuItem(GO_BACK_STR);
         settingsMenuItems[1] = new MenuItem(HEATER_STR);
         settingsMenuItems[2] = new MenuItem(HUMIDIFIER_STR);
         settingsMenuItems[3] = new ValueMenuItem(MOTOR_ROTATION_STR, motor_rotation);
-        settingsMenuItems[4] = new MenuItem(SAVE_STR);
-        settingsMenuItems[5] = new MenuItem(RESET_STR);
+        settingsMenuItems[4] = new MenuItem(MOTOR_ON_STR);
+        settingsMenuItems[5] = new MenuItem(SAVE_STR);
+        settingsMenuItems[6] = new MenuItem(RESET_STR);
         return new Menu(settingsMenuItems, 6);
     }
 

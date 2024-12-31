@@ -274,7 +274,10 @@ void MenuStateMachine::handle_settings_menu_event(menu_event_e event) {
                     _changing_value_item->increment_precision();
                     _state_before_changing_value = SETTINGS_MENU;
                     break;
-                case 4:  // Save Settings into eeprom
+                case 4:  // Turn Motor On
+                    _incubation->rotate_motor();
+                    break;
+                case 5:  // Save Settings into eeprom
                     break;
                 case 6:  // Reset Settings to defaults
                     break;
