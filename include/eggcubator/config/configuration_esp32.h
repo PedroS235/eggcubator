@@ -46,11 +46,11 @@
 
 // TODO: These pins are not ok. Need to be checked
 #define MOTOR_PIN 9  // Deprecated in favor of stepper motor
-#define MOTOR_IN1 8
-#define MOTOR_IN2 9
-#define MOTOR_IN3 10
-#define MOTOR_IN4 11
-#define MOTOR_ROTATION_DURATION 10  // in seconds
+#define MOTOR_IN1 27
+#define MOTOR_IN2 26
+#define MOTOR_IN3 25
+#define MOTOR_IN4 33
+#define MOTOR_ROTATION_DURATION 5  // in seconds
 
 // -----------------------------------------------------------------------------
 // |                             UI Config Section                             |
