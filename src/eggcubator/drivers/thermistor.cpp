@@ -1,6 +1,7 @@
 #include "eggcubator/drivers/thermistor.h"
 
 #include "Arduino.h"
+#include "eggcubator/extras/butterworth_filter.h"
 #include "eggcubator/extras/ema_filter.h"
 #include "eggcubator/extras/holt_winters_filter.h"
 #include "eggcubator/extras/moving_avg_filter.h"
@@ -1385,25 +1386,29 @@ const float lookup_table[] = {
 Thermistor::Thermistor(uint8_t pin, uint32_t series_res) {
     _pin = pin;
     _series_res = series_res;
-    _filter = new HoltWintersFilter();
+    _adc_filter = new EMAFilter(0.7);
+    _temp_filter = new MovingAvgFilter(10);
 
     pinMode(_pin, ANALOG);
     analogReadResolution(ADC_RESOLUTION);
+    _raw_reading = analogRead(_pin);  // your raw ADC reading
 }
 
 esp_err_t Thermistor::read(float *output) {
-    int reading = analogRead(_pin);
+    int raw_adc = analogRead(_pin);  // your raw ADC reading
+    int filtered_adc = (int)_adc_filter->compute(raw_adc);
 
-    if (reading < 0 || reading > MAX_ADC_VALUE) {
-        log_e("ADC reading out of range");
+    if (filtered_adc < 950 || filtered_adc > MAX_ADC_VALUE) {
+        log_e("ADC value invalid. Is thermistor connected?");
+        *output = NAN;
         return ESP_FAIL;
     }
 
     // Lookup temperature from the table
-    float tempC = lookup_table[reading];
-    tempC = _filter->compute(tempC);
+    float raw_temp = lookup_table[filtered_adc];
+    float filtered_temp = _temp_filter->compute(raw_temp);
 
-    *output = tempC;
+    *output = filtered_temp;
 
     return ESP_OK;
 }

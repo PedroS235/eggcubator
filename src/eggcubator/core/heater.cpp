@@ -107,7 +107,7 @@ void Heater::log_stats() {
 
 void Heater::task(void* pvParameters) {
     for (;;) {
-        vTaskDelay(100 / portTICK_PERIOD_MS);
+        vTaskDelay(250 / portTICK_PERIOD_MS);
         int ret = sensor->read(&temp);
 
         if (ret == ESP_FAIL) {
@@ -118,7 +118,7 @@ void Heater::task(void* pvParameters) {
 
         log_v("Temperature Reading %f", temp);
 
-        if (temp > HEATER_MAX_TEMP || temp < HEATER_MIN_TEMP) {
+        if (temp >= HEATER_MAX_TEMP || temp <= HEATER_MIN_TEMP) {
             log_w(
                 "Temperature is not within allowed range. Shutting down heater "
                 "for safety.");

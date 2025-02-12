@@ -7,9 +7,10 @@
 #ifndef MOVING_AVG_FILTER_H
 #define MOVING_AVG_FILTER_H
 
-#define MOVING_AVG_FILTER_WINDOW_SIZE 15
+#define DEFAULT_WINDOW_SIZE 15
 
 #include <Arduino.h>
+#include <stdlib.h>
 
 /**
  * @brief: Simple filter in order to smooth out sensor readings and reduce
@@ -17,16 +18,28 @@
  */
 class MovingAvgFilter {
    private:
-    float readings[MOVING_AVG_FILTER_WINDOW_SIZE];
+    float *readings = NULL;
     uint8_t curr_index = 0;
+    int window_size = DEFAULT_WINDOW_SIZE;
 
    public:
     /**
      * @brief Constructor of the class MovingAvgFilter
+     *
+     * @param window_size Size to be used for the average window
+     * @param default_value Value to set the initial window
      */
-    MovingAvgFilter() {
-        for (int i = 0; i < MOVING_AVG_FILTER_WINDOW_SIZE; i++) {
-            readings[i] = 0;
+    MovingAvgFilter(int window_size = DEFAULT_WINDOW_SIZE, float default_value = 22)
+        : window_size(window_size) {
+        readings = (float *)malloc(window_size * sizeof(float));
+        for (int i = 0; i < window_size; i++) {
+            readings[i] = default_value;
+        }
+    }
+
+    ~MovingAvgFilter() {
+        if (readings != NULL) {
+            free(readings);
         }
     }
 
@@ -39,14 +52,14 @@ class MovingAvgFilter {
      */
     float compute(float current_value) {
         readings[curr_index] = current_value;
-        curr_index = (curr_index + 1) % MOVING_AVG_FILTER_WINDOW_SIZE;
+        curr_index = (curr_index + 1) % window_size;
 
         float sum = 0;
-        for (int i = 0; i < MOVING_AVG_FILTER_WINDOW_SIZE; i++) {
+        for (int i = 0; i < window_size; i++) {
             sum += readings[i];
         }
 
-        return sum / MOVING_AVG_FILTER_WINDOW_SIZE;
+        return sum / window_size;
     }
 };
 

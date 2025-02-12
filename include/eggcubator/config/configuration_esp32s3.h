@@ -22,7 +22,7 @@
 
 #define HEATER_PIN 7
 #define HEATER_SENSOR_PIN 6  // Thermistor
-#define HEATER_MIN_TEMP -10.0
+#define HEATER_MIN_TEMP -1.0
 #define HEATER_MAX_TEMP 40.0
 #define HEATER_PID_KP 10.0
 #define HEATER_PID_KI 1.0

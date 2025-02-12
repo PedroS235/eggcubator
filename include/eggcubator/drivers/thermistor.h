@@ -4,7 +4,6 @@
 #include <Arduino.h>
 
 #include "eggcubator/extras/ema_filter.h"
-#include "eggcubator/extras/holt_winters_filter.h"
 #include "eggcubator/extras/moving_avg_filter.h"
 
 class Thermistor {
@@ -19,7 +18,9 @@ class Thermistor {
    private:
     uint8_t _pin;
     uint32_t _series_res;
-    HoltWintersFilter* _filter;
+    MovingAvgFilter* _temp_filter;
+    EMAFilter* _adc_filter;
+    int _raw_reading;
 };
 
 #endif  // !THERMISTOR_H
