@@ -12,17 +12,130 @@
 #ifndef CONFIGURATION_H
 #define CONFIGURATION_H
 
-#pragma once
-
 #define __EGGCUBATOR_VERSION__ "0.1.0"
 #define DEBUG
 
-// #include "eggcubator/config/configuration_esp32.h"
-#include "eggcubator/config/configuration_esp32s3.h"
+// Define the board you want to use. Available options are BOARD_ESP32 and
+// BOARD_ESP32_S3
+#define BOARD_ESP32_S3
 
+// -----------------------------------------------------------------------------
+// |                                 WiFi Section                              |
+// -----------------------------------------------------------------------------
+
+// #define USE_WIFI // Uncomment this line to enable WiFi
 #define WIFI_SSID "AndroidAPf97b"
 #define WIFI_PW "yourpassword"
-// #define USE_WIFI
+
+// -----------------------------------------------------------------------------
+// |                           Heater Config Section                           |
+// -----------------------------------------------------------------------------
+
+#define HEATER_MIN_TEMP -1.0
+#define HEATER_MAX_TEMP 40.0
+#define HEATER_PID_KP 10.0
+#define HEATER_PID_KI 1.0
+#define HEATER_PID_KD 1.5
+#define HEATER_CONTROL_TYPE 0  // 0: PID, 1: BANGBANG
+
+// -----------------------------------------------------------------------------
+// |                         Humidifier Config Section                         |
+// -----------------------------------------------------------------------------
+
+#define HUMIDIFIER_SENSOR_TYPE DHT11
+#define HUMIDIFIER_PID_KP 5.0
+#define HUMIDIFIER_PID_KI 0.0
+#define HUMIDIFIER_PID_KD 0.0
+
+// -----------------------------------------------------------------------------
+// |                            Motor Config Section                           |
+// -----------------------------------------------------------------------------
+#define MOTOR_ROTATION_DURATION 5  // in seconds
+
+// -----------------------------------------------------------------------------
+// |                             UI Config Section                             |
+// -----------------------------------------------------------------------------
+
+/* To know what is your oled type, you can check it in U8g2 repo,
+ * found here: https://github.com/olikraus/u8g2/wiki/u8g2setupcpp
+ */
+
+#define UI_LOCALE_EN                 // use _PT for portuguese
+#define UI_BOOTSCREEN_DURATION 1000  // in milliseconds
+#define UI_REFRESH_RATE 1 / 30       // 1/Hz
+#define UI_OLED_TYPE \
+    U8G2_SH1106_128X64_NONAME_F_HW_I2C  // Make sure to use full frame buffer
+
+// -----------------------------------------------------------------------------
+// |                              Egg Config Section                           |
+// -----------------------------------------------------------------------------
+
+// Chicken eggs
+#define EGG_CHICKEN_TYPE 0  // DO NOT CHANGE THIS VALUE
+#define EGG_CHICKEN_INCUBATION_PERIOD 21
+#define EGG_CHICKEN_MOTOR_ROTATION_PERIOD 1
+#define EGG_CHICKEN_START_MOTOR_ROTATION_PERIOD 2
+#define EGG_CHICKEN_STOP_MOTOR_ROTATION_PERIOD 3
+#define EGG_CHICKEN_TARGET_TEMP 37.7
+#define EGG_CHICKEN_TARGET_HUMD 55.0
+
+// Quail eggs
+#define EGG_QUAIL_TYPE 1  // DO NOT CHANGE THIS VALUE1
+#define EGG_QUAIL_INCUBATION_PERIOD 18
+#define EGG_QUAIL_MOTOR_ROTATION_PERIOD 1
+#define EGG_QUAIL_START_MOTOR_ROTATION_PERIOD 2
+#define EGG_QUAIL_STOP_MOTOR_ROTATION_PERIOD 3
+#define EGG_QUAIL_TARGET_TEMP 37.3
+#define EGG_QUAIL_TARGET_HUMD 40.0
+
+// Duck eggs
+#define EGG_DUCK_TYPE 2  // DO NOT CHANGE THIS VALUE
+#define EGG_DUCK_INCUBATION_PERIOD 28
+#define EGG_DUCK_MOTOR_ROTATION_PERIOD 1
+#define EGG_DUCK_START_MOTOR_ROTATION_PERIOD 2
+#define EGG_DUCK_STOP_MOTOR_ROTATION_PERIOD 3
+#define EGG_DUCK_TARGET_TEMP 37.5
+#define EGG_DUCK_TARGET_HUMD 55.0
+
+// Turkey eggs
+#define EGG_TURKEY_TYPE 3  // DO NOT CHANGE THIS VALUE
+#define EGG_TURKEY_INCUBATION_PERIOD 28
+#define EGG_TURKEY_MOTOR_ROTATION_PERIOD 1
+#define EGG_TURKEY_START_MOTOR_ROTATION_PERIOD 2
+#define EGG_TURKEY_STOP_MOTOR_ROTATION_PERIOD 3
+#define EGG_TURKEY_TARGET_TEMP 37.7
+#define EGG_TURKEY_TARGET_HUMD 55.0
+
+// Goose eggs
+#define EGG_GOOSE_TYPE 4  // DO NOT CHANGE THIS VALUE
+#define EGG_GOOSE_INCUBATION_PERIOD 28
+#define EGG_GOOSE_MOTOR_ROTATION_PERIOD 1
+#define EGG_GOOSE_START_MOTOR_ROTATION_PERIOD 2
+#define EGG_GOOSE_STOP_MOTOR_ROTATION_PERIOD 3
+#define EGG_GOOSE_TARGET_TEMP 37.7
+#define EGG_GOOSE_TARGET_HUMD 80.0
+
+// Pigeon eggs
+#define EGG_PIGEON_TYPE 5  // DO NOT CHANGE THIS VALUE
+#define EGG_PIGEON_INCUBATION_PERIOD 28
+#define EGG_PIGEON_MOTOR_ROTATION_PERIOD 1
+#define EGG_PIGEON_START_MOTOR_ROTATION_PERIOD 2
+#define EGG_PIGEON_STOP_MOTOR_ROTATION_PERIOD 3
+#define EGG_PIGEON_TARGET_TEMP 37.5
+#define EGG_PIGEON_TARGET_HUMD 57.0
+
+// -----------------------------------------------------------------------------
+// |                            End of Configuration                           |
+// -----------------------------------------------------------------------------
+
+// Includes the pins for the different boards
+#ifdef BOARD_ESP32_S3
+#include "eggcubator/config/pins/esp32_s3.h"
+#elif defined(BOARD_ESP32)
+#include "eggcubator/config/pins/esp32.h"
+#else
+#error "No board defined. Available boards are BOARD_ESP32 and BOARD_ESP32_S3"
+#endif
 
 #endif  // !CONFIGURATION_H
 

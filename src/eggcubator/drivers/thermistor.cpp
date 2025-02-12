@@ -1,13 +1,5 @@
 #include "eggcubator/drivers/thermistor.h"
 
-#include "Arduino.h"
-#include "eggcubator/extras/butterworth_filter.h"
-#include "eggcubator/extras/ema_filter.h"
-#include "eggcubator/extras/holt_winters_filter.h"
-#include "eggcubator/extras/moving_avg_filter.h"
-#include "esp32-hal-adc.h"
-#include "esp32-hal-log.h"
-
 static const float ADC_RESOLUTION = 12;
 static const float MAX_ADC_VALUE = 4095;  // 2^12
 static const float KELVIN_IN_CELSIUS = 273.15;
