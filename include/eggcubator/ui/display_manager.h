@@ -17,27 +17,27 @@ class DisplayManager {
     UI_OLED_TYPE* display;
 
    private:
-    void draw_text_item(uint8_t x, uint8_t y, const char* item_name, bool select);
-    void draw_value_item(uint8_t x,
-                         uint8_t y,
-                         const char* item_name,
-                         bool select,
-                         float value,
-                         uint8_t precision);
-    void draw_vert_progress_bar(uint8_t x,
-                                uint8_t y,
-                                uint8_t width,
-                                uint8_t height,
-                                uint8_t percetange);
-    void draw_progress_bar(uint8_t x,
-                           uint8_t y,
-                           uint8_t width,
-                           uint8_t height,
-                           uint8_t percetange);
-    void draw_temperature(uint8_t x, uint8_t y, float value, float target);
-    void draw_humidity(uint8_t x, uint8_t y, float value, float target);
-    void draw_time(uint8_t x, uint8_t y, eggcubator::time_t time);
-    void draw_title(const char* title);
+    void _draw_text_item(uint8_t x, uint8_t y, const char* item_name, bool select);
+    void _draw_value_item(uint8_t x,
+                          uint8_t y,
+                          const char* item_name,
+                          bool select,
+                          float value,
+                          uint8_t precision);
+    void _draw_vert_progress_bar(uint8_t x,
+                                 uint8_t y,
+                                 uint8_t width,
+                                 uint8_t height,
+                                 uint8_t percetange);
+    void _draw_progress_bar(uint8_t x,
+                            uint8_t y,
+                            uint8_t width,
+                            uint8_t height,
+                            uint8_t percetange);
+    void _draw_temperature(uint8_t x, uint8_t y, float value, float target);
+    void _draw_humidity(uint8_t x, uint8_t y, float value, float target);
+    void _draw_time(uint8_t x, uint8_t y, eggcubator::time_t time);
+    void _draw_title(const char* title);
 
    public:
     DisplayManager();

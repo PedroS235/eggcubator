@@ -3,8 +3,7 @@
 
 #include <Arduino.h>
 
-#include "eggcubator/extras/ema_filter.h"
-#include "eggcubator/extras/moving_avg_filter.h"
+#include "eggcubator/extras/filters.h"
 
 class Thermistor {
    public:

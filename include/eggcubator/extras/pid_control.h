@@ -25,15 +25,17 @@ class PidControl {
     pid_config_t *_config;
     float _error_sum;
     float _prev_error;
+    bool _bangbang;
 
    public:
     /**
      * @brief Constructor for the class PID
      *
      * @param config is the default configuration for the pid
+     * @param bangbang if set to true treats the pid as BangBang control
      *
      */
-    PidControl(pid_config_t *config);
+    PidControl(pid_config_t *config, bool bigbang = false);
 
     void update_pid_config(pid_config_t *config);
     pid_config_t get_pid_config();

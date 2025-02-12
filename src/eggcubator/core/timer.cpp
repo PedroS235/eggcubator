@@ -8,63 +8,63 @@
 
 using namespace eggcubator;
 Timer::Timer() {
-    time_interval = 1000;
-    elapsed_time = millis();
-    time = {0, 0, 0, 0};
-    drift = 0;
+    _time_interval = 1000;
+    _elapsed_time = millis();
+    _time = {0, 0, 0, 0};
+    _drift = 0;
 }
 
-uint8_t Timer::get_day() { return time.day; }
+uint8_t Timer::get_day() { return _time.day; }
 
-uint8_t Timer::get_hour() { return time.hour; }
+uint8_t Timer::get_hour() { return _time.hour; }
 
-uint8_t Timer::get_minute() { return time.minute; }
+uint8_t Timer::get_minute() { return _time.minute; }
 
-uint8_t Timer::get_seconds() { return time.second; }
+uint8_t Timer::get_seconds() { return _time.second; }
 
-eggcubator::time_t Timer::get_time_t() { return time; }
+eggcubator::time_t Timer::get_time_t() { return _time; }
 
 void Timer::print_time() {
-    if (time.day > 0) {
-        Serial.print(time.day);
+    if (_time.day > 0) {
+        Serial.print(_time.day);
         Serial.println(" days");
     } else {
-        Serial.print(time.hour);
+        Serial.print(_time.hour);
         Serial.print(":");
-        Serial.print(time.minute);
+        Serial.print(_time.minute);
         Serial.print(":");
-        Serial.println(time.second);
+        Serial.println(_time.second);
     }
 }
 
 void Timer::start() {
-    elapsed_time = millis();
-    is_running = true;
-    time = {0, 0, 0, 0};
+    _elapsed_time = millis();
+    _is_running = true;
+    _time = {0, 0, 0, 0};
 }
 
 void Timer::update() {
-    if (is_running) {
+    if (_is_running) {
         unsigned long now = millis();
-        if (now - elapsed_time + drift >= time_interval) {
-            drift = now - elapsed_time + drift - time_interval;
-            elapsed_time = now;
-            time.second++;
+        if (now - _elapsed_time + _drift >= _time_interval) {
+            _drift = now - _elapsed_time + _drift - _time_interval;
+            _elapsed_time = now;
+            _time.second++;
         }
 
-        if (time.second == 60) {
-            time.minute++;
-            time.second = 0;
+        if (_time.second == 60) {
+            _time.minute++;
+            _time.second = 0;
         }
 
-        if (time.minute == 60) {
-            time.hour++;
-            time.minute = 0;
+        if (_time.minute == 60) {
+            _time.hour++;
+            _time.minute = 0;
         }
 
-        if (time.hour == 24) {
-            time.day++;
-            time.hour = 0;
+        if (_time.hour == 24) {
+            _time.day++;
+            _time.hour = 0;
         }
     }
 }

@@ -16,16 +16,16 @@
 
 class Humidifier {
    private:
-    float humidity;
-    float humidity_correction;
-    float humidity_target;
-    float prev_humidity_target;
-    unsigned long last_humidity_reading_time;
-    unsigned long humidity_reading_interval;
+    float _humidity;
+    float _humidity_correction;
+    float _humidity_target;
+    float _prev_humidity_target;
+    unsigned long _last_humidity_reading_time;
+    unsigned long _humidity_reading_interval;
 
-    PidControl* pid;
-    pid_config_t pid_config;
-    DHT* sensor;
+    PidControl* _pid;
+    pid_config_t _pid_config;
+    DHT* _sensor;
 
    public:
     Humidifier(unsigned long humidity_reading_interval_ = 2000,

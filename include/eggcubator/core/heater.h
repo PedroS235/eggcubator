@@ -16,16 +16,16 @@
  */
 class Heater {
    private:
-    float temp;
-    int curr_power;
-    float temp_correction;
-    float temp_target;
-    float prev_temp_target;
+    float _temp;
+    int _curr_power;
+    float _temp_correction;
+    float _temp_target;
+    float _prev_temp_target;
     uint8_t _pin;
 
-    pid_config_t pid_config;
-    PidControl* pid;
-    Thermistor* sensor;
+    pid_config_t _pid_config;
+    PidControl* _pid;
+    Thermistor* _sensor;
 
    private:
     void _set_duty(uint8_t duty);
@@ -39,7 +39,7 @@ class Heater {
      * @param temp_correction_ is a correction that will be applied to the
      * temperature reading to calibrate the sensor
      */
-    Heater(float temp_correction_ = 0);
+    Heater(float temp_correction = 0);
 
     /**
      * @brief Method to return the current temperature reading

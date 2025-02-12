@@ -18,10 +18,10 @@ DisplayManager::DisplayManager() {
     display->setFontPosTop();
 }
 
-void DisplayManager::draw_text_item(uint8_t x,
-                                    uint8_t y,
-                                    const char* item_name,
-                                    bool select) {
+void DisplayManager::_draw_text_item(uint8_t x,
+                                     uint8_t y,
+                                     const char* item_name,
+                                     bool select) {
     display->setFont(u8g2_font_profont15_tf);
     if (select) {
         display->setDrawColor(1);
@@ -38,12 +38,12 @@ void DisplayManager::draw_text_item(uint8_t x,
     display->drawRFrame(0, y, display->getWidth(), 20, 2);
 }
 
-void DisplayManager::draw_value_item(uint8_t x,
-                                     uint8_t y,
-                                     const char* item_name,
-                                     bool select,
-                                     float value,
-                                     uint8_t precision) {
+void DisplayManager::_draw_value_item(uint8_t x,
+                                      uint8_t y,
+                                      const char* item_name,
+                                      bool select,
+                                      float value,
+                                      uint8_t precision) {
     display->setFont(u8g2_font_profont15_tf);
     if (select) {
         display->setDrawColor(1);
@@ -80,27 +80,30 @@ void DisplayManager::draw_value_item(uint8_t x,
     display->drawRFrame(0, y, display->getWidth(), 20, 2);
 }
 
-void DisplayManager::draw_vert_progress_bar(uint8_t x,
-                                            uint8_t y,
-                                            uint8_t width,
-                                            uint8_t height,
-                                            uint8_t percetange) {
+void DisplayManager::_draw_vert_progress_bar(uint8_t x,
+                                             uint8_t y,
+                                             uint8_t width,
+                                             uint8_t height,
+                                             uint8_t percetange) {
     display->drawFrame(x, y, width, height);
     uint8_t h = height * percetange / 100;
     display->drawBox(x, y, width, h);
 }
 
-void DisplayManager::draw_progress_bar(uint8_t x,
-                                       uint8_t y,
-                                       uint8_t width,
-                                       uint8_t height,
-                                       uint8_t percetange) {
+void DisplayManager::_draw_progress_bar(uint8_t x,
+                                        uint8_t y,
+                                        uint8_t width,
+                                        uint8_t height,
+                                        uint8_t percetange) {
     display->drawFrame(x, y, width, height);
     uint8_t w = width * percetange / 100;
     display->drawBox(x, y, w, height);
 }
 
-void DisplayManager::draw_temperature(uint8_t x, uint8_t y, float value, float target) {
+void DisplayManager::_draw_temperature(uint8_t x,
+                                       uint8_t y,
+                                       float value,
+                                       float target) {
     display->setFont(u8g2_font_tenthinnerguys_tr);
     display->setCursor(x, y);
     display->print(value, 1);
@@ -110,7 +113,7 @@ void DisplayManager::draw_temperature(uint8_t x, uint8_t y, float value, float t
     display->print(target, 1);
 }
 
-void DisplayManager::draw_humidity(uint8_t x, uint8_t y, float value, float target) {
+void DisplayManager::_draw_humidity(uint8_t x, uint8_t y, float value, float target) {
     display->setFont(u8g2_font_tenthinnerguys_tr);
     display->setCursor(x, y);
     display->print(value, 1);
@@ -120,7 +123,7 @@ void DisplayManager::draw_humidity(uint8_t x, uint8_t y, float value, float targ
     display->print(target, 1);
 }
 
-void DisplayManager::draw_time(uint8_t x, uint8_t y, eggcubator::time_t time) {
+void DisplayManager::_draw_time(uint8_t x, uint8_t y, eggcubator::time_t time) {
     // Time format (Dd) HH::MM
     display->setFont(u8g2_font_5x8_tf);
     display->setCursor(x, y);
@@ -144,7 +147,7 @@ void DisplayManager::draw_time(uint8_t x, uint8_t y, eggcubator::time_t time) {
     display->print(time.second);
 }
 
-void DisplayManager::draw_title(const char* title) {
+void DisplayManager::_draw_title(const char* title) {
     display->setFont(u8g2_font_profont15_tf);
     display->drawStr(
         display->getWidth() / 2 - display->getStrWidth(title) / 2, 0, title);
@@ -158,13 +161,13 @@ void DisplayManager::draw_status_screen(float temp,
                                         int heater_power) {
     display->firstPage();
     do {
-        draw_temperature(0, 0, temp, target_temp);
-        draw_humidity(display->getWidth() - 25, 0, humd, target_humd);
-        draw_vert_progress_bar(display->getWidth() / 2 - 5,
-                               2,
-                               4,
-                               display->getHeight() / 2,
-                               heater_power * 100 / 255);
+        _draw_temperature(0, 0, temp, target_temp);
+        _draw_humidity(display->getWidth() - 25, 0, humd, target_humd);
+        _draw_vert_progress_bar(display->getWidth() / 2 - 5,
+                                2,
+                                4,
+                                display->getHeight() / 2,
+                                heater_power * 100 / 255);
     } while (display->nextPage());
 }
 
@@ -177,16 +180,16 @@ void DisplayManager::draw_incubation_status_screen(float temp,
                                                    int heater_power) {
     display->firstPage();
     do {
-        draw_temperature(0, 0, temp, target_temp);
-        draw_humidity(display->getWidth() - 25, 0, humd, target_humd);
-        draw_progress_bar(
+        _draw_temperature(0, 0, temp, target_temp);
+        _draw_humidity(display->getWidth() - 25, 0, humd, target_humd);
+        _draw_progress_bar(
             2, 60, display->getWidth() - 4, 4, curr_time.day * 100 / total_days);
-        draw_vert_progress_bar(display->getWidth() / 2 - 5,
-                               2,
-                               4,
-                               display->getHeight() / 2,
-                               heater_power * 100 / 255);
-        draw_time(0, 50, curr_time);
+        _draw_vert_progress_bar(display->getWidth() / 2 - 5,
+                                2,
+                                4,
+                                display->getHeight() / 2,
+                                heater_power * 100 / 255);
+        _draw_time(0, 50, curr_time);
 
     } while (display->nextPage());
 }
@@ -202,20 +205,20 @@ void DisplayManager::draw_menu(Menu* menu) {
             MenuItem* item = items[i];
             switch (item->get_type()) {
                 case TEXT_ITEM:
-                    draw_text_item(0, y, item->get_text(), i == selected_item);
+                    _draw_text_item(0, y, item->get_text(), i == selected_item);
                     break;
                 case VALUE_ITEM: {
                     ValueMenuItem* valueItem = static_cast<ValueMenuItem*>(item);
-                    draw_value_item(0,
-                                    y,
-                                    valueItem->get_text(),
-                                    i == selected_item,
-                                    valueItem->get_value(),
-                                    valueItem->get_precision());
+                    _draw_value_item(0,
+                                     y,
+                                     valueItem->get_text(),
+                                     i == selected_item,
+                                     valueItem->get_value(),
+                                     valueItem->get_precision());
                     break;
                 }
                 case CHECKBOX_ITEM:
-                    draw_text_item(0, y, item->get_text(), i == selected_item);
+                    _draw_text_item(0, y, item->get_text(), i == selected_item);
                     break;
             }
             y += 22;

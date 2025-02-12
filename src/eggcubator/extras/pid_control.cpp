@@ -9,7 +9,8 @@
 
 #include "eggcubator/extras/pid_control.h"
 
-PidControl::PidControl(pid_config_t *config) : _error_sum(0), _prev_error(0) {
+PidControl::PidControl(pid_config_t *config, bool bangbang)
+    : _error_sum(0), _prev_error(0), _bangbang(bangbang) {
     _config = config;
 }
 
@@ -24,6 +25,10 @@ void PidControl::reset() {
 
 float PidControl::compute(float setpoint, float current_value) {
     const float error = setpoint - current_value;
+
+    if (_bangbang) {
+        return error > setpoint ? _config->min_output : _config->max_output;
+    }
 
     // Eliminate possible noise on the integral term.
     if (error == 0 && setpoint == 0) {

@@ -21,8 +21,8 @@ class Interface {
     static Interface* _instance;  // Static instance pointer
     bool _button_has_been_pressed;
 
-    void handle_encoder_events(menu_event_e event);
-    void handle_encoder_button_event();
+    void _handle_encoder_events(menu_event_e event);
+    void _handle_encoder_button_event();
 
    public:
     Interface(Heater* heater, Humidifier* humidifier, IncubationRoutine* incubator);

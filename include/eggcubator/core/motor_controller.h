@@ -19,19 +19,19 @@
  */
 class MotorController {
    private:
-    unsigned long rotation_interval;  // In hours
-    unsigned long trigger_timer;
-    unsigned long rotation_timer;
-    unsigned long prev_rotation;
-    unsigned long start_of_rotation;
-    unsigned long rotation_duration;  // In seconds
-    uint8_t curr_state;
+    unsigned long _rotation_interval;  // In hours
+    unsigned long _trigger_timer;
+    unsigned long _rotation_timer;
+    unsigned long _prev_rotation;
+    unsigned long _start_of_rotation;
+    unsigned long _rotation_duration;  // In seconds
+    uint8_t _curr_state;
 
-    AccelStepper stepper;
+    AccelStepper _stepper;
 
    private:
-    void waiting_state();
-    void rotating_state();
+    void _waiting_state();
+    void _rotating_state();
 
    public:
     /**

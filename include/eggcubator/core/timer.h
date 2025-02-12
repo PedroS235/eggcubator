@@ -19,11 +19,11 @@ typedef struct {
 
 class Timer {
    private:
-    time_t time;
-    unsigned long elapsed_time;
-    unsigned long drift;
-    unsigned long time_interval;
-    bool is_running = false;
+    time_t _time;
+    unsigned long _elapsed_time;
+    unsigned long _drift;
+    unsigned long _time_interval;
+    bool _is_running = false;
 
    public:
     Timer();

@@ -39,22 +39,22 @@ void Interface::encoder_ISR() {
 void Interface::encoder_callback() { _encoder.tick(); }
 
 void Interface::move_down_callback() {
-    if (_instance != nullptr) _instance->handle_encoder_events(MOVE_DOWN);
+    if (_instance != nullptr) _instance->_handle_encoder_events(MOVE_DOWN);
 }
 
 void Interface::move_up_callback() {
-    if (_instance != nullptr) _instance->handle_encoder_events(MOVE_UP);
+    if (_instance != nullptr) _instance->_handle_encoder_events(MOVE_UP);
 }
 
-void Interface::handle_encoder_events(menu_event_e event) {
+void Interface::_handle_encoder_events(menu_event_e event) {
     _menuStateMachine.handle_event(event);
 }
 
-void Interface::handle_encoder_button_event() {
+void Interface::_handle_encoder_button_event() {
     bool button_state = _encoder.is_button_pressed();
     if (button_state && !_button_has_been_pressed) {
         // _speaker.button_click_sound();
-        handle_encoder_events(CLICK);
+        _handle_encoder_events(CLICK);
         _button_has_been_pressed = true;
     } else if (!button_state) {
         _button_has_been_pressed = false;
@@ -65,7 +65,7 @@ void Interface::task(void* pvParameters) {
     for (;;) {
         log_v("Ticking Interface");
 
-        handle_encoder_button_event();
+        _handle_encoder_button_event();
 
         Menu* _curr_menu = _menuStateMachine.get_curr_menu();
 
