@@ -51,6 +51,8 @@
 // |                            Motor Config Section                           |
 // -----------------------------------------------------------------------------
 #define MOTOR_ROTATION_DURATION 5  // in seconds
+#define STEPPER_STEPS_PER_REV 200
+#define MOTOR_SPEED 50
 
 // -----------------------------------------------------------------------------
 // |                             UI Config Section                             |

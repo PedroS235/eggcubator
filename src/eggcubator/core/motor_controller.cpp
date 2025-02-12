@@ -8,20 +8,19 @@
 #include <eggcubator/core/motor_controller.h>
 #include <eggcubator/extras/time_conversions.h>
 
-#include "AccelStepper.h"
+// #include "AccelStepper.h"
+#include "eggcubator/config/configuration.h"
 
 MotorController::MotorController()
-    : _stepper(AccelStepper::FULL4WIRE, MOTOR_IN1, MOTOR_IN2, MOTOR_IN3, MOTOR_IN4) {
+    : _stepper(STEPPER_STEPS_PER_REV, MOTOR_IN1, MOTOR_IN2, MOTOR_IN3, MOTOR_IN4) {
     log_d("Setting MotorController state to IDDLE");
-    _stepper.setMaxSpeed(1000);
-    _stepper.setAcceleration(100);
     _curr_state = IDDLE_MOTOR_STATE;
     set_rotation_duration_seconds(MOTOR_ROTATION_DURATION);
 }
 
 void MotorController::start_motor_rotation() {
     unsigned long now = millis();
-    _stepper.setSpeed(60);
+    _stepper.setSpeed(MOTOR_SPEED);
     log_d("Changing MotorController state: WAITING state -> ROTATING state");
     _curr_state = ROTATING_MOTOR_STATE;
     _prev_rotation = now;
@@ -52,7 +51,7 @@ void MotorController::set_rotation_duration_seconds(unsigned long interval) {
 void MotorController::_waiting_state() {
     unsigned long now = millis();
     if (now - _prev_rotation >= _rotation_interval) {
-        _stepper.setSpeed(200);
+        _stepper.setSpeed(MOTOR_SPEED);
         log_d("Changing MotorController state: WAITING state -> ROTATING state");
         _curr_state = ROTATING_MOTOR_STATE;
         _prev_rotation = now;
@@ -64,8 +63,8 @@ void MotorController::_rotating_state() {
     unsigned long now = millis();
     if (now - _start_of_rotation >= _rotation_duration) {
         _stepper.setSpeed(0);
-        _stepper.stop();
-        _stepper.disableOutputs();
+        // _stepper.stop();
+        // _stepper.disableOutputs();
         log_d("Changing MotorController state: ROTATING state -> WAITING state");
         _curr_state = WAITING_MOTOR_STATE;
     }
@@ -73,7 +72,7 @@ void MotorController::_rotating_state() {
 
 void MotorController::tick() {
     log_v("Ticking motor controller");
-    _stepper.runSpeed();
+    _stepper.step(STEPPER_STEPS_PER_REV / 100);
     switch (_curr_state) {
         case IDDLE_MOTOR_STATE:
             break;

@@ -7,8 +7,9 @@
 #ifndef MOTOR_CONTROLLER_H
 #define MOTOR_CONTROLLER_H
 
-#include <AccelStepper.h>
+// #include <AccelStepper.h>
 #include <Arduino.h>
+#include <Stepper.h>
 
 #define IDDLE_MOTOR_STATE 0
 #define ROTATING_MOTOR_STATE 1
@@ -27,7 +28,7 @@ class MotorController {
     unsigned long _rotation_duration;  // In seconds
     uint8_t _curr_state;
 
-    AccelStepper _stepper;
+    Stepper _stepper;
 
    private:
     void _waiting_state();
