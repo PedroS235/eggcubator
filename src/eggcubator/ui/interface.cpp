@@ -77,7 +77,7 @@ void Interface::task(void* pvParameters) {
                     _humidifier->get_humidity(),
                     _humidifier->get_target(),
                     _incubation->get_curr_time().get_time_t(),
-                    29,
+                    _incubation->curr_egg_in_incubation().incubation_days,
                     _heater->get_curr_power());
                 continue;
             }
