@@ -70,12 +70,13 @@ void setup() {
 
 void loop() {
     // Handled by FreeRTOS tasks.
+#ifdef USE_WIFI
+    server->handle_client();
+#else
     heater->log_stats();
     humidifier->log_stats();
     incubation->log_stats();
     vTaskDelay(5000 / portTICK_PERIOD_MS);
-#ifdef USE_WIFI
-    server->handle_client();
 #endif
 }
 
