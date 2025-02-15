@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Eggcubator Control Panel</title>
+    <!-- Bootstrap 5 CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chart.js Date Adapter (date-fns) -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <div class="container-fluid mt-4">
+      <div class="row">
+        <!-- Left Column: Controls -->
+        <div class="col-lg-6">
+          <h3>Control Panel</h3>
+          <div class="mb-3">
+            <label for="targetTemp" class="form-label"
+              >Target Temperature (°C)</label
+            >
+            <input
+              type="number"
+              step="0.1"
+              id="targetTemp"
+              class="form-control"
+              placeholder="Enter target temperature"
+            />
+            <button id="setTempBtn" class="btn btn-primary mt-2">
+              Set Temperature
+            </button>
+          </div>
+          <div class="mb-3">
+            <label for="eggType" class="form-label">Egg Type</label>
+            <select id="eggType" class="form-select">
+              <option value="0">Chicken</option>
+              <option value="1">Quail</option>
+              <option value="2">Duck</option>
+              <option value="3">Turkey</option>
+              <option value="4">Goose</option>
+              <option value="5">Pigeon</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <button id="startIncubation" class="btn btn-success me-2">
+              Start Incubation
+            </button>
+            <button id="stopIncubation" class="btn btn-danger">
+              Stop Incubation
+            </button>
+          </div>
+        </div>
+        <!-- Right Column: Combined Chart -->
+        <div class="col-lg-6">
+          <h3>Combined Chart</h3>
+          <canvas id="combinedChart"></canvas>
+        </div>
+      </div>
+    </div>
+    <!-- Bootstrap 5 Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      // Create the combined chart with a time-based x-axis.
+      const ctx = document.getElementById("combinedChart").getContext("2d");
+
+      const eggtype = {
+        chicken: 0,
+        quail: 1,
+        duck: 2,
+        turkey: 3,
+        goose: 4,
+        pigeon: 5,
+      };
+
+      const combinedChart = new Chart(ctx, {
+        type: "line",
+        data: {
+          datasets: [
+            {
+              label: "Current Temperature",
+              data: [],
+              borderColor: "rgba(255, 10, 10, 1)",
+              fill: false,
+              yAxisID: "y-temp",
+              parsing: { xAxisKey: "time", yAxisKey: "value" },
+              pointRadius: 0,
+            },
+            {
+              label: "Target Temperature",
+              data: [],
+              borderColor: "rgba(255, 155, 155, 1)",
+              borderDash: [5, 5],
+              fill: false,
+              yAxisID: "y-temp",
+              parsing: { xAxisKey: "time", yAxisKey: "value" },
+              pointRadius: 0,
+            },
+            {
+              label: "Current Humidity",
+              data: [],
+              borderColor: "rgba(10, 10, 255, 1)",
+              fill: false,
+              yAxisID: "y-humidity",
+              parsing: { xAxisKey: "time", yAxisKey: "value" },
+              pointRadius: 0,
+            },
+            {
+              label: "Target Humidity",
+              data: [],
+              borderColor: "rgba(54, 162, 235, 1)",
+              borderDash: [5, 5],
+              fill: false,
+              yAxisID: "y-humidity",
+              parsing: { xAxisKey: "time", yAxisKey: "value" },
+              pointRadius: 0,
+            },
+          ],
+        },
+        options: {
+          scales: {
+            x: {
+              type: "time",
+              time: {
+                unit: "minute",
+                stepSize: 2, // Show ticks at 10-minute intervals.
+                displayFormats: {
+                  minute: "h:mm",
+                },
+              },
+              title: { display: true, text: "Time" },
+            },
+            "y-temp": {
+              type: "linear",
+              position: "left",
+              title: { display: true, text: "Temperature (°C)" },
+            },
+            "y-humidity": {
+              type: "linear",
+              position: "right",
+              title: { display: true, text: "Humidity (%)" },
+              grid: { drawOnChartArea: false },
+            },
+          },
+        },
+      });
+
+      // Function to update the combined chart by fetching data from your FastAPI endpoints.
+      async function updateCombinedChart() {
+        try {
+          const [tempResponse, humidityResponse] = await Promise.all([
+            axios.get("http://192.168.178.96/temperature"),
+            axios.get("http://192.168.178.96/humidity"),
+          ]);
+          const tempData = await tempResponse.data;
+          const humidityData = await humidityResponse.data;
+
+          // Use a Date object for the x-axis so Chart.js formats it using the time adapter.
+          const now = new Date();
+
+          combinedChart.data.datasets[0].data.push({
+            time: now,
+            value: tempData.current_temperature,
+          });
+          combinedChart.data.datasets[1].data.push({
+            time: now,
+            value: tempData.target_temperature,
+          });
+          combinedChart.data.datasets[2].data.push({
+            time: now,
+            value: humidityData.current_humidity,
+          });
+          combinedChart.data.datasets[3].data.push({
+            time: now,
+            value: humidityData.target_humidity,
+          });
+
+          combinedChart.update();
+        } catch (error) {
+          console.error("Error updating chart:", error);
+        }
+      }
+
+      // Update the chart every 1 seconds.
+      setInterval(updateCombinedChart, 1000);
+
+      // Event listener for setting the target temperature.
+      document
+        .getElementById("setTempBtn")
+        .addEventListener("click", async () => {
+          const target = parseFloat(
+            document.getElementById("targetTemp").value,
+          );
+          if (!isNaN(target)) {
+            const response = await fetch("/temperature", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ target: target }),
+            });
+            const result = await response.json();
+            console.log("Set temperature result:", result);
+          }
+        });
+
+      // Event listener for starting incubation.
+      document
+        .getElementById("startIncubation")
+        .addEventListener("click", async () => {
+          const eggType = parseInt(document.getElementById("eggType").value);
+          const response = await fetch("/incubation/start", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ egg_type: eggType }),
+          });
+          const result = await response.json();
+          console.log("Start incubation result:", result);
+        });
+
+      // Event listener for stopping incubation.
+      document
+        .getElementById("stopIncubation")
+        .addEventListener("click", async () => {
+          const response = await fetch("/incubation/stop", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+          });
+          const result = await response.json();
+          console.log("Stop incubation result:", result);
+        });
+    </script>
+  </body>
+</html>
